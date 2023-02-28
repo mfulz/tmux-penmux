@@ -3,7 +3,9 @@ SUPPORTED_VERSION="1.9"
 # Defaults
 # Pathes
 la_default_work_dir="$HOME"
-la_work_dir=$(tmux show-option -gqv "@la-work-dir")
+la_global_work_dir=$(tmux show-option -gqv "@la-work-dir")
+la_work_dir=$(tmux show-option -qv "@la-work-dir")
+la_work_dir=${la_work_dir:-$la_global_work_dir}
 la_work_dir=${la_work_dir:-$la_default_work_dir}
 
 #la_default_session_path="${la_work_dir}/#{session_name}/%Y%m%dT%H"
