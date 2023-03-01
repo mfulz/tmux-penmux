@@ -22,7 +22,7 @@ stop_pipe_pane() {
 
 # returns a string unique to current pane
 pane_unique_id() {
-    tmux display-message -p "#{session_name}_#{window_index}_#{pane_index}"
+    tmux display-message -p "#{session_name}-#{window_name}-#{pane_id}"
 }
 
 # saving 'logging' 'not logging' status in a variable unique to pane
@@ -75,9 +75,24 @@ toggle_pipe_pane() {
     fi
 }
 
-main() {
-    if supported_tmux_version_ok; then
-        toggle_pipe_pane
+# stop logging
+main_stop() {
+    if is_logging; then
+        set_logging_variable "not logging"
+        restore_pane_title
+        stop_pipe_pane
     fi
 }
-main
+
+main() {
+    local ARG="${1}"
+
+    if supported_tmux_version_ok; then
+        if [[ ${ARG} == "stop" ]]; then
+            main_stop
+        else
+            toggle_pipe_pane
+        fi
+    fi
+}
+main "$@"
