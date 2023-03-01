@@ -33,6 +33,25 @@ display_message() {
     tmux set-option -gq display-time "$saved_display_time"
 }
 
+# Ensures a message is displayed for 3 seconds in tmux prompt
+display_message2() {
+    local PANE_ID="${1}"
+    local message="${2}"
+
+    # display_duration defaults to 3 seconds, if not passed as an argument
+    if [ "$#" -eq 3 ]; then
+        local display_duration=${3}
+    else
+        local display_duration="3000"
+    fi
+
+    # saves user-set 'display-time' option
+    local saved_display_time=$(get_tmux_option "display-time" "750")
+
+    # displays message
+    tmux display-message -d "${display_duration}" -t "${PANE_ID}" "$message"
+}
+
 # simplest solution, taken from here: http://unix.stackexchange.com/a/81689
 remove_empty_lines_from_end_of_file() {
     local file=$1
@@ -55,22 +74,22 @@ expand_tmux_format_path() {
 }
 
 ansifilter_installed() {
-    type ansifilter >/dev/null 2>&1 || return 1
+    type ansifilter > /dev/null 2>&1 || return 1
 }
 
 script_installed() {
-    type script >/dev/null 2>&1 || return 1
+    type script > /dev/null 2>&1 || return 1
 }
 
 use_script() {
-    if [[ "${la_capture_via_script}" -ne 0 ]]; then
+    if [[ ${la_capture_via_script} -ne 0 ]]; then
         return $(script_installed)
     fi
     return 1
 }
 
 use_timing() {
-    if [[ "${la_script_timing}" -ne 0 ]]; then
+    if [[ ${la_script_timing} -ne 0 ]]; then
         return 0
     fi
     return 1
