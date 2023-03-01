@@ -7,9 +7,9 @@ source "$CURRENT_DIR/shared.sh"
 
 start_pipe_pane() {
     local PANE_ID="${1}"
-    local file=$(expand_tmux_format_path "${la_log_full_filename}")
+    local file=$(expand_tmux_format_path "${PANE_ID}" "${la_log_full_filename}")
     "$CURRENT_DIR/start_logging.sh" "${PANE_ID}" "${file}"
-    display_message2 "${PANE_ID}" "Started logging to ${la_log_full_filename}"
+    display_message "${PANE_ID}" "Started logging to ${la_log_full_filename}"
 }
 
 stop_pipe_pane() {
@@ -19,7 +19,7 @@ stop_pipe_pane() {
     else
         tmux pipe-pane -t "${PANE_ID}"
     fi
-    display_message2 "${PANE_ID}" "Ended logging to $la_log_full_filename"
+    display_message "${PANE_ID}" "Ended logging to $la_log_full_filename"
 }
 
 # saving 'logging' 'not logging' status in a variable unique to pane
@@ -82,12 +82,11 @@ start_log() {
     if is_logging "${PANE_ID}"; then
         return 0
     fi
-    #echo "START"
 
     set_logging_variable "${PANE_ID}" "logging"
+    start_pipe_pane "${PANE_ID}"
     store_pane_title "${PANE_ID}"
     set_pane_title "${PANE_ID}" " *logging*"
-    start_pipe_pane "${PANE_ID}"
 }
 
 # stop logging
@@ -97,11 +96,10 @@ stop_log() {
     if ! is_logging "${PANE_ID}"; then
         return 0
     fi
-    #echo "STOP"
 
-    stop_pipe_pane "${PANE_ID}"
     set_logging_variable "${PANE_ID}" "not logging"
     restore_pane_title "${PANE_ID}"
+    stop_pipe_pane "${PANE_ID}"
 }
 
 # toggle logging

@@ -9,32 +9,8 @@ get_tmux_option() {
     fi
 }
 
-# Ensures a message is displayed for 5 seconds in tmux prompt
-display_message() {
-    local message=$1
-
-    # display_duration defaults to 3 seconds, if not passed as an argument
-    if [ "$#" -eq 2 ]; then
-        local display_duration=$2
-    else
-        local display_duration="3000"
-    fi
-
-    # saves user-set 'display-time' option
-    local saved_display_time=$(get_tmux_option "display-time" "750")
-
-    # sets message display time to 5 seconds
-    tmux set-option -gq display-time "$display_duration"
-
-    # displays message
-    tmux display-message "$message"
-
-    # restores original 'display-time' value
-    tmux set-option -gq display-time "$saved_display_time"
-}
-
 # Ensures a message is displayed for 3 seconds in tmux prompt
-display_message2() {
+display_message() {
     local PANE_ID="${1}"
     local message="${2}"
 
@@ -66,8 +42,9 @@ supported_tmux_version_ok() {
 # Checking full path to logfile and expanding tmux format in normal path
 # As example: expand %Y-%m-%d to current date
 expand_tmux_format_path() {
-    local tmux_format_path=$1
-    local full_path=$(tmux display-message -p "${tmux_format_path}")
+    local PANE_ID="${1}"
+    local tmux_format_path="${2}"
+    local full_path=$(tmux display-message -t "${PANE_ID}" -p "${tmux_format_path}")
     local full_directory_path=${full_path%/*}
     mkdir -p "${full_directory_path}"
     echo "${full_path}"
