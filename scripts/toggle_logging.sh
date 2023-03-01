@@ -8,7 +8,7 @@ source "$CURRENT_DIR/shared.sh"
 start_pipe_pane() {
     local PANE_ID="${1}"
     local file=$(expand_tmux_format_path "${la_log_full_filename}")
-    "$CURRENT_DIR/start_logging2.sh" "${PANE_ID}" "${file}"
+    "$CURRENT_DIR/start_logging.sh" "${PANE_ID}" "${file}"
     display_message2 "${PANE_ID}" "Started logging to ${la_log_full_filename}"
 }
 
