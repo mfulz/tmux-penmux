@@ -75,17 +75,6 @@ toggle_pipe_pane() {
     fi
 }
 
-# toggle logging
-toggle_log() {
-    local PANE_ID="${1}"
-
-    if is_logging "${PANE_ID}"; then
-        stop_pipe "${PANE_ID}"
-    else
-        start_pipe "${PANE_ID}"
-    fi
-}
-
 # start logging
 start_log() {
     local PANE_ID="${1}"
@@ -93,7 +82,7 @@ start_log() {
     if is_logging "${PANE_ID}"; then
         return 0
     fi
-    echo "START"
+    #echo "START"
 
     set_logging_variable "${PANE_ID}" "logging"
     store_pane_title "${PANE_ID}"
@@ -108,11 +97,22 @@ stop_log() {
     if ! is_logging "${PANE_ID}"; then
         return 0
     fi
-    echo "STOP"
+    #echo "STOP"
 
     stop_pipe_pane "${PANE_ID}"
     set_logging_variable "${PANE_ID}" "not logging"
     restore_pane_title "${PANE_ID}"
+}
+
+# toggle logging
+toggle_log() {
+    local PANE_ID="${1}"
+
+    if is_logging "${PANE_ID}"; then
+        stop_log "${PANE_ID}"
+    else
+        start_log "${PANE_ID}"
+    fi
 }
 
 main() {
@@ -151,14 +151,6 @@ main() {
                 exit 1
                 ;;
         esac
-    fi
-
-    if supported_tmux_version_ok; then
-        if [[ ${ARG} == "stop" ]]; then
-            main_stop
-        else
-            toggle_pipe_pane "${PANE_ID}"
-        fi
     fi
 }
 main "$@"
