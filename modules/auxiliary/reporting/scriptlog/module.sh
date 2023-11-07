@@ -21,16 +21,17 @@ _load() {
     exit 1
   }
 
-  tmux set-option -t "$session" default-command "\"$CURRENT_DIR/scriptlog.sh\" -a start -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\""
-  tmux set-hook -t "$session" session-renamed "run-shell '\"$CURRENT_DIR/scriptlog.sh\" -a restart -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\"'"
-  tmux set-hook -t "$session" window-renamed "run-shell '\"$CURRENT_DIR/scriptlog.sh\" -a restart -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\"'"
-
   if [[ "$logexisting" == "true" ]]; then
     panes="$(_get_all_panes)"
     while IFS= read -r p; do
       tmux respawn-pane -k -t "$p" "\"$CURRENT_DIR/scriptlog.sh\" -a start -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\" -p \"$p\""
     done <<< "$panes"
   fi
+
+  tmux set-option -t "$session" default-command "\"$CURRENT_DIR/scriptlog.sh\" -a start -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\""
+  tmux set-hook -t "$session" -a session-renamed "run-shell '\"$CURRENT_DIR/scriptlog.sh\" -a restart -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\"'"
+  tmux set-hook -t "$session" -a window-renamed "run-shell '\"$CURRENT_DIR/scriptlog.sh\" -a restart -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\"'"
+  tmux set-hook -t "$session" -a after-set-option "run-shell '\"$CURRENT_DIR/scriptlog.sh\" -a restart_all -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\"'"
 
   tmux display-message -d 5000 "scriptlog loaded and running"
 }
@@ -40,8 +41,12 @@ _unload() {
   local panes
 
   tmux set-option -t "$session" -u default-command "\"$CURRENT_DIR/scriptlog.sh\" -a start -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\""
-  tmux set-hook -t "$session" -u session-renamed "run-shell '\"$CURRENT_DIR/scriptlog.sh\" -a restart -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\"'"
-  tmux set-hook -t "$session" -u window-renamed "run-shell '\"$CURRENT_DIR/scriptlog.sh\" -a restart -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\"'"
+  # tmux set-hook -t "$session" -u session-renamed "run-shell '\"$CURRENT_DIR/scriptlog.sh\" -a restart -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\"'"
+  # tmux set-hook -t "$session" -u window-renamed "run-shell '\"$CURRENT_DIR/scriptlog.sh\" -a restart -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\"'"
+  # tmux set-hook -t "$session" -u after-set-option "run-shell '\"$CURRENT_DIR/scriptlog.sh\" -a restart_all -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\"'"
+  unset_tmux_hook "session-renamed" "$CURRENT_DIR/scriptlog.sh" "$session"
+  unset_tmux_hook "window-renamed" "$CURRENT_DIR/scriptlog.sh" "$session"
+  unset_tmux_hook "after-set-option" "$CURRENT_DIR/scriptlog.sh" "$session"
 
   panes="$(_get_all_panes)"
   while IFS= read -r p; do

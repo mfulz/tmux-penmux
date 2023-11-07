@@ -22,7 +22,15 @@ supported_tmux_version_ok() {
 get_tmux_option_global() {
 	local option=$1
 	local default_value=$2
-	local option_value=$(tmux show-option -gqv "$option")
+	local pane_id=$3
+	local option_value
+
+  if [ -z "$pane_id" ]; then
+    pane_id="$(tmux display-message -p "#D")"
+  fi
+
+  option_value=$(tmux show-options -t "$pane_id" -gqv "$option")
+
 	if [ -z "$option_value" ]; then
 		echo $default_value
 	else
@@ -33,7 +41,15 @@ get_tmux_option_global() {
 get_tmux_option_session() {
 	local option=$1
 	local default_value=$2
-	local option_value=$(tmux show-option -qv "$option")
+	local pane_id=$3
+	local option_value
+
+  if [ -z "$pane_id" ]; then
+    pane_id="$(tmux display-message -p "#D")"
+  fi
+
+  option_value=$(tmux show-options -t "$pane_id" -qv "$option")
+
 	if [ -z "$option_value" ]; then
 		echo $default_value
 	else
@@ -44,7 +60,15 @@ get_tmux_option_session() {
 get_tmux_option_window() {
 	local option=$1
 	local default_value=$2
-	local option_value=$(tmux show-option -wqv "$option")
+	local pane_id=$3
+	local option_value
+
+  if [ -z "$pane_id" ]; then
+    pane_id="$(tmux display-message -p "#D")"
+  fi
+
+  option_value=$(tmux show-options -t "$pane_id" -wqv "$option")
+
 	if [ -z "$option_value" ]; then
 		echo $default_value
 	else
@@ -55,7 +79,15 @@ get_tmux_option_window() {
 get_tmux_option_pane() {
 	local option=$1
 	local default_value=$2
-	local option_value=$(tmux show-option -pqv "$option")
+	local pane_id=$3
+	local option_value
+
+  if [ -z "$pane_id" ]; then
+    pane_id="$(tmux display-message -p "#D")"
+  fi
+
+  option_value=$(tmux show-options -t "$pane_id" -pqv "$option")
+
 	if [ -z "$option_value" ]; then
 		echo $default_value
 	else
@@ -66,24 +98,29 @@ get_tmux_option_pane() {
 get_tmux_option() {
 	local option=$1
 	local default_value=$2
+	local pane_id=$3
 	local option_value
 
-	option_value=$(get_tmux_option_pane "$option" "")
+  if [ -z "$pane_id" ]; then
+    pane_id="$(tmux display-message -p "#D")"
+  fi
+
+	option_value=$(get_tmux_option_pane "$option" "" "$pane_id")
 	[[ -z "$option_value" ]] || {
 		echo $option_value
 		return
 	}
-	option_value=$(get_tmux_option_window "$option" "")
+	option_value=$(get_tmux_option_window "$option" "" "$pane_id")
 	[[ -z "$option_value" ]] || {
 		echo $option_value
 		return
 	}
-	option_value=$(get_tmux_option_session "$option" "")
+	option_value=$(get_tmux_option_session "$option" "" "$pane_id")
 	[[ -z "$option_value" ]] || {
 		echo $option_value
 		return
 	}
-	option_value=$(get_tmux_option_global "$option" "")
+	option_value=$(get_tmux_option_global "$option" "" "$pane_id")
 	[[ -z "$option_value" ]] || {
 		echo $option_value
 		return
@@ -91,6 +128,26 @@ get_tmux_option() {
 	echo $default_value
 }
 
+# Handlers to work around tmux limitations
+unset_tmux_hook() {
+  local hook="$1"
+  local cmd="$2"
+  local session="$3"
+  local all_hooks
+
+  if [ -z "$session" ]; then
+    session="$(tmux display-message -p "#S")"
+  fi
+
+  all_hooks="$(tmux show-hooks -t "$session" | grep "$hook" | grep -v "$cmd" | awk '{$1=""; print $0}')"
+
+  tmux set-hook -t "$session" -u "$hook"
+  while IFS= read -r h; do
+    [ -z "$h" ] && continue
+    [[ "$h" == " " ]] && continue
+    tmux set-hook -t "$session" -a "$hook" "$h"
+  done <<< "$all_hooks"
+}
 
 # Checking full path to logfile and expanding tmux format in normal path
 # As example: expand %Y-%m-%d to current date
@@ -218,7 +275,7 @@ penmux_module_get_loaded() {
     fi
   done
 
-  echo -n "$loaded_modules"
+  echo "$loaded_modules"
 }
 
 penmux_module_get_option() {

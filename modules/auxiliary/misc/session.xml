@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PenmuxModule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../schemas/penmux-module.xsd">
+  <Name>Session</Name>
+  <Description>Module to persist penmux sessions and provide easy to use storage of module options</Description>
+  <HandleScript>auxiliary/misc/session/module.sh</HandleScript>
+  <Option xsi:type="OptionTypeBool" Private="true">
+    <Name>AutoLoad</Name>
+    <Description>If enabled sessions will be loaded automatically after cd into a directory that includes a session file</Description>
+    <DefaultValue>true</DefaultValue>
+  </Option>
+  <Option xsi:type="OptionTypeBool" Private="true">
+    <Name>UseCwd</Name>
+    <Description>If enabled new session will be created as sub directory to the current dir</Description>
+    <DefaultValue>true</DefaultValue>
+  </Option>
+  <Option xsi:type="OptionTypeString" Private="true">
+    <Name>SessionDir</Name>
+    <Description>Default directory to use for sessions. Has no effect when UseCwd is set to true.</Description>
+    <DefaultValue>$HOME/.tmux/penmux/sessions</DefaultValue>
+  </Option>
+</PenmuxModule>

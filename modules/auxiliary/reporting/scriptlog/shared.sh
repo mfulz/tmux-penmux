@@ -6,7 +6,7 @@ _get_log_dir() {
 
 
   if [[ "$log_penmux_session_dir" == "true" ]]; then
-    logdir_penmux_session="$(get_tmux_option "@penmux-session-dir" "")"
+    logdir_penmux_session="$(get_tmux_option "@penmux-session-dir" "" "$pane_id")"
     if [[ -n "$logdir_penmux_session" ]]; then
       logdir="$logdir_penmux_session"
     fi
@@ -17,7 +17,7 @@ _get_log_dir() {
 
 _get_log_file() {
   local pane_id="$1"
-  local logdir="$(_get_log_dir)"
+  local logdir="$(_get_log_dir "$pane_id")"
   local logfile="$(penmux_module_get_option "$_MODULE_PATH" "Name")"
   logfile="$(expand_tmux_format_path "$pane_id" "$logdir/$logfile")"
 
