@@ -48,17 +48,32 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:complexType name="PenmuxProvider">
+    <xs:sequence>
+      <xs:element name="Name" type="xs:string" />
+      <xs:element name="Description" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="PenmuxConsumer">
+    <xs:sequence>
+      <xs:element name="Name" type="xs:string" />
+      <xs:element name="Description" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
 
   <xs:element name="PenmuxModule">
     <xs:complexType>
       <xs:sequence>
         <xs:element name="Name" type="xs:string" />
         <xs:element name="Description" type="xs:string" />
-        <xs:element name="Command" type="xs:string" minOccurs="0" maxOccurs="1" />
+        <xs:element name="HasRun" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+        <xs:element name="CmdPrio" type="xs:int" minOccurs="0" maxOccurs="1" />
         <xs:element name="HandleScript" type="xs:string" minOccurs="0" maxOccurs="1" />
-        <xs:element name="Use" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
         <xs:element name="Depend" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
         <xs:element name="Option" type="OptionType" minOccurs="0" maxOccurs="unbounded" />
+        <xs:element name="Provides" type="PenmuxProvider" minOccurs="0" maxOccurs="unbounded" />
+        <xs:element name="Consumes" type="PenmuxConsumer" minOccurs="0" maxOccurs="unbounded" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>

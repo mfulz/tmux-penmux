@@ -2,6 +2,7 @@
 <PenmuxModule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../schemas/penmux-module.xsd">
   <Name>Session</Name>
   <Description>Module to persist penmux sessions and provide easy to use storage of module options</Description>
+  <CmdPrio>100</CmdPrio>
   <HandleScript>auxiliary/misc/session/module.sh</HandleScript>
   <Option xsi:type="OptionTypeBool" Private="true">
     <Name>AutoLoad</Name>
@@ -14,8 +15,16 @@
     <DefaultValue>true</DefaultValue>
   </Option>
   <Option xsi:type="OptionTypeString" Private="true">
-    <Name>SessionDir</Name>
+    <Name>SessionDirBase</Name>
     <Description>Default directory to use for sessions. Has no effect when UseCwd is set to true.</Description>
     <DefaultValue>$HOME/.tmux/penmux/sessions</DefaultValue>
   </Option>
+  <Provides>
+    <Name>SessionDir</Name>
+    <Description>The final session directory. Can be used by other modules to store data.</Description>
+  </Provides>
+  <Provides>
+    <Name>SessionName</Name>
+    <Description>The Name of the session.</Description>
+  </Provides>
 </PenmuxModule>

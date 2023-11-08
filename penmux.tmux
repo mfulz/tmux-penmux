@@ -7,6 +7,8 @@ source "$CURRENT_DIR/scripts/helpers.sh"
 
 
 main() {
+  local session="$(tmux display-message -p "#{session_id}")"
+  local pane_id="$(tmux display-message -p "#D")"
   local keytable_key_option_value="$(get_tmux_option "$keytable_key_option" "$default_keytable_key")"
   local load_module_key_option_value="$(get_tmux_option "$load_module_key_option" "$default_load_module_key")"
   local unload_module_key_option_value="$(get_tmux_option "$unload_module_key_option" "$default_unload_module_key")"

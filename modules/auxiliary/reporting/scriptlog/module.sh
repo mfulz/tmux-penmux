@@ -12,8 +12,7 @@ source "$CURRENT_DIR/shared.sh"
 _load() {
   local logexisting="$(penmux_module_get_option "$_MODULE_PATH" "LogExisting")"
   local logdir
-  local err
-  local session="$(tmux display-message -p "#S")"
+  # local session="$(tmux display-message -p "#{session_id}")"
   local panes
 
   which script >/dev/null 2>&1 || {
@@ -22,33 +21,32 @@ _load() {
   }
 
   if [[ "$logexisting" == "true" ]]; then
-    panes="$(_get_all_panes)"
+    panes="$(tmux list-panes -F "#D")"
     while IFS= read -r p; do
       tmux respawn-pane -k -t "$p" "\"$CURRENT_DIR/scriptlog.sh\" -a start -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\" -p \"$p\""
     done <<< "$panes"
   fi
 
-  tmux set-option -t "$session" default-command "\"$CURRENT_DIR/scriptlog.sh\" -a start -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\""
-  tmux set-hook -t "$session" -a session-renamed "run-shell '\"$CURRENT_DIR/scriptlog.sh\" -a restart -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\"'"
-  tmux set-hook -t "$session" -a window-renamed "run-shell '\"$CURRENT_DIR/scriptlog.sh\" -a restart -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\"'"
-  tmux set-hook -t "$session" -a after-set-option "run-shell '\"$CURRENT_DIR/scriptlog.sh\" -a restart_all -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\"'"
+  # tmux set-option -t "$session" default-command "\"$CURRENT_DIR/scriptlog.sh\" -a start -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\""
+  # tmux set-hook -t "$session" -a session-renamed "run-shell '\"$CURRENT_DIR/scriptlog.sh\" -a restart -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\"'"
+  # tmux set-hook -t "$session" -a window-renamed "run-shell '\"$CURRENT_DIR/scriptlog.sh\" -a restart -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\"'"
+  # tmux set-hook -t "$session" -a after-set-option "run-shell '\"$CURRENT_DIR/scriptlog.sh\" -a restart_all -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\"'"
 
   tmux display-message -d 5000 "scriptlog loaded and running"
 }
 
 _unload() {
-  local session="$(tmux display-message -p "#S")"
-  local panes
+  # local session="$(tmux display-message -p "#{session_id}")"
+  local panes="$(tmux list-panes -F "#D")"
 
-  tmux set-option -t "$session" -u default-command "\"$CURRENT_DIR/scriptlog.sh\" -a start -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\""
+  # tmux set-option -t "$session" -u default-command "\"$CURRENT_DIR/scriptlog.sh\" -a start -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\""
   # tmux set-hook -t "$session" -u session-renamed "run-shell '\"$CURRENT_DIR/scriptlog.sh\" -a restart -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\"'"
   # tmux set-hook -t "$session" -u window-renamed "run-shell '\"$CURRENT_DIR/scriptlog.sh\" -a restart -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\"'"
   # tmux set-hook -t "$session" -u after-set-option "run-shell '\"$CURRENT_DIR/scriptlog.sh\" -a restart_all -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\"'"
-  unset_tmux_hook "session-renamed" "$CURRENT_DIR/scriptlog.sh" "$session"
-  unset_tmux_hook "window-renamed" "$CURRENT_DIR/scriptlog.sh" "$session"
-  unset_tmux_hook "after-set-option" "$CURRENT_DIR/scriptlog.sh" "$session"
+  # unset_tmux_hook "session-renamed" "$CURRENT_DIR/scriptlog.sh" "$session"
+  # unset_tmux_hook "window-renamed" "$CURRENT_DIR/scriptlog.sh" "$session"
+  # unset_tmux_hook "after-set-option" "$CURRENT_DIR/scriptlog.sh" "$session"
 
-  panes="$(_get_all_panes)"
   while IFS= read -r p; do
     tmux run-shell -t "$p" "\"$CURRENT_DIR/scriptlog.sh\" -a revert -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\" -p \"$p\""
   done <<< "$panes"
@@ -56,11 +54,31 @@ _unload() {
   tmux display-message -d 5000 "scriptlog stopped and unloaded"
 }
 
+_cmd() {
+  local calling_pane_id="$1"
+  local pane_id="$2"
+
+  tmux respawn-pane -k -t "$pane_id" "\"$CURRENT_DIR/scriptlog.sh\" -a start -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\" -p \"$pane_id\""
+}
+
+_notify() {
+  local pane_id="$1"
+  local panes="$(tmux list-panes -F "#D")"
+
+  while IFS= read -r p; do
+    tmux run-shell -t "$p" "\"$CURRENT_DIR/scriptlog.sh\" -a restart -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\" -p \"$p\""
+  done <<< "$panes"
+}
+
 main() {
   local action
+  local pane_id
+  local calling_pane_id
+  local provider_name
+  local provider_value
 
 	local OPTIND o
-	while getopts "a:vc:m:" o; do
+	while getopts "a:vc:m:o:p:k:i:" o; do
 		case "${o}" in
 		a)
 			action="${OPTARG}"
@@ -76,6 +94,18 @@ main() {
       ;;
 		m)
       _MODULE_PATH="${OPTARG}"
+			;;
+		o)
+      calling_pane_id="${OPTARG}"
+			;;
+		p)
+      pane_id="${OPTARG}"
+			;;
+		k)
+      provider_name="${OPTARG}"
+			;;
+		i)
+      provider_value="${OPTARG}"
 			;;
     *)
       # do not change !!! 
@@ -109,6 +139,20 @@ case "${action}" in
     # If not needed just exit 0
     # ## this should only be the case for passive modules, that run in background
     # ## doing their work over tmux hooks or similar
+    exit 0
+    ;;
+  "cmd")
+    # Will be called as default command for
+    # new panes
+    # If not needed just exit 0
+    _cmd "$calling_pane_id" "$pane_id"
+    exit 0
+    ;;
+  "notify")
+    # Will be called as default command for
+    # new panes
+    # If not needed just exit 0
+    _notify "$pane_id"
     exit 0
     ;;
   *)

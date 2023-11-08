@@ -1,21 +1,12 @@
-if [ -d "$HOME/.tmux/penmux" ]; then
-	default_penmux_session_dir="$HOME/.tmux/penmux"
-else
-	default_penmux_session_dir="${XDG_DATA_HOME:-$HOME/.local/share}"/tmux/penmux
-fi
-penmux_session_dir_option="@penmux-session-dir"
-
 SUPPORTED_VERSION="1.9"
-PENMUX_SESSION_FILE_PREFIX="tmux_penmux"
-PENMUX_SESSION_FILE_EXTENSION="pses"
-_PENMUX_SESSION_DIR=""
-_PENMUX_SESSION_FILE_PATH=""
 
-_PENMUX_MODULE_SCHEMA="${CURRENT_DIR}/../schemas/penmux-module.xsd"
-_PENMUX_MODULE_DIR="${CURRENT_DIR}/../modules"
+_CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+_PENMUX_MODULE_SCHEMA="${_CURRENT_DIR}/../schemas/penmux-module.xsd"
+_PENMUX_MODULE_DIR="${_CURRENT_DIR}/../modules"
 
 supported_tmux_version_ok() {
-	"$CURRENT_DIR/check_tmux_version.sh" "$SUPPORTED_VERSION"
+	"$_CURRENT_DIR/check_tmux_version.sh" "$SUPPORTED_VERSION"
 }
 
 # env and option helpers
@@ -261,6 +252,17 @@ penmux_module_get_depends() {
   xmlstarlet sel -t -v '/PenmuxModule/Depend' -n "${module_path}"
 }
 
+penmux_module_get_cmdprio() {
+  local module_path="${1}"
+
+  xmlstarlet sel -t -v '/PenmuxModule/CmdPrio' -n "${module_path}"
+}
+
+penmux_module_convert_relative_path() {
+  local relative_path="$1"
+  echo "$_PENMUX_MODULE_DIR/$relative_path"
+}
+
 penmux_module_get_loaded() {
   local loaded_modules_plain="$(get_tmux_option "@penmux-loaded-modules" "")"
   local loaded_modules
@@ -301,7 +303,85 @@ penmux_module_get_option() {
   get_tmux_option "$tmux_option_name" "$option_default"
 }
 
-penmux_module_convert_relative_path() {
-  local relative_path="$1"
-  echo "$_PENMUX_MODULE_DIR/$relative_path"
+penmux_module_notify_consumers() {
+  local module_path="${1}"
+  local provider_name="${2}"
+  local pane_id="${3}"
+  local loaded_modules="$(penmux_module_get_loaded)"
+  local act_module_path
+  local handle_script
+  local consumes
+  local value
+
+  provider_name="$(xmlstarlet sel -t -v "/PenmuxModule/Provides[Name=\"$provider_name\"]/Name/text()" "$module_path")"
+
+  if [ -z "$provider_name" ]; then
+    return 1
+  fi
+
+  value="$(get_tmux_option "@penmux-providers-$provider_name" "" "$pane_id")"
+
+  while IFS= read -r m; do
+    act_module_path="$(penmux_module_convert_relative_path "$m")"
+    consumes="$(xmlstarlet sel -t -v "/PenmuxModule/Consumes[Name=\"$provider_name\"]/Name/text()" "$act_module_path")"
+    if [ -n "$consumes" ]; then
+      handle_script="$_PENMUX_MODULE_DIR/$(penmux_module_get_handlescript "$act_module_path")"
+
+      [ -z "$handle_script" ] && continue
+      "$handle_script" -c "$_CURRENT_DIR" -a notify -m "$act_module_path" -p "$pane_id" -k "$provider_name" -i "$value"
+    fi
+  done <<< "$loaded_modules"
+}
+
+penmux_module_set_provider() {
+  local module_path="${1}"
+  local provider_name="${2}"
+  local value="${3}"
+  local tid="${4}"
+  local dst="${5}"
+  local unset="${6}"
+
+  provider_name="$(xmlstarlet sel -t -v "/PenmuxModule/Provides[Name=\"$provider_name\"]/Name/text()" "$module_path")"
+
+  if [ -z "$provider_name" ]; then
+    return 1
+  fi
+
+  if [ -n "$unset" ]; then
+    unset="-u"
+  fi
+
+
+  case "$dst" in
+    "pane")
+      tmux set-option -t "$tid" -p $unset "@penmux-providers-$provider_name" "$value"
+      ;;
+    "window")
+      tmux set-option -t "$tid" -w $unset "@penmux-providers-$provider_name" "$value"
+      ;;
+    "session")
+      tmux set-option -t "$tid" $unset "@penmux-providers-$provider_name" "$value"
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
+
+penmux_module_get_provider() {
+  local module_path="${1}"
+  local provider_name="${2}"
+  local id="${3}"
+  local provider_name_final
+
+  provider_name_final="$(xmlstarlet sel -t -v "/PenmuxModule/Provides[Name=\"$provider_name\"]/Name/text()" "$module_path")"
+  if [ -z "$provider_name_final" ]; then
+    provider_name_final="$(xmlstarlet sel -t -v "/PenmuxModule/Consumes[Name=\"$provider_name\"]/Name/text()" "$module_path")"
+    if [ -z "$provider_name_final" ]; then
+      return 1
+    fi
+  fi
+  provider_name="$provider_name_final"
+
+  get_tmux_option "@penmux-providers-$provider_name" "" "$id"
 }

@@ -2,8 +2,8 @@
 <PenmuxModule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../schemas/penmux-module.xsd">
   <Name>ScriptLog</Name>
   <Description>Module to log terminal input / output to files (using util/linux script)</Description>
+  <CmdPrio>200</CmdPrio>
   <HandleScript>auxiliary/reporting/scriptlog/module.sh</HandleScript>
-  <Use>auxiliary/misc/session</Use>
   <Option xsi:type="OptionTypeBool" Private="true">
     <Name>LogExisting</Name>
     <Description>If enabled all existing panes will start logging</Description>
@@ -24,4 +24,8 @@
     <Description>Directory to store logfiles. All tmux placeholders can be used (ae. #W, #S, etc.)</Description>
     <DefaultValue>$HOME/.tmux/penmux/logs/#S</DefaultValue>
   </Option>
+  <Consumes>
+    <Name>SessionDir</Name>
+    <Description>The final session directory. Can be used by other modules to store data.</Description>
+  </Consumes>
 </PenmuxModule>

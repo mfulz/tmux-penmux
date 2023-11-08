@@ -4,9 +4,8 @@ _get_log_dir() {
   local logdir="$(penmux_module_get_option "$_MODULE_PATH" "LogDir")"
   local logdir_penmux_session
 
-
   if [[ "$log_penmux_session_dir" == "true" ]]; then
-    logdir_penmux_session="$(get_tmux_option "@penmux-session-dir" "" "$pane_id")"
+    logdir_penmux_session="$(penmux_module_get_provider "$_MODULE_PATH" "SessionDir" "$pane_id")"
     if [[ -n "$logdir_penmux_session" ]]; then
       logdir="$logdir_penmux_session"
     fi
@@ -38,12 +37,4 @@ _is_logging() {
   local pane_id="$1"
   local current_pane_logging="$(tmux show-option -t "${pane_id}" -pqv "@penmux-scriptlog-logfile")"
 	[ -n "$current_pane_logging" ]
-}
-
-_get_all_windows() {
-  tmux list-windows -F \#I
-}
-
-_get_all_panes() {
-  tmux list-panes -F \#D
 }
