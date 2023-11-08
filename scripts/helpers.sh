@@ -280,6 +280,19 @@ penmux_module_get_loaded() {
   echo "$loaded_modules"
 }
 
+penmux_module_is_loaded() {
+  local module="$1"
+  local loaded_modules="$(penmux_module_get_loaded)"
+
+  while IFS= read -r m; do
+    if [[ "$module" == "$m" ]]; then
+      return 0
+    fi
+  done <<< "$loaded_modules"
+
+  return 1
+}
+
 penmux_module_get_option() {
   local module_path="${1}"
   local option_name="${2}"

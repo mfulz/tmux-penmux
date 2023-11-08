@@ -18,12 +18,15 @@ _new() {
     }
   fi 
 
-  if [ ! -e "$session_dir/$session_name.pmses" ]; then
-    err="$(touch "$session_dir/$session_name.pmses" >/dev/null)" || {
-    echo "Unable to create session file: '$session_dir/$session_name.pmses' ('$err')"
+  if [ ! -e "$session_dir/.pmses" ]; then
+    err="$(touch "$session_dir/.pmses" >/dev/null)" || {
+    echo "Unable to create session file: '$session_dir/.pmses' ('$err')"
       exit 1
     }
   fi
+
+  printf "%s,%s\n" "SessionName" "$session_name" > "$session_dir/.pmses"
+  printf "%s,%s\n" "SessionDir" "$session_dir" >> "$session_dir/.pmses"
 
   penmux_module_set_provider "$_MODULE_PATH" "SessionName" "$session_name" "$pane_id" "pane"
   penmux_module_set_provider "$_MODULE_PATH" "SessionDir" "$session_dir" "$pane_id" "pane"
@@ -50,16 +53,52 @@ _stop() {
   fi
 }
 
-  main() {
+_load() {
+  local pane_id="$1"
+  local session_file="$2"
+  local session_dir_act="$(penmux_module_get_provider "$_MODULE_PATH" "SessionDir" "$pane_id")"
+  local session_dir
+  local session_name
+
+  while IFS= read -r l; do
+    local key="$(echo "$l" | cut -d, -f1)"
+    local val="$(echo "$l" | cut -d, -f2)"
+
+    if [[ "$key" == "SessionDir" ]]; then
+      if [[ "$val" == "$session_dir_act" ]]; then
+        exit 0
+      fi
+      session_dir="$val"
+    fi
+
+    if [[ "$key" == "SessionName" ]]; then
+      session_name="$val"
+    fi
+  done < "$session_file"
+
+  penmux_module_set_provider "$_MODULE_PATH" "SessionName" "$session_name" "$pane_id" "pane"
+  penmux_module_set_provider "$_MODULE_PATH" "SessionDir" "$session_dir" "$pane_id" "pane"
+
+  tmux set-option -t "$pane_id" -p remain-on-exit on
+  tmux send-keys -t "$pane_id" " exit" Enter
+  tmux respawn-pane -k -t "$pane_id" -c "$session_dir"
+  tmux set-option -t "$pane_id" -p -u remain-on-exit
+
+  penmux_module_notify_consumers "$_MODULE_PATH" "SessionDir" "$pane_id"
+  penmux_module_notify_consumers "$_MODULE_PATH" "SessionName" "$pane_id"
+}
+
+main() {
   local action
   local pane_id
   local session_name
   local session_dir
+  local session_file
 
   pane_id="$(tmux display-message -p "#D")"
 
   local OPTIND o
-  while getopts "a:c:m:p:n:d:" o; do
+  while getopts "a:c:m:p:n:d:f:" o; do
     case "${o}" in
       a)
         action="${OPTARG}"
@@ -79,6 +118,9 @@ _stop() {
       d)
         session_dir="${OPTARG}"
         ;;
+      f)
+        session_file="${OPTARG}"
+        ;;
       *)
         echo >&2 "Invalid parameter"
         exit 1
@@ -96,6 +138,9 @@ _stop() {
       ;;
     "stop")
       _stop "$pane_id"
+      ;;
+    "load")
+      _load "$pane_id" "$session_file"
       ;;
     *)
       echo >&2 "Invalid action '${action}'"

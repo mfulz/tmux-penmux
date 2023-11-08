@@ -101,7 +101,7 @@ _restart() {
   _is_logging "$pane_id" || exit 0
 
   if [[ "$log_file" != "$new_file" ]]; then
-    _revert "$pane_id"
+    tmux run-shell "\"$CURRENT_DIR/scriptlog.sh\" -a revert -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\" -p \"$pane_id\""
 
     tmux respawn-pane -k -t "$pane_id" "\"$CURRENT_DIR/scriptlog.sh\" -a start -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\" -p \"$pane_id\""
     # tmux set-hook -t "$pane_id" -up pane-title-changed
