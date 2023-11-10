@@ -12,6 +12,9 @@
     <xs:attribute name="Private"
     type="xs:boolean"
     use="optional" />
+    <xs:attribute name="Exported"
+    type="xs:boolean"
+    use="optional" />
   </xs:complexType>
   <xs:complexType name="OptionTypeString">
     <xs:complexContent>
@@ -25,6 +28,9 @@
         type="xs:boolean"
         use="optional" />
         <xs:attribute name="Private"
+        type="xs:boolean"
+        use="optional" />
+        <xs:attribute name="Exported"
         type="xs:boolean"
         use="optional" />
       </xs:restriction>
@@ -42,6 +48,9 @@
         type="xs:boolean"
         use="optional" />
         <xs:attribute name="Private"
+        type="xs:boolean"
+        use="optional" />
+        <xs:attribute name="Exported"
         type="xs:boolean"
         use="optional" />
       </xs:restriction>
@@ -69,6 +78,7 @@
         <xs:element name="Description" type="xs:string" />
         <xs:element name="HasRun" type="xs:boolean" minOccurs="0" maxOccurs="1" />
         <xs:element name="CmdPrio" type="xs:int" minOccurs="0" maxOccurs="1" />
+        <xs:element name="OptionsNotifyPrio" type="xs:int" minOccurs="0" maxOccurs="1" />
         <xs:element name="HandleScript" type="xs:string" minOccurs="0" maxOccurs="1" />
         <xs:element name="Depend" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
         <xs:element name="Option" type="OptionType" minOccurs="0" maxOccurs="unbounded" />

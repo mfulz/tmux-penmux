@@ -19,6 +19,7 @@ main() {
   "$CURRENT_DIR/init_hooks.sh"
 
   module_to_load="$("$CURRENT_DIR/_modules.sh" -a select)"
+  [ -z "$module_to_load" ] && exit 0
 
   while IFS= read -r m; do
     if [[ "$m" == "$module_to_load" ]]; then

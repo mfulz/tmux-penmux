@@ -4,22 +4,22 @@
   <Description>Module to log terminal input / output to files (using util/linux script)</Description>
   <CmdPrio>200</CmdPrio>
   <HandleScript>auxiliary/reporting/scriptlog/module.sh</HandleScript>
-  <Option xsi:type="OptionTypeBool" Private="true">
+  <Option xsi:type="OptionTypeBool" Private="true" Exported="true">
     <Name>LogExisting</Name>
     <Description>If enabled all existing panes will start logging</Description>
     <DefaultValue>true</DefaultValue>
   </Option>
-  <Option xsi:type="OptionTypeString" Private="true">
+  <Option xsi:type="OptionTypeString" Private="true" Exported="true">
     <Name>Name</Name>
     <Description>Logfile name to use. All tmux placeholders can be used (ae. #W, #S, etc.)</Description>
     <DefaultValue>%Y%m%d-#T-(#D).log</DefaultValue>
   </Option>
-  <Option xsi:type="OptionTypeBool" Private="true">
+  <Option xsi:type="OptionTypeBool" Private="true" Exported="true">
     <Name>LogPenmuxSessionDir</Name>
     <Description>Log to penmux session directory if set. If not set use LogDir</Description>
     <DefaultValue>true</DefaultValue>
   </Option>
-  <Option xsi:type="OptionTypeString" Private="true">
+  <Option xsi:type="OptionTypeString" Private="true" Exported="true">
     <Name>LogDir</Name>
     <Description>Directory to store logfiles. All tmux placeholders can be used (ae. #W, #S, etc.)</Description>
     <DefaultValue>$HOME/.tmux/penmux/logs/#S</DefaultValue>

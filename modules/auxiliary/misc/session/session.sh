@@ -10,6 +10,9 @@ _new() {
   local pane_id="$1"
   local session_name="$(tmux command-prompt -p "Session Name: " "display-message -p '%%'")"
   local session_dir="$(_get_new_session_dir "$pane_id" "$session_name")"
+  local session_opts
+
+  [[ -z "$session_name" ]] && exit 0
 
   if [ ! -d "$session_dir" ]; then
     err="$(mkdir -p "$session_dir" >/dev/null)" || {
@@ -25,11 +28,14 @@ _new() {
     }
   fi
 
-  printf "%s,%s\n" "SessionName" "$session_name" > "$session_dir/.pmses"
-  printf "%s,%s\n" "SessionDir" "$session_dir" >> "$session_dir/.pmses"
+  declare -A session_opts="($(penmux_module_get_exported_options "$pane_id"))"
+  session_opts["SessionName"]="$session_name"
+  session_opts["SessionDir"]="$session_dir"
 
-  penmux_module_set_provider "$_MODULE_PATH" "SessionName" "$session_name" "$pane_id" "pane"
-  penmux_module_set_provider "$_MODULE_PATH" "SessionDir" "$session_dir" "$pane_id" "pane"
+  _array_to_session_file "$session_dir/.pmses" session_opts
+
+  penmux_module_set_provider "$_MODULE_PATH" "SessionName" "$session_name" "$pane_id"
+  penmux_module_set_provider "$_MODULE_PATH" "SessionDir" "$session_dir" "$pane_id"
 
   tmux respawn-pane -k -t "$pane_id" -c "$session_dir"
 
@@ -43,8 +49,8 @@ _stop() {
   local session_dir="$(penmux_module_get_provider "$_MODULE_PATH" "SessionDir" "$pane_id")"
  
   if [ -n "$session_name" ] && [ -n "$session_dir" ]; then
-    penmux_module_set_provider "$_MODULE_PATH" "SessionName" "" "$pane_id" "pane" "1"
-    penmux_module_set_provider "$_MODULE_PATH" "SessionDir" "" "$pane_id" "pane" "1"
+    penmux_module_set_provider "$_MODULE_PATH" "SessionName" "" "$pane_id"
+    penmux_module_set_provider "$_MODULE_PATH" "SessionDir" "" "$pane_id"
 
     tmux respawn-pane -k -t "$pane_id" -c "" "$SHELL"
 
@@ -57,35 +63,42 @@ _load() {
   local pane_id="$1"
   local session_file="$2"
   local session_dir_act="$(penmux_module_get_provider "$_MODULE_PATH" "SessionDir" "$pane_id")"
-  local session_dir
-  local session_name
+  local auto_load="$(penmux_module_get_option "$_MODULE_PATH" "AutoLoad")"
+  local session_opts
 
-  while IFS= read -r l; do
-    local key="$(echo "$l" | cut -d, -f1)"
-    local val="$(echo "$l" | cut -d, -f2)"
+  [[ "$auto_load" != "true" && -n "$session_file" ]] && exit 0
 
-    if [[ "$key" == "SessionDir" ]]; then
-      if [[ "$val" == "$session_dir_act" ]]; then
-        exit 0
-      fi
-      session_dir="$val"
-    fi
+  if [ -z "$session_file" ]; then
+    session_file="$(tmux display-message -p '#{pane_current_path}')"
+    session_file="$session_file/.pmses"
+    session_file="$(realpath "$session_file")"
+    [[ -e "$session_file" ]] || exit 1
+  fi
 
-    if [[ "$key" == "SessionName" ]]; then
-      session_name="$val"
-    fi
-  done < "$session_file"
+  declare -A session_opts="($(_session_file_to_array "$session_file"))"
+  [[ -v "session_opts[SessionDir]" ]] || exit 1
+  [[ -v "session_opts[SessionName]" ]] || exit 1
 
-  penmux_module_set_provider "$_MODULE_PATH" "SessionName" "$session_name" "$pane_id" "pane"
-  penmux_module_set_provider "$_MODULE_PATH" "SessionDir" "$session_dir" "$pane_id" "pane"
+  [[ "$session_dir_act" == "${session_opts[SessionDir]}" ]] && exit 0
+
+  _unset_session "$pane_id"
+
+  for key in "${!session_opts[@]}"; do
+    [[ "$key" == "SessionDir" || "$key" == "SessionName" ]] && continue
+    tmux set-option -p -t "$pane_id" "$key" "${session_opts[${key}]}"
+  done
+
+  penmux_module_set_provider "$_MODULE_PATH" "SessionName" "${session_opts[SessionName]}" "$pane_id"
+  penmux_module_set_provider "$_MODULE_PATH" "SessionDir" "${session_opts[SessionDir]}" "$pane_id"
 
   tmux set-option -t "$pane_id" -p remain-on-exit on
   tmux send-keys -t "$pane_id" " exit" Enter
-  tmux respawn-pane -k -t "$pane_id" -c "$session_dir"
+  tmux respawn-pane -k -t "$pane_id" -c "${session_opts[SessionDir]}" "$SHELL"
   tmux set-option -t "$pane_id" -p -u remain-on-exit
 
   penmux_module_notify_consumers "$_MODULE_PATH" "SessionDir" "$pane_id"
   penmux_module_notify_consumers "$_MODULE_PATH" "SessionName" "$pane_id"
+
 }
 
 main() {

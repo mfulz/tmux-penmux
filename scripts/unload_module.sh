@@ -21,9 +21,11 @@ main() {
   fi
 
   module_to_unload="$("$CURRENT_DIR/_modules.sh" -a select_loaded)"
+  [ -z "$module_to_unload" ] && exit 0
+
   new_modules="${loaded_modules/\#$module_to_unload/}"
-    new_modules="${new_modules/$module_to_unload\#/}"
-    new_modules="${new_modules/$module_to_unload/}"
+  new_modules="${new_modules/$module_to_unload\#/}"
+  new_modules="${new_modules/$module_to_unload/}"
 
   tmux set-option "@penmux-loaded-modules" "$new_modules"
 

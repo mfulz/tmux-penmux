@@ -34,6 +34,23 @@ _get_info() {
   printf "Module: %s\n\nDescription:\n  %s\n\nDepends:%s\n\nUses:%s" "${module_name}" "${module_description}" "${module_depends}" "${module_uses}"
 }
 
+_list_module_options() {
+  local module_file="$(penmux_module_convert_relative_path "$1")"
+  local module_opts="$(penmux_module_get_options "$module_file")"
+  tmux set-option -p @penmux-hidden-option "$(echo -n "$module_opts" | fzf --cycle --preview="$CURRENT_DIR/_modules.sh -a opt_info -m "$module_file" -o {}")"
+}
+
+_get_opt_info() {
+  local module_file="$1"
+  local module_opt="$2"
+  local opt_private="$(penmux_module_get_option_private "$module_file" "$module_opt")"
+  local opt_exported="$(penmux_module_get_option_exported "$module_file" "$module_opt")"
+  local opt_description="$(penmux_module_get_option_description "$module_file" "$module_opt")"
+  local opt_default_value="$(penmux_module_get_option_default_value "$module_file" "$module_opt")"
+
+  printf "Option: %s (Private: %s | Exported: %s)\n\nDescription:\n  %s\n\nDefault:%s" "${module_opt}" "${opt_private}" "${opt_exported}" "${opt_description}" "${opt_default_value}"
+}
+
 _select_module() {
   local module
   tmux display-popup -w 80% -h 80% -E "$CURRENT_DIR/_modules.sh -a list"
@@ -50,18 +67,31 @@ _select_loaded() {
   echo "${module}"
 }
 
+_select_option() {
+  local module_file="$1"
+  local option
+  tmux display-popup -w 80% -h 80% -E "$CURRENT_DIR/_modules.sh -a list_options -m \"$module_file\""
+  option="$(tmux show-options -pqv "@penmux-hidden-option")"
+  tmux set-option -pu "@penmux-hidden-option" > /dev/null
+  echo "${option}"
+}
+
 main() {
 	local action
   local module_file
+  local module_opt
 
 	local OPTIND o
-	while getopts "a:m:" o; do
+	while getopts "a:m:o:" o; do
 		case "${o}" in
 		a)
 			action="${OPTARG}"
 			;;
 		m)
 			module_file="${OPTARG}"
+			;;
+		o)
+			module_opt="${OPTARG}"
 			;;
 		*)
 			echo >&2 "Invalid parameter"
@@ -86,6 +116,15 @@ main() {
       ;;
     "info")
 			_get_info "${module_file}"
+			;;
+    "list_options")
+			_list_module_options "${module_file}"
+			;;
+    "opt_info")
+			_get_opt_info "${module_file}" "${module_opt}"
+			;;
+    "select_option")
+			_select_option "${module_file}"
 			;;
 		*)
 			echo >&2 "Invalid action '${action}'"

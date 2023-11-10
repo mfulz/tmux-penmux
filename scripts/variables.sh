@@ -16,3 +16,6 @@ default_load_module_key="l"
 
 unload_module_key_option="@penmux-unload-module-key" # u
 default_unload_module_key="u"
+
+change_option_key_option="@penmux-change-option-key" # c
+default_change_option_key="c"
