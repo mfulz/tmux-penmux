@@ -3,7 +3,7 @@
 CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 source "$CURRENT_DIR/scripts/variables.sh"
-source "$CURRENT_DIR/scripts/helpers.sh"
+source "$CURRENT_DIR/scripts/exported.sh"
 
 
 main() {

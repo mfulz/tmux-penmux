@@ -3,7 +3,7 @@
 CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 source "$CURRENT_DIR/variables.sh"
-source "$CURRENT_DIR/helpers.sh"
+source "$CURRENT_DIR/exported.sh"
 
 _list_modules() {
   tmux set-option -p @penmux-hidden-module "$(find "$_PENMUX_MODULE_DIR" -type f -iname "*\.xml" -printf '%P\n' | fzf --cycle --preview="$CURRENT_DIR/_modules.sh -a info -m {}")"

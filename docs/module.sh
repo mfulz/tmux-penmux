@@ -33,8 +33,7 @@ main() {
   esac
 done
 
-source "${penmux_scripts}/variables.sh"
-source "${penmux_scripts}/helpers.sh"
+source "${penmux_scripts}/exported.sh"
 
 case "${action}" in
   "load")
