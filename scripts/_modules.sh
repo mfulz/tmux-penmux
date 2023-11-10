@@ -55,8 +55,12 @@ _set_option() {
   local module_file="$1"
   local module_opt="$2"
   local module_opt_val="$3"
+  local err
 
-  penmux_module_set_option "$module_file" "$module_opt" "$module_opt_val"
+  err="$(penmux_module_set_option "$module_file" "$module_opt" "$module_opt_val" 2>&1 1>/dev/null)" || {
+    tmux display-message -d 5000 "Error: '$err'"
+    exit 0
+  }
 }
 
 _select_module() {

@@ -7,7 +7,7 @@ source "$_CURRENT_DIR/helpers.sh"
 _module_validate() {
   local module_path="${1}"
 
-  err=$(xmlstarlet val --xsd "${_PENMUX_MODULE_SCHEMA}" "${module_path}" 2>&1 >/dev/null) || { echo "${err}"; return 1; }
+  err=$(xmlstarlet val --xsd "${_PENMUX_MODULE_SCHEMA}" "${module_path}" 2>&1 1>/dev/null) || { echo >&2 "${err}"; return 1; }
 }
 
 _module_get_name() {
@@ -144,5 +144,3 @@ _module_notify_options() {
     fi
   done <<< "$loaded_modules"
 }
-
-

@@ -16,16 +16,16 @@ _new() {
   [[ -z "$session_name" ]] && exit 0
 
   if [ ! -d "$session_dir" ]; then
-    err="$(mkdir -p "$session_dir" >/dev/null)" || {
-    echo "Unable to create session dir: '$session_dir' ('$err')"
-      exit 1
+    err="$(mkdir -p "$session_dir" 2>&1 1>/dev/null)" || {
+      echo >&2 "Unable to create session dir: '$session_dir' ('$err')"
+      return 1
     }
   fi 
 
   if [ ! -e "$session_dir/.pmses" ]; then
-    err="$(touch "$session_dir/.pmses" >/dev/null)" || {
-    echo "Unable to create session file: '$session_dir/.pmses' ('$err')"
-      exit 1
+    err="$(touch "$session_dir/.pmses" 2>&1 1>/dev/null)" || {
+      echo >&2 "Unable to create session file: '$session_dir/.pmses' ('$err')"
+      return 1
     }
   else
     if [[ "$no_confirm" != "true" ]]; then
@@ -78,12 +78,21 @@ _load() {
     session_file="$(tmux display-message -p '#{pane_current_path}')"
     session_file="$session_file/.pmses"
     session_file="$(realpath "$session_file")"
-    [[ -e "$session_file" ]] || exit 1
+    [[ -e "$session_file" ]] || {
+      echo >&2 "Session file '$session_file' does not exist"
+      return 1
+    }
   fi
 
   declare -A session_opts="($(_session_file_to_array "$session_file"))"
-  [[ -v "session_opts[SessionDir]" ]] || exit 1
-  [[ -v "session_opts[SessionName]" ]] || exit 1
+  [[ -v "session_opts[SessionDir]" ]] || {
+    echo >&2 "Session file '$session_file' corrupt. Missing 'SessionDir'"
+    return 1
+  }
+  [[ -v "session_opts[SessionName]" ]] || {
+    echo >&2 "Session file '$session_file' corrupt. Missing 'SessionName'"
+    return 1
+  }
 
   [[ "$session_dir_act" == "${session_opts[SessionDir]}" ]] && exit 0
 
@@ -104,7 +113,6 @@ _load() {
 
   penmux_module_notify_consumers "$_MODULE_PATH" "SessionDir" "$pane_id"
   penmux_module_notify_consumers "$_MODULE_PATH" "SessionName" "$pane_id"
-
 }
 
 _save() {
@@ -127,6 +135,7 @@ main() {
   local session_name
   local session_dir
   local session_file
+  local err
 
   pane_id="$(tmux display-message -p "#D")"
 
@@ -166,16 +175,28 @@ main() {
   # if supported_tmux_version_ok; then
   case "${action}" in
     "new")
-      _new "$pane_id"
+      err="$(_new "$pane_id" 2>&1 1>/dev/null)" || {
+        tmux display-message -d 5000 "Error: '$err'"
+        exit 0
+      }
       ;;
     "stop")
-      _stop "$pane_id"
+      err="$(_stop "$pane_id" 2>&1 1>/dev/null)" || {
+        tmux display-message -d 5000 "Error: '$err'"
+        exit 0
+      }
       ;;
     "load")
-      _load "$pane_id" "$session_file"
+      err="$(_load "$pane_id" "$session_file" 2>&1 1>/dev/null)" || {
+        tmux display-message -d 5000 "Error: '$err'"
+        exit 0
+      }
       ;;
     "save")
-      _save "$pane_id"
+      err="$(_save "$pane_id" 2>&1 1>/dev/null)" || {
+        tmux display-message -d 5000 "Error: '$err'"
+        exit 0
+      }
       ;;
     *)
       echo >&2 "Invalid action '${action}'"

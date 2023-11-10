@@ -88,6 +88,7 @@ penmux_module_set_option() {
         if [ "$value" == "true" ] || [ "$value" == "false" ]; then
           tmux set-option -t "$pane_id" -p "$tmux_option_name" "$value"
         else
+          echo >&2 "Wrong option value '$value' for type 'OptionTypeBool'"
           return 1
         fi
         ;;
@@ -95,6 +96,7 @@ penmux_module_set_option() {
         if [ "$value" -eq "$value" ] 2>/dev/null; then
           tmux set-option -t "$pane_id" -p "$tmux_option_name" "$value"
         else
+          echo >&2 "Wrong option value '$value' for type 'OptionTypeBool'"
           return 1
         fi
         ;;
@@ -102,6 +104,7 @@ penmux_module_set_option() {
         tmux set-option -t "$pane_id" -p "$tmux_option_name" "$value"
         ;;
       *)
+        echo >&2 "Unknown option type '$option_type'"
         return 1
         ;;
     esac
@@ -123,6 +126,7 @@ penmux_module_notify_consumers() {
   provider_name="$(xmlstarlet sel -t -v "/PenmuxModule/Provides[Name=\"$provider_name\"]/Name/text()" "$module_path")"
 
   if [ -z "$provider_name" ]; then
+    echo >&2 "Unable to receive provider '$provider_name' from '$module_path'"
     return 1
   fi
 
@@ -151,6 +155,7 @@ penmux_module_set_provider() {
   provider_name="$(xmlstarlet sel -t -v "/PenmuxModule/Provides[Name=\"$provider_name\"]/Name/text()" "$module_path")"
 
   if [ -z "$provider_name" ]; then
+    echo >&2 "Unable to receive provider '$provider_name' from '$module_path'"
     return 1
   fi
 
@@ -182,6 +187,7 @@ penmux_module_get_provider() {
   if [ -z "$provider_name_final" ]; then
     provider_name_final="$(xmlstarlet sel -t -v "/PenmuxModule/Consumes[Name=\"$provider_name\"]/Name/text()" "$module_path")"
     if [ -z "$provider_name_final" ]; then
+      echo >&2 "Unable to receive provider/consumer '$provider_name' from '$module_path'"
       return 1
     fi
   fi

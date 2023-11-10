@@ -5,6 +5,11 @@
   <CmdPrio>100</CmdPrio>
   <OptionsNotify>true</OptionsNotify>
   <HandleScript>auxiliary/misc/session/module.sh</HandleScript>
+  <Option xsi:type="OptionTypeInt" Private="true" Exported="true">
+    <Name>Test</Name>
+    <Description>If enabled sessions will be loaded automatically after cd into a directory that includes a session file</Description>
+    <DefaultValue>4444</DefaultValue>
+  </Option>
   <Option xsi:type="OptionTypeBool" Private="true" Exported="true">
     <Name>AutoLoad</Name>
     <Description>If enabled sessions will be loaded automatically after cd into a directory that includes a session file</Description>
