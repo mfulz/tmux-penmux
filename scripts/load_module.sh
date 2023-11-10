@@ -84,7 +84,7 @@ main() {
     tmux set-option -t "$session" "@penmux-default-cmds" "$new_cmds"
   fi
 
-  err="$($handle_script -c "$CURRENT_DIR" -a load -m "$module_path")" || {
+  err="$($handle_script -c "$CURRENT_DIR" -a load -m "$module_path" 2>&1 1>/dev/null)" || {
     tmux display-message -d 5000 "Module load error: '$err'"
     return
   }

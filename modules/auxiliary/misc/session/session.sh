@@ -54,10 +54,15 @@ _stop() {
   local session_name="$(penmux_module_get_provider "$_MODULE_PATH" "SessionName" "$pane_id")"
   local session_dir="$(penmux_module_get_provider "$_MODULE_PATH" "SessionDir" "$pane_id")"
  
-  if [ -n "$session_name" ] && [ -n "$session_dir" ]; then
-    penmux_module_set_provider "$_MODULE_PATH" "SessionName" "" "$pane_id"
-    penmux_module_set_provider "$_MODULE_PATH" "SessionDir" "" "$pane_id"
+  penmux_module_set_provider "$_MODULE_PATH" "SessionName" "" "$pane_id"
+  penmux_module_set_provider "$_MODULE_PATH" "SessionDir" "" "$pane_id"
+  penmux_module_set_option "$_MODULE_PATH" "AutoLoad" ""
+  penmux_module_set_option "$_MODULE_PATH" "AutoSave" ""
+  penmux_module_set_option "$_MODULE_PATH" "NoConfirm" ""
+  penmux_module_set_option "$_MODULE_PATH" "UseCwd" ""
+  penmux_module_set_option "$_MODULE_PATH" "SessionDirBase" ""
 
+  if [ -n "$session_name" ] && [ -n "$session_dir" ]; then
     tmux respawn-pane -k -t "$pane_id" -c "" "$SHELL"
 
     penmux_module_notify_consumers "$_MODULE_PATH" "SessionDir" "$pane_id"
@@ -121,6 +126,11 @@ _save() {
   local session_dir="$(penmux_module_get_provider "$_MODULE_PATH" "SessionDir" "$pane_id")"
   local session_file="$(realpath $session_dir/.pmses)"
   local session_opts
+
+  if [ -z "$session_name" ] || [ -z "$session_dir" ]; then
+    echo >&2 "No session started"
+    return 1
+  fi
 
   declare -A session_opts="($(penmux_module_get_exported_options "$calling_pane_id"))"
   session_opts["SessionName"]="$session_name"
@@ -199,8 +209,8 @@ main() {
       }
       ;;
     *)
-      echo >&2 "Invalid action '${action}'"
-      exit 1
+      tmux display-message -d 5000 "Error: 'Invalid action ${action}'"
+      exit 0
       ;;
   esac
   # fi

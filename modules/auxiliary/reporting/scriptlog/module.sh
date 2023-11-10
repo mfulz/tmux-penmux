@@ -16,14 +16,15 @@ _load() {
   local panes
 
   which script >/dev/null 2>&1 || {
-    echo "Cannot find 'script'. Either it is not installed or not in path. Please make sure you have installed util-linux"
+    echo >&2 "Cannot find 'script'. Either it is not installed or not in path. Please make sure you have installed util-linux"
     exit 1
   }
 
   if [[ "$logexisting" == "true" ]]; then
     panes="$(tmux list-panes -s -t "$session" -F "#D")"
     while IFS= read -r p; do
-      tmux respawn-pane -k -t "$p" "\"$CURRENT_DIR/scriptlog.sh\" -a start -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\" -p \"$p\""
+      # tmux respawn-pane -k -t "$p" "\"$CURRENT_DIR/scriptlog.sh\" -a start -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\" -p \"$p\""
+      tmux run-shell -t "$p" "\"$CURRENT_DIR/scriptlog.sh\" -a start -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\" -p \"$p\""
     done <<< "$panes"
   fi
 }
@@ -41,7 +42,8 @@ _cmd() {
   local calling_pane_id="$1"
   local pane_id="$2"
 
-  tmux respawn-pane -k -t "$pane_id" "\"$CURRENT_DIR/scriptlog.sh\" -a start -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\" -p \"$pane_id\""
+  tmux run-shell -t "$pane_id" "\"$CURRENT_DIR/scriptlog.sh\" -a start -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\" -p \"$pane_id\""
+  # tmux respawn-pane -k -t "$pane_id" "\"$CURRENT_DIR/scriptlog.sh\" -a start -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\" -p \"$pane_id\""
 }
 
 _notify() {

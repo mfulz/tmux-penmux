@@ -77,9 +77,9 @@ _start() {
   if [[ "$log_file" != "$new_file" ]]; then
     logdir="$(_get_log_dir "$pane_id")"
     if [ ! -d "$logdir" ]; then
-      err="$(mkdir -p "$logdir" >/dev/null)" || {
-        echo "Unable to create logdir: '$logdir' ('$err')"
-        exit 1
+      err="$(mkdir -p "$logdir" 2>&1 1>/dev/null)" || {
+        echo >&2 "Unable to create logdir: '$logdir' ('$err')"
+        return 1
       }
     fi
 
@@ -88,7 +88,7 @@ _start() {
     _set_logging_variable "$pane_id"
 
     # tmux set-hook -t "$pane_id" -p pane-title-changed "run-shell '\"$CURRENT_DIR/scriptlog.sh\" -a title -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\" -p \"$pane_id\"'"
-    script -q -T "${new_file}.time" "$new_file"
+    tmux respawn-pane -k -t "$pane_id" "script -q -T \"${new_file}.time\" \"$new_file\""
   fi
 }
 
@@ -98,13 +98,14 @@ _restart() {
   local log_file="$(_get_act_log_file "$pane_id")"
   local new_file="$(_get_log_file "$pane_id")"
 
-  _is_logging "$pane_id" || exit 0
+  # _is_logging "$pane_id" || exit 0
 
   if [[ "$log_file" != "$new_file" ]]; then
     _revert "$pane_id"
     # tmux run-shell "\"$CURRENT_DIR/scriptlog.sh\" -a revert -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\" -p \"$pane_id\""
 
-    tmux respawn-pane -k -t "$pane_id" "\"$CURRENT_DIR/scriptlog.sh\" -a start -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\" -p \"$pane_id\""
+    # tmux respawn-pane -k -t "$pane_id" "\"$CURRENT_DIR/scriptlog.sh\" -a start -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\" -p \"$pane_id\""
+    tmux run-shell -t "$pane_id" "\"$CURRENT_DIR/scriptlog.sh\" -a start -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\" -p \"$pane_id\""
     # tmux set-hook -t "$pane_id" -up pane-title-changed
   fi
 }
@@ -165,20 +166,32 @@ main() {
   # if supported_tmux_version_ok; then
   case "${action}" in
     "start")
-      _start "$pane_id"
+      err="$(_start "$pane_id" 2>&1 1>/dev/null)" || {
+        tmux display-message -d 5000 "Error: '$err'"
+        exit 0
+      }
       ;;
     "restart")
-      _restart "$pane_id"
+      err="$(_restart "$pane_id")" || {
+        tmux display-message -d 5000 "Error: '$err'"
+        exit 0
+      }
       ;;
     "title")
-      _title "$pane_id"
+      err="$(_title "$pane_id")" || {
+        tmux display-message -d 5000 "Error: '$err'"
+        exit 0
+      }
       ;;
     "revert")
-      _revert "$pane_id"
+      err="$(_revert "$pane_id")" || {
+        tmux display-message -d 5000 "Error: '$err'"
+        exit 0
+      }
       ;;
     *)
-      echo >&2 "Invalid action '${action}'"
-      exit 1
+      tmux display-message -d 5000 "Error: 'Invalid action ${action}'"
+      exit 0
       ;;
   esac
   # fi
