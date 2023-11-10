@@ -11,6 +11,16 @@
     <DefaultValue>true</DefaultValue>
   </Option>
   <Option xsi:type="OptionTypeBool" Private="true" Exported="true">
+    <Name>AutoSave</Name>
+    <Description>If enabled sessions will be saved automatically after change of module options</Description>
+    <DefaultValue>true</DefaultValue>
+  </Option>
+  <Option xsi:type="OptionTypeBool" Private="true" Exported="true">
+    <Name>NoConfirm</Name>
+    <Description>If enabled creating a new session that points to a existing one will overwrite the session file without confirmation</Description>
+    <DefaultValue>false</DefaultValue>
+  </Option>
+  <Option xsi:type="OptionTypeBool" Private="true" Exported="true">
     <Name>UseCwd</Name>
     <Description>If enabled new session will be created as sub directory to the current dir</Description>
     <DefaultValue>true</DefaultValue>

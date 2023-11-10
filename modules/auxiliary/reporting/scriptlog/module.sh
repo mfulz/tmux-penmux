@@ -10,9 +10,9 @@ _MODULE_PATH=""
 source "$CURRENT_DIR/shared.sh"
 
 _load() {
+  local session="$(tmux display-message -p "#{session_id}")"
   local logexisting="$(penmux_module_get_option "$_MODULE_PATH" "LogExisting")"
   local logdir
-  # local session="$(tmux display-message -p "#{session_id}")"
   local panes
 
   which script >/dev/null 2>&1 || {
@@ -21,7 +21,7 @@ _load() {
   }
 
   if [[ "$logexisting" == "true" ]]; then
-    panes="$(tmux list-panes -F "#D")"
+    panes="$(tmux list-panes -s -t "$session" -F "#D")"
     while IFS= read -r p; do
       tmux respawn-pane -k -t "$p" "\"$CURRENT_DIR/scriptlog.sh\" -a start -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\" -p \"$p\""
     done <<< "$panes"
@@ -36,8 +36,8 @@ _load() {
 }
 
 _unload() {
-  # local session="$(tmux display-message -p "#{session_id}")"
-  local panes="$(tmux list-panes -F "#D")"
+  local session="$(tmux display-message -p "#{session_id}")"
+  local panes="$(tmux list-panes -s -t "$session" -F "#D")"
 
   # tmux set-option -t "$session" -u default-command "\"$CURRENT_DIR/scriptlog.sh\" -a start -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\""
   # tmux set-hook -t "$session" -u session-renamed "run-shell '\"$CURRENT_DIR/scriptlog.sh\" -a restart -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\"'"
@@ -63,7 +63,8 @@ _cmd() {
 
 _notify() {
   local pane_id="$1"
-  local panes="$(tmux list-panes -F "#D")"
+  local session="$(tmux display-message -p "#{session_id}")"
+  local panes="$(tmux list-panes -s -t "$session" -F "#D")"
 
   while IFS= read -r p; do
     tmux run-shell -t "$p" "\"$CURRENT_DIR/scriptlog.sh\" -a restart -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\" -p \"$p\""

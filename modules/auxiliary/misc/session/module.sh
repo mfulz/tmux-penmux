@@ -16,18 +16,20 @@ _load() {
   tmux bind -T penmux_module_session_keytable "n" "run-shell '\"$CURRENT_DIR/session.sh\" -a new -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\"'"
   tmux bind -T penmux_module_session_keytable "e" "run-shell '\"$CURRENT_DIR/session.sh\" -a stop -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\"'"
   tmux bind -T penmux_module_session_keytable "l" "run-shell '\"$CURRENT_DIR/session.sh\" -a load -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\"'"
+  tmux bind -T penmux_module_session_keytable "s" "run-shell '\"$CURRENT_DIR/session.sh\" -a save -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\"'"
   
-  tmux set-option -t "$session" automatic-rename-format '#{?#{==:#{@penmux-providers-SessionName},},No Session,#{@penmux-providers-SessionName}} (#{?#{==:#{@penmux-providers-SessionDir},},CWD: #{pane_current_path},CSD: #{@penmux-providers-SessionDir}})'
-  tmux set-option -t "$session" status-interval 10
-  tmux set-option -t "$session" automatic-rename on
+  tmux set-option -t "$session" -g automatic-rename-format '#{?#{==:#{@penmux-providers-SessionName},},No Session,#{@penmux-providers-SessionName}} (#{?#{==:#{@penmux-providers-SessionDir},},CWD: #{pane_current_path},CSD: #{@penmux-providers-SessionDir}})'
+  tmux set-option -t "$session" -g status-interval 5
+  tmux set-option -t "$session" -g automatic-rename on
 
   tmux display-message -d 5000 "session loaded and running"
 }
 
 _unload() {
-  local session="$(tmux display-message -p "#S")"
-  local panes="$(tmux list-panes -F "#D")"
+  local session="$(tmux display-message -p "#{session_id}")"
+  local panes="$(tmux list-panes -s -t "$session" -F "#D")"
 
+  tmux unbind -T penmux_module_session_keytable "s"
   tmux unbind -T penmux_module_session_keytable "l"
   tmux unbind -T penmux_module_session_keytable "e"
   tmux unbind -T penmux_module_session_keytable "n"
@@ -37,9 +39,9 @@ _unload() {
     tmux run-shell "\"$CURRENT_DIR/session.sh\" -a stop -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\" -p \"$p\""
   done <<< "$panes"
 
-  tmux set-option -t "$session" -u automatic-rename-format
-  tmux set-option -t "$session" -u status-interval
-  tmux set-option -t "$session" -u automatic-rename
+  tmux set-option -t "$session" -g -u automatic-rename-format
+  tmux set-option -t "$session" -g -u status-interval
+  tmux set-option -t "$session" -g -u automatic-rename
 
   tmux display-message -d 5000 "session stopped and unloaded"
 }
@@ -76,7 +78,10 @@ _optionsnotify() {
   local session_name="$(penmux_module_get_provider "$_MODULE_PATH" "SessionName" "$pane_id")"
   local session_dir="$(penmux_module_get_provider "$_MODULE_PATH" "SessionDir" "$pane_id")"
   local session_file="$(realpath $session_dir/.pmses)"
+  local auto_save="$(penmux_module_get_option "$_MODULE_PATH" "AutoSave")"
   local session_opts
+
+  [[ "$auto_save" == "true" ]] || exit 0
 
   if [ -n "$session_name" ] && [ -n "$session_dir" ]; then
     declare -A session_opts="($(_session_file_to_array "$session_file"))"

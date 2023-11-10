@@ -10,6 +10,7 @@ _new() {
   local pane_id="$1"
   local session_name="$(tmux command-prompt -p "Session Name: " "display-message -p '%%'")"
   local session_dir="$(_get_new_session_dir "$pane_id" "$session_name")"
+  local no_confirm="$(penmux_module_get_option "$_MODULE_PATH" "NoConfirm")"
   local session_opts
 
   [[ -z "$session_name" ]] && exit 0
@@ -26,6 +27,11 @@ _new() {
     echo "Unable to create session file: '$session_dir/.pmses' ('$err')"
       exit 1
     }
+  else
+    if [[ "$no_confirm" != "true" ]]; then
+      local user_select="$(tmux command-prompt -p "Session '$session_name' already exists. Overwrite? (y/n)" -1 "display-message -p '%%'")"
+      [[ "$user_select" == "y" ]] || exit 0
+    fi
   fi
 
   declare -A session_opts="($(penmux_module_get_exported_options "$pane_id"))"
@@ -101,6 +107,20 @@ _load() {
 
 }
 
+_save() {
+  local pane_id="$1"
+  local session_name="$(penmux_module_get_provider "$_MODULE_PATH" "SessionName" "$pane_id")"
+  local session_dir="$(penmux_module_get_provider "$_MODULE_PATH" "SessionDir" "$pane_id")"
+  local session_file="$(realpath $session_dir/.pmses)"
+  local session_opts
+
+  declare -A session_opts="($(penmux_module_get_exported_options "$calling_pane_id"))"
+  session_opts["SessionName"]="$session_name"
+  session_opts["SessionDir"]="$session_dir"
+
+  _array_to_session_file "$session_file" session_opts
+}
+
 main() {
   local action
   local pane_id
@@ -154,6 +174,9 @@ main() {
       ;;
     "load")
       _load "$pane_id" "$session_file"
+      ;;
+    "save")
+      _save "$pane_id"
       ;;
     *)
       echo >&2 "Invalid action '${action}'"
