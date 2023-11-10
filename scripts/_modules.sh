@@ -10,17 +10,17 @@ _list_modules() {
 }
 
 _list_loaded_modules() {
-  local loaded_modules="$(penmux_module_get_loaded)"
+  local loaded_modules="$(_module_get_loaded)"
   tmux set-option -p @penmux-hidden-module "$(echo -n "$loaded_modules" | fzf --cycle --preview="$CURRENT_DIR/_modules.sh -a info -m {}")"
 }
 
 _get_info() {
-  local module_file="$(penmux_module_convert_relative_path "$1")"
-  local module_name="$(penmux_module_get_name "$module_file")"
-  local module_description="$(penmux_module_get_description "$module_file")"
-  local module_consumes_plain="$(penmux_module_get_consumes "$module_file")"
+  local module_file="$(_module_convert_relative_path "$1")"
+  local module_name="$(_module_get_name "$module_file")"
+  local module_description="$(_module_get_description "$module_file")"
+  local module_consumes_plain="$(_module_get_consumes "$module_file")"
   local module_consumes
-  local module_provides_plain="$(penmux_module_get_provides "$module_file")"
+  local module_provides_plain="$(_module_get_provides "$module_file")"
   local module_provides
 
   while IFS= read -r e; do
@@ -35,18 +35,18 @@ _get_info() {
 }
 
 _list_module_options() {
-  local module_file="$(penmux_module_convert_relative_path "$1")"
-  local module_opts="$(penmux_module_get_options "$module_file")"
+  local module_file="$(_module_convert_relative_path "$1")"
+  local module_opts="$(_module_get_options "$module_file")"
   tmux set-option -p @penmux-hidden-option "$(echo -n "$module_opts" | fzf --cycle --preview="$CURRENT_DIR/_modules.sh -a opt_info -m "$module_file" -o {}")"
 }
 
 _get_opt_info() {
   local module_file="$1"
   local module_opt="$2"
-  local opt_private="$(penmux_module_get_option_private "$module_file" "$module_opt")"
-  local opt_exported="$(penmux_module_get_option_exported "$module_file" "$module_opt")"
-  local opt_description="$(penmux_module_get_option_description "$module_file" "$module_opt")"
-  local opt_default_value="$(penmux_module_get_option_default_value "$module_file" "$module_opt")"
+  local opt_private="$(_module_get_option_private "$module_file" "$module_opt")"
+  local opt_exported="$(_module_get_option_exported "$module_file" "$module_opt")"
+  local opt_description="$(_module_get_option_description "$module_file" "$module_opt")"
+  local opt_default_value="$(_module_get_option_default_value "$module_file" "$module_opt")"
 
   printf "Option: %s (Private: %s | Exported: %s)\n\nDescription:\n  %s\n\nDefault:%s" "${module_opt}" "${opt_private}" "${opt_exported}" "${opt_description}" "${opt_default_value}"
 }

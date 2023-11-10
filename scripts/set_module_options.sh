@@ -24,16 +24,16 @@ main() {
   module_to_change="$("$CURRENT_DIR/_modules.sh" -a select_loaded)"
   [ -z "$module_to_change" ] && exit 0
 
-  module_path="$(penmux_module_convert_relative_path "$module_to_change")"
+  module_path="$(_module_convert_relative_path "$module_to_change")"
 
-  module_name="$(penmux_module_get_name "$module_path")"
+  module_name="$(_module_get_name "$module_path")"
 
   option="$("$CURRENT_DIR/_modules.sh" -a select_option -m "$module_to_change")"
   [ -z "$option" ] && exit 0
 
   value="$(penmux_module_get_option "$module_path" "$option")"
 
-  opt_type="$(penmux_module_get_option_type "$module_path" "$option")"
+  opt_type="$(_module_get_option_type "$module_path" "$option")"
   [ -z "$opt_type" ] && exit 0
 
   case "$opt_type" in

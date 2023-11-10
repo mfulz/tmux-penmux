@@ -7,7 +7,7 @@ source "$CURRENT_DIR/exported.sh"
 
 main() {
   local module_to_load
-  local loaded_modules="$(penmux_module_get_loaded)"
+  local loaded_modules="$(_module_get_loaded)"
   local cmds="$(get_tmux_option "@penmux-default-cmds" "" "")"
   local session="$(tmux display-message -p "#{session_id}")"
   local handle_script
@@ -28,9 +28,9 @@ main() {
     fi
   done <<< "$loaded_modules"
 
-  module_path="$(penmux_module_convert_relative_path "$module_to_load")"
+  module_path="$(_module_convert_relative_path "$module_to_load")"
 
-  handle_script="$(penmux_module_get_handlescript "$module_path")"
+  handle_script="$(_module_get_handlescript "$module_path")"
   if [ -z "$handle_script" ]; then
       tmux display-message -d 5000 "Module handle script missing in xml"
       return
@@ -42,7 +42,7 @@ main() {
       return
   fi
 
-  cmdprio="$(penmux_module_get_cmdprio "$module_path")"
+  cmdprio="$(_module_get_cmdprio "$module_path")"
   if [ -n "$cmdprio" ]; then
     local new_cmds=""
     local cmd_script="$module_path:$cmdprio:$handle_script"

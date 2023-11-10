@@ -29,9 +29,9 @@ main() {
 
   tmux set-option "@penmux-loaded-modules" "$new_modules"
 
-  module_path="$(penmux_module_convert_relative_path "$module_to_unload")"
+  module_path="$(_module_convert_relative_path "$module_to_unload")"
 
-  handle_script="$(penmux_module_get_handlescript "$module_path")"
+  handle_script="$(_module_get_handlescript "$module_path")"
   if [ -z "$handle_script" ]; then
     tmux display-message -d 5000 "Module handle script missing in xml"
     return
@@ -43,7 +43,7 @@ main() {
     return
   fi
 
-  cmdprio="$(penmux_module_get_cmdprio "$module_path")"
+  cmdprio="$(_module_get_cmdprio "$module_path")"
   if [ -n "$cmdprio" ]; then
     local new_cmds=""
     if [ -n "$cmds" ]; then
