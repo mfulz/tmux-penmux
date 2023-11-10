@@ -28,16 +28,16 @@ penmux_module_get_handlescript() {
   xmlstarlet sel -t -v '/PenmuxModule/HandleScript' -n "${module_path}"
 }
 
-penmux_module_get_uses() {
+penmux_module_get_provides() {
   local module_path="${1}"
 
-  xmlstarlet sel -t -v '/PenmuxModule/Use' -n "${module_path}"
+  xmlstarlet sel -t -v '/PenmuxModule/Provides' -n "${module_path}"
 }
 
-penmux_module_get_depends() {
+penmux_module_get_consumes() {
   local module_path="${1}"
 
-  xmlstarlet sel -t -v '/PenmuxModule/Depend' -n "${module_path}"
+  xmlstarlet sel -t -v '/PenmuxModule/Consumes' -n "${module_path}"
 }
 
 penmux_module_get_cmdprio() {

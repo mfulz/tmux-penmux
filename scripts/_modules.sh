@@ -18,20 +18,20 @@ _get_info() {
   local module_file="$(penmux_module_convert_relative_path "$1")"
   local module_name="$(penmux_module_get_name "$module_file")"
   local module_description="$(penmux_module_get_description "$module_file")"
-  local module_uses_plain="$(penmux_module_get_uses "$module_file")"
-  local module_uses
-  local module_depends_plain="$(penmux_module_get_depends "$module_file")"
-  local module_depends
+  local module_consumes_plain="$(penmux_module_get_consumes "$module_file")"
+  local module_consumes
+  local module_provides_plain="$(penmux_module_get_provides "$module_file")"
+  local module_provides
 
   while IFS= read -r e; do
-    module_uses=$(printf "%s\n  %s" "$module_uses" "$e")
-  done <<< "$module_uses_plain"
+    module_consumes=$(printf "%s\n  %s" "$module_consumes" "$e")
+  done <<< "$module_consumes_plain"
 
   while IFS= read -r e; do
-    module_depends=$(printf "%s\n  %s" "$module_depends" "$e")
-  done <<< "$module_depends_plain"
+    module_provides=$(printf "%s\n  %s" "$module_provides" "$e")
+  done <<< "$module_provides_plain"
 
-  printf "Module: %s\n\nDescription:\n  %s\n\nDepends:%s\n\nUses:%s" "${module_name}" "${module_description}" "${module_depends}" "${module_uses}"
+  printf "Module: %s\n\nDescription:\n  %s\n\nConsumes:%s\nProvides:%s" "${module_name}" "${module_description}" "${module_consumes}" "${module_provides}"
 }
 
 _list_module_options() {
