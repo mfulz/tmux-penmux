@@ -56,6 +56,26 @@
       </xs:restriction>
     </xs:complexContent>
   </xs:complexType>
+  <xs:complexType name="OptionTypeInt">
+    <xs:complexContent>
+      <xs:restriction base="OptionType">
+        <xs:sequence>
+          <xs:element name="Name" type="xs:string" />
+          <xs:element name="Description" type="xs:string" />
+          <xs:element name="DefaultValue" type="xs:int" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+        <xs:attribute name="Mandatory"
+        type="xs:boolean"
+        use="optional" />
+        <xs:attribute name="Private"
+        type="xs:boolean"
+        use="optional" />
+        <xs:attribute name="Exported"
+        type="xs:boolean"
+        use="optional" />
+      </xs:restriction>
+    </xs:complexContent>
+  </xs:complexType>
 
   <xs:complexType name="PenmuxProvider">
     <xs:sequence>
@@ -78,7 +98,7 @@
         <xs:element name="Description" type="xs:string" />
         <xs:element name="HasRun" type="xs:boolean" minOccurs="0" maxOccurs="1" />
         <xs:element name="CmdPrio" type="xs:int" minOccurs="0" maxOccurs="1" />
-        <xs:element name="OptionsNotifyPrio" type="xs:int" minOccurs="0" maxOccurs="1" />
+        <xs:element name="OptionsNotify" type="xs:boolean" minOccurs="0" maxOccurs="1" />
         <xs:element name="HandleScript" type="xs:string" minOccurs="0" maxOccurs="1" />
         <xs:element name="Depend" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
         <xs:element name="Option" type="OptionType" minOccurs="0" maxOccurs="unbounded" />

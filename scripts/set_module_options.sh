@@ -9,7 +9,10 @@ main() {
   local module_to_change
   local loaded_modules="$(get_tmux_option "@penmux-loaded-modules" "")"
   local session="$(tmux display-message -p "#{session_id}")"
+  local module_path
+  local module_name
   local option
+  local opt_type
   local value
   local err
 
@@ -21,10 +24,37 @@ main() {
   module_to_change="$("$CURRENT_DIR/_modules.sh" -a select_loaded)"
   [ -z "$module_to_change" ] && exit 0
 
-  option="$("$CURRENT_DIR/_modules.sh" -a select_option -m \"$module_to_change\")"
+  module_path="$(penmux_module_convert_relative_path "$module_to_change")"
+
+  module_name="$(penmux_module_get_name "$module_path")"
+
+  option="$("$CURRENT_DIR/_modules.sh" -a select_option -m "$module_to_change")"
   [ -z "$option" ] && exit 0
 
-  value="$(tmux command-prompt -p "Enter Value for "$option": " "display-message -p '%%'")"
-  penmux_module_set_option "$(penmux_module_convert_relative_path "$module_to_change")" "$option" "$value"
+  value="$(penmux_module_get_option "$module_path" "$option")"
+
+  opt_type="$(penmux_module_get_option_type "$module_path" "$option")"
+  [ -z "$opt_type" ] && exit 0
+
+  case "$opt_type" in
+    "OptionTypeBool")
+      tmux display-menu -T "Change '$option' for '$module_name'" \
+        "true" "t" \
+        "run-shell '\"$CURRENT_DIR/_modules.sh\" -a set_option -m \"$module_path\" -o \"$option\" -v \"true\"'" \
+        "false" "f" \
+        "run-shell '\"$CURRENT_DIR/_modules.sh\" -a set_option -m \"$module_path\" -o \"$option\" -v \"false\"'" \
+        "unset" "u" \
+        "run-shell '\"$CURRENT_DIR/_modules.sh\" -a set_option -m \"$module_path\" -o \"$option\" -v \"\"'"
+      ;;
+    "OptionTypeString")
+      tmux command-prompt -p "Change '$option' for '$module_name': " -I "$value" "run-shell '\"$CURRENT_DIR/_modules.sh\" -a set_option -m \"$module_path\" -o \"$option\" -v \"%%\"'"
+      ;;
+    "OptionTypeInt")
+      tmux command-prompt -p "Change '$option' for '$module_name': " -I "$value" "run-shell '\"$CURRENT_DIR/_modules.sh\" -a set_option -m \"$module_path\" -o \"$option\" -v \"%%\"'"
+      ;;
+    *)
+      exit 1
+      ;;
+  esac
 }
-  main
+main

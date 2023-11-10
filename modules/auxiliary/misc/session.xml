@@ -3,7 +3,7 @@
   <Name>Session</Name>
   <Description>Module to persist penmux sessions and provide easy to use storage of module options</Description>
   <CmdPrio>100</CmdPrio>
-  <OptionsNotifyPrio>10000</OptionsNotifyPrio>
+  <OptionsNotify>true</OptionsNotify>
   <HandleScript>auxiliary/misc/session/module.sh</HandleScript>
   <Option xsi:type="OptionTypeBool" Private="true" Exported="true">
     <Name>AutoLoad</Name>

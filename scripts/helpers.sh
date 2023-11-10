@@ -278,6 +278,13 @@ penmux_module_get_option_exported() {
   xmlstarlet sel -t -v "boolean(/PenmuxModule/Option[Name=\"$option_name\"]/@Exported)" "$module_path"
 }
 
+penmux_module_get_option_type() {
+  local module_path="$1"
+  local option_name="$2"
+
+  xmlstarlet sel -t -v "/PenmuxModule/Option[Name=\"$option_name\"]/@xsi:type" "$module_path"
+}
+
 penmux_module_get_option_description() {
   local module_path="$1"
   local option_name="$2"
@@ -378,6 +385,29 @@ penmux_module_get_option() {
   get_tmux_option "$tmux_option_name" "$option_default"
 }
 
+penmux_module_notify_options() {
+  local opt_name="${1}"
+  local pane_id="${2}"
+  local opt_value="${3}"
+  local loaded_modules="$(penmux_module_get_loaded)"
+  local opts_notify
+
+  while IFS= read -r m; do
+    act_module_path="$(penmux_module_convert_relative_path "$m")"
+    opts_notify="$(xmlstarlet sel -t -v "boolean(/PenmuxModule/OptionsNotify)" "$act_module_path")"
+    if [[ "$opts_notify" == "true" ]]; then
+      handle_script="$_PENMUX_MODULE_DIR/$(penmux_module_get_handlescript "$act_module_path")"
+
+      [ -z "$handle_script" ] && continue
+      if [ -z "$opt_value" ]; then
+        "$handle_script" -c "$_CURRENT_DIR" -a optionsnotify -m "$act_module_path" -p "$pane_id" -k "$opt_name"
+      else
+        "$handle_script" -c "$_CURRENT_DIR" -a optionsnotify -m "$act_module_path" -p "$pane_id" -k "$opt_name" -i "$opt_value"
+      fi
+    fi
+  done <<< "$loaded_modules"
+}
+
 penmux_module_set_option() {
   local module_path="${1}"
   local option_name="${2}"
@@ -387,6 +417,7 @@ penmux_module_set_option() {
   local option_private
   local option_default
   local tmux_option_name
+  local option_type
 
   # xmlstarlet val sel -t -c "/PenmuxModule/Option[Name=\"$option_name\"]" "${module_path}" >/dev/null || { echo ""; return 1; }
 
@@ -399,11 +430,39 @@ penmux_module_set_option() {
     tmux_option_name="@penmux-$option_name"
   fi
 
+  if [ -z "$pane_id" ]; then
+    pane_id="$(tmux display-message -p '#D')"
+  fi
+
   if [ -z "$value" ]; then
     tmux set-option -t "$pane_id" -p -u "$tmux_option_name"
   else
-    tmux set-option -t "$pane_id" -p "$tmux_option_name" "$value"
+    option_type="$(penmux_module_get_option_type "$module_path" "$option_name")"
+    case "$option_type" in
+      "OptionTypeBool")
+        if [ "$value" == "true" ] || [ "$value" == "false" ]; then
+          tmux set-option -t "$pane_id" -p "$tmux_option_name" "$value"
+        else
+          return 1
+        fi
+        ;;
+      "OptionTypeInt")
+        if [ "$value" -eq "$value" ] 2>/dev/null; then
+          tmux set-option -t "$pane_id" -p "$tmux_option_name" "$value"
+        else
+          return 1
+        fi
+        ;;
+      "OptionTypeString")
+        tmux set-option -t "$pane_id" -p "$tmux_option_name" "$value"
+        ;;
+      *)
+        return 1
+        ;;
+    esac
   fi
+
+  penmux_module_notify_options "$tmux_option_name" "$pane_id" "$value"
 }
 
 penmux_module_notify_consumers() {
@@ -485,3 +544,4 @@ penmux_module_get_provider() {
 
   get_tmux_option "@penmux-providers-$provider_name" "" "$id"
 }
+

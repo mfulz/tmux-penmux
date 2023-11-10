@@ -70,21 +70,24 @@ _cmd() {
 }
 
 _optionsnotify() {
-  local calling_pane_id="$1"
-  local pane_id="$2"
-  local session_name="$(penmux_module_get_provider "$_MODULE_PATH" "SessionName" "$calling_pane_id")"
-  local session_dir="$(penmux_module_get_provider "$_MODULE_PATH" "SessionDir" "$calling_pane_id")"
+  local pane_id="$1"
+  local opt="$2"
+  local val="$3"
+  local session_name="$(penmux_module_get_provider "$_MODULE_PATH" "SessionName" "$pane_id")"
+  local session_dir="$(penmux_module_get_provider "$_MODULE_PATH" "SessionDir" "$pane_id")"
+  local session_file="$(realpath $session_dir/.pmses)"
+  local session_opts
 
   if [ -n "$session_name" ] && [ -n "$session_dir" ]; then
-    penmux_module_set_provider "$_MODULE_PATH" "SessionName" "$session_name" "$pane_id"
-    penmux_module_set_provider "$_MODULE_PATH" "SessionDir" "$session_dir" "$pane_id"
+    declare -A session_opts="($(_session_file_to_array "$session_file"))"
 
-    tmux respawn-pane -k -t "$pane_id" -c "$session_dir" "$SHELL"
+    if [ -z "$val" ]; then
+      unset "session_opts[${opt}]"
+    else
+      session_opts["${opt}"]="$val"
+    fi
 
-    penmux_module_notify_consumers "$_MODULE_PATH" "SessionDir" "$pane_id"
-    penmux_module_notify_consumers "$_MODULE_PATH" "SessionName" "$pane_id"
-  else
-    tmux respawn-pane -k -t "$pane_id" "$SHELL"
+    _array_to_session_file "$session_file" session_opts
   fi
 }
 
@@ -170,7 +173,7 @@ case "${action}" in
     # Will be called as default command for
     # new panes
     # If not needed just exit 0
-    _optionsnotify "$calling_pane_id" "$pane_id"
+    _optionsnotify "$pane_id" "$provider_name" "$provider_value"
     exit 0
     ;;
   *)

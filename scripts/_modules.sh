@@ -51,6 +51,14 @@ _get_opt_info() {
   printf "Option: %s (Private: %s | Exported: %s)\n\nDescription:\n  %s\n\nDefault:%s" "${module_opt}" "${opt_private}" "${opt_exported}" "${opt_description}" "${opt_default_value}"
 }
 
+_set_option() {
+  local module_file="$1"
+  local module_opt="$2"
+  local module_opt_val="$3"
+
+  penmux_module_set_option "$module_file" "$module_opt" "$module_opt_val"
+}
+
 _select_module() {
   local module
   tmux display-popup -w 80% -h 80% -E "$CURRENT_DIR/_modules.sh -a list"
@@ -80,9 +88,10 @@ main() {
 	local action
   local module_file
   local module_opt
+  local module_opt_val
 
 	local OPTIND o
-	while getopts "a:m:o:" o; do
+	while getopts "a:m:o:v:" o; do
 		case "${o}" in
 		a)
 			action="${OPTARG}"
@@ -92,6 +101,9 @@ main() {
 			;;
 		o)
 			module_opt="${OPTARG}"
+			;;
+		v)
+			module_opt_val="${OPTARG}"
 			;;
 		*)
 			echo >&2 "Invalid parameter"
@@ -125,6 +137,9 @@ main() {
 			;;
     "select_option")
 			_select_option "${module_file}"
+			;;
+    "set_option")
+			_set_option "${module_file}" "${module_opt}" "$module_opt_val"
 			;;
 		*)
 			echo >&2 "Invalid action '${action}'"
