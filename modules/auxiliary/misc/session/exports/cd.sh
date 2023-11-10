@@ -3,7 +3,11 @@
 cd_session() {
   local session_file 
 
-  cd "$1" || return
+  if [ -z "$1" ]; then
+    cd || return
+  else
+    cd "$1" || return
+  fi
 
   if [ -e ".pmses" ]; then
     session_file="$(realpath .pmses)"

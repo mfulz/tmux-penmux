@@ -73,7 +73,8 @@ main() {
 
   err="$($handle_script -c "$CURRENT_DIR" -a unload -m "$module_path")" || {
     tmux display-message -d 5000 "Module unload error: '$err'"
-      return
-    }
+    return
   }
-  main
+  tmux display-message -d 5000 "Module '$module_to_unload' unloaded"
+}
+main

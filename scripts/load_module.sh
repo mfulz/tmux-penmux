@@ -86,13 +86,14 @@ main() {
 
   err="$($handle_script -c "$CURRENT_DIR" -a load -m "$module_path")" || {
     tmux display-message -d 5000 "Module load error: '$err'"
-      return
-    }
-
-    if [ -z "$loaded_modules" ]; then
-      tmux set-option -a "@penmux-loaded-modules" "$module_to_load"
-    else
-      tmux set-option -a "@penmux-loaded-modules" "#$module_to_load"
-    fi
+    return
   }
-  main
+  tmux display-message -d 5000 "Module '$module_to_load' loaded"
+
+  if [ -z "$loaded_modules" ]; then
+    tmux set-option -a "@penmux-loaded-modules" "$module_to_load"
+  else
+    tmux set-option -a "@penmux-loaded-modules" "#$module_to_load"
+  fi
+}
+main

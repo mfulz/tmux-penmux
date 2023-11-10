@@ -21,8 +21,6 @@ _load() {
   tmux set-option -t "$session" -g automatic-rename-format '#{?#{==:#{@penmux-providers-SessionName},},No Session,#{@penmux-providers-SessionName}} (#{?#{==:#{@penmux-providers-SessionDir},},CWD: #{pane_current_path},CSD: #{@penmux-providers-SessionDir}})'
   tmux set-option -t "$session" -g status-interval 5
   tmux set-option -t "$session" -g automatic-rename on
-
-  tmux display-message -d 5000 "session loaded and running"
 }
 
 _unload() {
@@ -42,8 +40,6 @@ _unload() {
   tmux set-option -t "$session" -g -u automatic-rename-format
   tmux set-option -t "$session" -g -u status-interval
   tmux set-option -t "$session" -g -u automatic-rename
-
-  tmux display-message -d 5000 "session stopped and unloaded"
 }
 
 _cmd() {
