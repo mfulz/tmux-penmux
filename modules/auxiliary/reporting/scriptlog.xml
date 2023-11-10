@@ -22,7 +22,7 @@
   <Option xsi:type="OptionTypeString" Private="true" Exported="true">
     <Name>LogDir</Name>
     <Description>Directory to store logfiles. All tmux placeholders can be used (ae. #W, #S, etc.)</Description>
-    <DefaultValue>$HOME/.tmux/penmux/logs/#S</DefaultValue>
+    <DefaultValue>$HOME/.tmux/penmux/scriptlog/#S</DefaultValue>
   </Option>
   <Consumes>
     <Name>SessionDir</Name>

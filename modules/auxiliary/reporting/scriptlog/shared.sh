@@ -7,7 +7,7 @@ _get_log_dir() {
   if [[ "$log_penmux_session_dir" == "true" ]]; then
     logdir_penmux_session="$(penmux_module_get_provider "$_MODULE_PATH" "SessionDir" "$pane_id")"
     if [[ -n "$logdir_penmux_session" ]]; then
-      logdir="$logdir_penmux_session"
+      logdir="$logdir_penmux_session/scriptlog"
     fi
   fi
 
