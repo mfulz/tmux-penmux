@@ -55,7 +55,6 @@ _unset_session() {
   declare -A session_opts="($(penmux_module_get_exported_options "$pane_id"))"
 
   for key in "${!session_opts[@]}"; do
-    [[ "$key" == "SessionDir" || "$key" == "SessionName" ]] && continue
     tmux set-option -p -t "$pane_id" -u "$key"
   done
 }

@@ -24,6 +24,14 @@
     <Description>Directory to store logfiles. All tmux placeholders can be used (ae. #W, #S, etc.)</Description>
     <DefaultValue>$HOME/.tmux/penmux/scriptlog/#S</DefaultValue>
   </Option>
+  <Option xsi:type="OptionTypeString" Private="true">
+    <Name>LogFile</Name>
+    <Description>Actual logfile (used only internal)</Description>
+  </Option>
+  <Option xsi:type="OptionTypeString" Private="true">
+    <Name>Title</Name>
+    <Description>Pane title (used only internal)</Description>
+  </Option>
   <Consumes>
     <Name>SessionDir</Name>
     <Description>The final session directory. Can be used by other modules to store data.</Description>

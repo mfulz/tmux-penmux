@@ -15,6 +15,9 @@
     <xs:attribute name="Exported"
     type="xs:boolean"
     use="optional" />
+    <xs:attribute name="Provided"
+    type="xs:boolean"
+    use="optional" />
   </xs:complexType>
   <xs:complexType name="OptionTypeString">
     <xs:complexContent>
@@ -31,6 +34,9 @@
         type="xs:boolean"
         use="optional" />
         <xs:attribute name="Exported"
+        type="xs:boolean"
+        use="optional" />
+        <xs:attribute name="Provided"
         type="xs:boolean"
         use="optional" />
       </xs:restriction>
@@ -53,6 +59,9 @@
         <xs:attribute name="Exported"
         type="xs:boolean"
         use="optional" />
+        <xs:attribute name="Provided"
+        type="xs:boolean"
+        use="optional" />
       </xs:restriction>
     </xs:complexContent>
   </xs:complexType>
@@ -71,6 +80,9 @@
         type="xs:boolean"
         use="optional" />
         <xs:attribute name="Exported"
+        type="xs:boolean"
+        use="optional" />
+        <xs:attribute name="Provided"
         type="xs:boolean"
         use="optional" />
       </xs:restriction>
@@ -98,11 +110,10 @@
         <xs:element name="Description" type="xs:string" />
         <xs:element name="HasRun" type="xs:boolean" minOccurs="0" maxOccurs="1" />
         <xs:element name="CmdPrio" type="xs:int" minOccurs="0" maxOccurs="1" />
-        <xs:element name="OptionsNotify" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+        <xs:element name="NotifyOptions" type="xs:boolean" minOccurs="0" maxOccurs="1" />
         <xs:element name="HandleScript" type="xs:string" minOccurs="0" maxOccurs="1" />
         <xs:element name="Depend" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
         <xs:element name="Option" type="OptionType" minOccurs="0" maxOccurs="unbounded" />
-        <xs:element name="Provides" type="PenmuxProvider" minOccurs="0" maxOccurs="unbounded" />
         <xs:element name="Consumes" type="PenmuxConsumer" minOccurs="0" maxOccurs="unbounded" />
       </xs:sequence>
     </xs:complexType>

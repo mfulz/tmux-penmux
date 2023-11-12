@@ -33,6 +33,14 @@ _optionsnotify() {
   return
 }
 
+_consumes() {
+  # local pane_id="$1"
+  # local opt="$2"
+  # local val="$3"
+
+  return
+}
+
 main() {
   local action
   local pane_id
@@ -119,6 +127,11 @@ case "${action}" in
     # Will be called when options are set
     # If not needed just exit 0
     _optionsnotify "$pane_id" "$provider_name" "$provider_value"
+    exit 0
+  "consumes")
+    # Will be called when options are set
+    # If not needed just exit 0
+    _consumes "$pane_id" "$provider_name" "$provider_value"
     exit 0
     ;;
   *)

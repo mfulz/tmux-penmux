@@ -23,7 +23,6 @@ _load() {
   if [[ "$logexisting" == "true" ]]; then
     panes="$(tmux list-panes -s -t "$session" -F "#D")"
     while IFS= read -r p; do
-      # tmux respawn-pane -k -t "$p" "\"$CURRENT_DIR/scriptlog.sh\" -a start -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\" -p \"$p\""
       tmux run-shell -t "$p" "\"$CURRENT_DIR/scriptlog.sh\" -a start -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\" -p \"$p\""
     done <<< "$panes"
   fi
@@ -43,10 +42,9 @@ _cmd() {
   local pane_id="$2"
 
   tmux run-shell -t "$pane_id" "\"$CURRENT_DIR/scriptlog.sh\" -a start -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\" -p \"$pane_id\""
-  # tmux respawn-pane -k -t "$pane_id" "\"$CURRENT_DIR/scriptlog.sh\" -a start -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\" -p \"$pane_id\""
 }
 
-_notify() {
+_consumes() {
   local pane_id="$1"
   local session="$(tmux display-message -p "#{session_id}")"
   local panes="$(tmux list-panes -s -t "$session" -F "#D")"
@@ -133,11 +131,11 @@ case "${action}" in
     _cmd "$calling_pane_id" "$pane_id"
     exit 0
     ;;
-  "notify")
+  "consumes")
     # Will be called as default command for
     # new panes
     # If not needed just exit 0
-    _notify "$pane_id"
+    _consumes "$pane_id"
     exit 0
     ;;
   *)

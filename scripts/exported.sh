@@ -2,6 +2,7 @@ _CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 source "$_CURRENT_DIR/module.sh"
 
+# penmux module functions
 penmux_module_get_exported_options() {
   local pane_id="$1"
   local loaded_modules="$(_module_get_loaded)"
@@ -11,8 +12,8 @@ penmux_module_get_exported_options() {
   while IFS= read -r m; do
     mpath="$(_module_convert_relative_path "$m")"
     mname="$(xmlstarlet sel -t -v "/PenmuxModule/Name" "$mpath")"
-    mpopts="$(xmlstarlet sel -t -v "/PenmuxModule/Option[boolean(@Private)=\"true\"][boolean(@Exported)=\"true\"]/Name/text()" "$mpath")"
-    mopts="$(xmlstarlet sel -t -v "/PenmuxModule/Option[boolean(@Private)=\"false\"]/Name/text()" "$mpath")"
+    mpopts="$(xmlstarlet sel -t -v "/PenmuxModule/Option[boolean(@Private)=1][boolean(@Exported)=1]/Name/text()" "$mpath")"
+    mopts="$(xmlstarlet sel -t -v "/PenmuxModule/Option[boolean(@Private)=0]/Name/text()" "$mpath")"
 
     while IFS= read -r o; do
       local oval="$(get_tmux_option_pane "@penmux-$mname-$o" "" "$pane_id")"
@@ -33,16 +34,24 @@ penmux_module_get_exported_options() {
 penmux_module_get_option() {
   local module_path="${1}"
   local option_name="${2}"
+  local pane_id="${3}"
+  local option_name_xml
   local module_name
   local option_private
   local option_default
   local tmux_option_name
 
   # xmlstarlet val sel -t -c "/PenmuxModule/Option[Name=\"$option_name\"]" "${module_path}" >/dev/null || { echo ""; return 1; }
+  option_name_xml="$(xmlstarlet sel -t -v "/PenmuxModule/Option[Name=\"$option_name\"]/Name/text()" "$module_path")"
+  if [[ -n "$option_name_xml" ]]; then
+    option_private="$(xmlstarlet sel -t -v "boolean(/PenmuxModule/Option[Name=\"$option_name\"]/@Private)" "$module_path")"
+    option_default="$(xmlstarlet sel -t -v "/PenmuxModule/Option[Name=\"$option_name\"]/DefaultValue" "$module_path")"
+    module_name="$(xmlstarlet sel -t -v "/PenmuxModule/Name" "$module_path")"
+  else
+    option_name_xml="$(xmlstarlet sel -t -v "/PenmuxModule/Consumes[Name=\"$option_name\"]/Name/text()" "$module_path")"
+  fi
 
-  option_private="$(xmlstarlet sel -t -v "boolean(/PenmuxModule/Option[Name=\"$option_name\"]/@Private)" "$module_path")"
-  option_default="$(xmlstarlet sel -t -v "/PenmuxModule/Option[Name=\"$option_name\"]/DefaultValue" "$module_path")"
-  module_name="$(xmlstarlet sel -t -v "/PenmuxModule/Name" "$module_path")"
+  [[ -z "$option_name_xml" ]] && return
 
   if [ "$option_private" == "true" ]; then
     tmux_option_name="@penmux-$module_name-$option_name"
@@ -50,7 +59,7 @@ penmux_module_get_option() {
     tmux_option_name="@penmux-$option_name"
   fi
 
-  get_tmux_option "$tmux_option_name" "$option_default"
+  get_tmux_option_pane "$tmux_option_name" "$option_default" "$pane_id"
 }
 
 penmux_module_set_option() {
@@ -115,31 +124,29 @@ penmux_module_set_option() {
 
 penmux_module_notify_consumers() {
   local module_path="${1}"
-  local provider_name="${2}"
+  local option_name="${2}"
   local pane_id="${3}"
   local loaded_modules="$(_module_get_loaded)"
+  local option_private="$(_module_get_option_private "$module_path" "$option_name")"
+  local option_provided="$(_module_get_option_provided "$module_path" "$option_name")"
   local act_module_path
   local handle_script
   local consumes
   local value
 
-  provider_name="$(xmlstarlet sel -t -v "/PenmuxModule/Provides[Name=\"$provider_name\"]/Name/text()" "$module_path")"
+  [[ "$option_private" == "true" ]] && return
+  [[ "$option_provided" == "true" ]] || return
 
-  if [ -z "$provider_name" ]; then
-    echo >&2 "Unable to receive provider '$provider_name' from '$module_path'"
-    return 1
-  fi
-
-  value="$(get_tmux_option "@penmux-providers-$provider_name" "" "$pane_id")"
+  value="$(get_tmux_option "$module_path" "$option_name" "$pane_id")"
 
   while IFS= read -r m; do
     act_module_path="$(_module_convert_relative_path "$m")"
-    consumes="$(xmlstarlet sel -t -v "/PenmuxModule/Consumes[Name=\"$provider_name\"]/Name/text()" "$act_module_path")"
+    consumes="$(xmlstarlet sel -t -v "/PenmuxModule/Consumes[Name=\"$option_name\"]/Name/text()" "$act_module_path")"
     if [ -n "$consumes" ]; then
       handle_script="$_PENMUX_MODULE_DIR/$(_module_get_handlescript "$act_module_path")"
 
       [ -z "$handle_script" ] && continue
-      "$handle_script" -c "$_CURRENT_DIR" -a notify -m "$act_module_path" -p "$pane_id" -k "$provider_name" -i "$value"
+      "$handle_script" -c "$_CURRENT_DIR" -a consumes -m "$act_module_path" -p "$pane_id" -k "$option_name" -i "$value"
     fi
   done <<< "$loaded_modules"
 }
@@ -194,4 +201,73 @@ penmux_module_get_provider() {
   provider_name="$provider_name_final"
 
   get_tmux_option "@penmux-providers-$provider_name" "" "$id"
+}
+
+# generel helper functions
+penmux_csv_to_arrays() {
+  local csv_content="$1"
+  local csv_sep="$2"
+  local csv_header
+  local csv_col_nums
+
+  declare -A csv_header
+
+  [[ -z "$csv_sep" ]] && csv_sep=","
+
+  while IFS= read -r l; do
+    if [[ -z "$csv_col_nums" ]]; then
+      csv_col_nums="$(echo "$l" | awk -F"$csv_sep" '{print NF}')"
+      for (( i=0 ; i<csv_col_nums ; i++ )); do
+        y=$((i+1))
+        csv_header[$i]="$(echo "$l" | awk -F"$csv_sep" '{print $'$y'}')"
+      done
+      echo "${csv_header[@]@K}"
+    else
+      local csv_line
+      declare -A csv_line
+      for (( i=0 ; i<csv_col_nums ; i++ )); do
+        y=$((i+1))
+        csv_line[${csv_header[$i]}]="$(echo "$l" | awk -F"$csv_sep" '{print $'$y'}')"
+      done
+      echo "${csv_line[@]@K}"
+    fi
+  done <<< "$csv_content"
+}
+
+penmux_arrays_to_csv() {
+  local csv_content="$1"
+  local csv_sep="$2"
+  local csv_header
+  local csv_col_nums
+  local csv_header
+
+  [[ -z "$csv_sep" ]] && csv_sep=","
+
+  while IFS= read -r l; do
+    if [[ -z "$csv_col_nums" ]]; then
+      declare -A csv_header="($(echo "$l"))"
+      csv_col_nums="${#csv_header[@]}"
+
+      for (( i=0 ; i<csv_col_nums ; i++ )); do
+        if [[ "$i" -eq 0 ]]; then
+          printf "%s" "${csv_header[$i]}"
+        else
+          printf "%s%s" "$csv_sep" "${csv_header[$i]}"
+        fi
+      done
+      printf "\n"
+    else
+      local csv_line
+      declare -A csv_line="($(echo "$l"))"
+
+      for (( i=0 ; i<csv_col_nums ; i++ )); do
+        if [[ "$i" -eq 0 ]]; then
+          printf "%s" "${csv_line[${csv_header[$i]}]}"
+        else
+          printf "%s%s" "$csv_sep" "${csv_line[${csv_header[$i]}]}"
+        fi
+      done
+      printf "\n"
+    fi
+  done <<< "$csv_content"
 }

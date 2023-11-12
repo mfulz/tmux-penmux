@@ -59,6 +59,13 @@ _module_get_option_private() {
   xmlstarlet sel -t -v "boolean(/PenmuxModule/Option[Name=\"$option_name\"]/@Private)" "$module_path"
 }
 
+_module_get_option_provided() {
+  local module_path="$1"
+  local option_name="$2"
+
+  xmlstarlet sel -t -v "boolean(/PenmuxModule/Option[Name=\"$option_name\"]/@Provided)" "$module_path"
+}
+
 _module_get_option_type() {
   local module_path="$1"
   local option_name="$2"

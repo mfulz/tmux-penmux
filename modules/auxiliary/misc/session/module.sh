@@ -18,7 +18,7 @@ _load() {
   tmux bind -T penmux_module_session_keytable "l" "run-shell '\"$CURRENT_DIR/session.sh\" -a load -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\"'"
   tmux bind -T penmux_module_session_keytable "s" "run-shell '\"$CURRENT_DIR/session.sh\" -a save -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\"'"
   
-  tmux set-option -t "$session" -g automatic-rename-format '#{?#{==:#{@penmux-providers-SessionName},},No Session,#{@penmux-providers-SessionName}} (#{?#{==:#{@penmux-providers-SessionDir},},CWD: #{pane_current_path},CSD: #{@penmux-providers-SessionDir}})'
+  tmux set-option -t "$session" -g automatic-rename-format '#{?#{==:#{@penmux-SessionName},},No Session,#{@penmux-SessionName}} (#{?#{==:#{@penmux-SessionDir},},CWD: #{pane_current_path},CSD: #{@penmux-SessionDir}})'
   tmux set-option -t "$session" -g status-interval 5
   tmux set-option -t "$session" -g automatic-rename on
 }
@@ -45,13 +45,13 @@ _unload() {
 _cmd() {
   local calling_pane_id="$1"
   local pane_id="$2"
-  local session_name="$(penmux_module_get_provider "$_MODULE_PATH" "SessionName" "$calling_pane_id")"
-  local session_dir="$(penmux_module_get_provider "$_MODULE_PATH" "SessionDir" "$calling_pane_id")"
+  local session_name="$(penmux_module_get_option "$_MODULE_PATH" "SessionName" "$calling_pane_id")"
+  local session_dir="$(penmux_module_get_option "$_MODULE_PATH" "SessionDir" "$calling_pane_id")"
   local session_opts
 
   if [ -n "$session_name" ] && [ -n "$session_dir" ]; then
-    penmux_module_set_provider "$_MODULE_PATH" "SessionName" "$session_name" "$pane_id"
-    penmux_module_set_provider "$_MODULE_PATH" "SessionDir" "$session_dir" "$pane_id"
+    penmux_module_set_option "$_MODULE_PATH" "SessionName" "$session_name" "$pane_id"
+    penmux_module_set_option "$_MODULE_PATH" "SessionDir" "$session_dir" "$pane_id"
 
     declare -A session_opts="($(penmux_module_get_exported_options "$calling_pane_id"))"
     for key in "${!session_opts[@]}"; do
@@ -60,8 +60,8 @@ _cmd() {
 
     tmux respawn-pane -k -t "$pane_id" -c "$session_dir" "$SHELL"
 
-    penmux_module_notify_consumers "$_MODULE_PATH" "SessionDir" "$pane_id"
     penmux_module_notify_consumers "$_MODULE_PATH" "SessionName" "$pane_id"
+    penmux_module_notify_consumers "$_MODULE_PATH" "SessionDir" "$pane_id"
   else
     tmux respawn-pane -k -t "$pane_id" "$SHELL"
   fi
@@ -71,11 +71,14 @@ _optionsnotify() {
   local pane_id="$1"
   local opt="$2"
   local val="$3"
-  local session_name="$(penmux_module_get_provider "$_MODULE_PATH" "SessionName" "$pane_id")"
-  local session_dir="$(penmux_module_get_provider "$_MODULE_PATH" "SessionDir" "$pane_id")"
+  local session_name="$(penmux_module_get_option "$_MODULE_PATH" "SessionName" "$pane_id")"
+  local session_dir="$(penmux_module_get_option "$_MODULE_PATH" "SessionDir" "$pane_id")"
   local session_file="$(realpath $session_dir/.pmses)"
   local auto_save="$(penmux_module_get_option "$_MODULE_PATH" "AutoSave")"
   local session_opts
+
+  [[ "$opt" == "@penmux-SessionName" ]] && return
+  [[ "$opt" == "@penmux-SessionDir" ]] && return
 
   [[ "$auto_save" == "true" ]] || exit 0
 
@@ -174,6 +177,12 @@ case "${action}" in
     # new panes
     # If not needed just exit 0
     _optionsnotify "$pane_id" "$provider_name" "$provider_value"
+    exit 0
+    ;;
+  "consumes")
+    # Will be called as default command for
+    # new panes
+    # If not needed just exit 0
     exit 0
     ;;
   *)

@@ -8,17 +8,18 @@ source "$CURRENT_DIR/shared.sh"
 
 _set_logging_variable() {
   local pane_id="$1"
-  tmux set-option -t "${pane_id}" -pq "@penmux-scriptlog-logfile" "$(_get_log_file "$pane_id")"
+  local log_file="$(_get_log_file "$pane_id")"
+  penmux_module_set_option "$_MODULE_PATH" "LogFile" "$log_file" "$pane_id"
 }
 
 _unset_logging_variable() {
   local pane_id="$1"
-	tmux set-option -t "${pane_id}" -upq "@penmux-scriptlog-logfile"
+  penmux_module_set_option "$_MODULE_PATH" "LogFile" "" "$pane_id"
 }
 
 _unset_stored_pane_title() {
   local pane_id="$1"
-	tmux set-option -t "${pane_id}" -upq "@penmux-scriptlog-title"
+  penmux_module_set_option "$_MODULE_PATH" "Title" "" "$pane_id"
 }
 
 _get_pane_title() {
@@ -32,12 +33,12 @@ _get_pane_title() {
 _store_pane_title() {
   local pane_id="$1"
 	local pane_title="$(_get_pane_title "$pane_id")"
-	tmux set-option -t "${pane_id}" -pq "@penmux-scriptlog-title" "${pane_title}"
+  penmux_module_set_option "$_MODULE_PATH" "Title" "$pane_title" "$pane_id"
 }
 
 _get_stored_pane_title() {
   local pane_id="$1"
-	local pane_title="$(tmux show-option -t "${pane_id}" -pqv "@penmux-scriptlog-title")"
+  local pane_title="$(penmux_module_get_option "$_MODULE_PATH" "Title" "$pane_id")"
 
   echo "$pane_title"
 }
@@ -50,9 +51,9 @@ _set_pane_title() {
 
 _restore_pane_title() {
   local pane_id="$1"
-	local pane_title="$(tmux show-option -t "${pane_id}" -pqv "@penmux-scriptlog-title")"
+  local pane_title="$(penmux_module_get_option "$_MODULE_PATH" "Title" "$pane_id")"
 	tmux select-pane -t "${pane_id}" -T "${pane_title}"
-	tmux set-option -t "${pane_id}" -upq "@penmux-scriptlog-title"
+  penmux_module_set_option "$_MODULE_PATH" "Title" "" "$pane_id"
 }
 
 # revert logging

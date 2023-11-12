@@ -34,46 +34,43 @@ _new() {
     fi
   fi
 
+  penmux_module_set_option "$_MODULE_PATH" "SessionName" "$session_name" "$pane_id"
+  penmux_module_set_option "$_MODULE_PATH" "SessionDir" "$session_dir" "$pane_id"
+
   declare -A session_opts="($(penmux_module_get_exported_options "$pane_id"))"
-  session_opts["SessionName"]="$session_name"
-  session_opts["SessionDir"]="$session_dir"
-
   _array_to_session_file "$session_dir/.pmses" session_opts
-
-  penmux_module_set_provider "$_MODULE_PATH" "SessionName" "$session_name" "$pane_id"
-  penmux_module_set_provider "$_MODULE_PATH" "SessionDir" "$session_dir" "$pane_id"
 
   tmux respawn-pane -k -t "$pane_id" -c "$session_dir"
 
-  penmux_module_notify_consumers "$_MODULE_PATH" "SessionDir" "$pane_id"
   penmux_module_notify_consumers "$_MODULE_PATH" "SessionName" "$pane_id"
+  penmux_module_notify_consumers "$_MODULE_PATH" "SessionDir" "$pane_id"
 }
 
 _stop() {
   local pane_id="$1"
-  local session_name="$(penmux_module_get_provider "$_MODULE_PATH" "SessionName" "$pane_id")"
-  local session_dir="$(penmux_module_get_provider "$_MODULE_PATH" "SessionDir" "$pane_id")"
- 
-  penmux_module_set_provider "$_MODULE_PATH" "SessionName" "" "$pane_id"
-  penmux_module_set_provider "$_MODULE_PATH" "SessionDir" "" "$pane_id"
+  local session_name="$(penmux_module_get_option "$_MODULE_PATH" "SessionName" "$pane_id")"
+  local session_dir="$(penmux_module_get_option "$_MODULE_PATH" "SessionDir" "$pane_id")"
+
+  penmux_module_set_option "$_MODULE_PATH" "SessionName" "" "$pane_id"
+  penmux_module_set_option "$_MODULE_PATH" "SessionDir" "" "$pane_id"
   penmux_module_set_option "$_MODULE_PATH" "AutoLoad" ""
   penmux_module_set_option "$_MODULE_PATH" "AutoSave" ""
   penmux_module_set_option "$_MODULE_PATH" "NoConfirm" ""
   penmux_module_set_option "$_MODULE_PATH" "UseCwd" ""
   penmux_module_set_option "$_MODULE_PATH" "SessionDirBase" ""
-
+ 
   if [ -n "$session_name" ] && [ -n "$session_dir" ]; then
     tmux respawn-pane -k -t "$pane_id" -c "" "$SHELL"
 
-    penmux_module_notify_consumers "$_MODULE_PATH" "SessionDir" "$pane_id"
     penmux_module_notify_consumers "$_MODULE_PATH" "SessionName" "$pane_id"
+    penmux_module_notify_consumers "$_MODULE_PATH" "SessionDir" "$pane_id"
   fi
 }
 
 _load() {
   local pane_id="$1"
   local session_file="$2"
-  local session_dir_act="$(penmux_module_get_provider "$_MODULE_PATH" "SessionDir" "$pane_id")"
+  local session_dir_act="$(penmux_module_get_option "$_MODULE_PATH" "SessionDir" "$pane_id")"
   local auto_load="$(penmux_module_get_option "$_MODULE_PATH" "AutoLoad")"
   local session_opts
 
@@ -90,40 +87,36 @@ _load() {
   fi
 
   declare -A session_opts="($(_session_file_to_array "$session_file"))"
-  [[ -v "session_opts[SessionDir]" ]] || {
+  [[ -v "session_opts[@penmux-SessionDir]" ]] || {
     echo >&2 "Session file '$session_file' corrupt. Missing 'SessionDir'"
     return 1
   }
-  [[ -v "session_opts[SessionName]" ]] || {
+  [[ -v "session_opts[@penmux-SessionName]" ]] || {
     echo >&2 "Session file '$session_file' corrupt. Missing 'SessionName'"
     return 1
   }
 
-  [[ "$session_dir_act" == "${session_opts[SessionDir]}" ]] && exit 0
+  [[ "$session_dir_act" == "${session_opts["@penmux-SessionDir"]}" ]] && exit 0
 
   _unset_session "$pane_id"
 
   for key in "${!session_opts[@]}"; do
-    [[ "$key" == "SessionDir" || "$key" == "SessionName" ]] && continue
     tmux set-option -p -t "$pane_id" "$key" "${session_opts[${key}]}"
   done
 
-  penmux_module_set_provider "$_MODULE_PATH" "SessionName" "${session_opts[SessionName]}" "$pane_id"
-  penmux_module_set_provider "$_MODULE_PATH" "SessionDir" "${session_opts[SessionDir]}" "$pane_id"
-
   tmux set-option -t "$pane_id" -p remain-on-exit on
   tmux send-keys -t "$pane_id" " exit" Enter
-  tmux respawn-pane -k -t "$pane_id" -c "${session_opts[SessionDir]}" "$SHELL"
+  tmux respawn-pane -k -t "$pane_id" -c "${session_opts["@penmux-SessionDir"]}" "$SHELL"
   tmux set-option -t "$pane_id" -p -u remain-on-exit
 
-  penmux_module_notify_consumers "$_MODULE_PATH" "SessionDir" "$pane_id"
   penmux_module_notify_consumers "$_MODULE_PATH" "SessionName" "$pane_id"
+  penmux_module_notify_consumers "$_MODULE_PATH" "SessionDir" "$pane_id"
 }
 
 _save() {
   local pane_id="$1"
-  local session_name="$(penmux_module_get_provider "$_MODULE_PATH" "SessionName" "$pane_id")"
-  local session_dir="$(penmux_module_get_provider "$_MODULE_PATH" "SessionDir" "$pane_id")"
+  local session_name="$(penmux_module_get_option "$_MODULE_PATH" "SessionName")"
+  local session_dir="$(penmux_module_get_option "$_MODULE_PATH" "SessionDir")"
   local session_file="$(realpath $session_dir/.pmses)"
   local session_opts
 
@@ -132,9 +125,7 @@ _save() {
     return 1
   fi
 
-  declare -A session_opts="($(penmux_module_get_exported_options "$calling_pane_id"))"
-  session_opts["SessionName"]="$session_name"
-  session_opts["SessionDir"]="$session_dir"
+  declare -A session_opts="($(penmux_module_get_exported_options "$pane_id"))"
 
   _array_to_session_file "$session_file" session_opts
 }
