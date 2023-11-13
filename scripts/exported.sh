@@ -141,7 +141,7 @@ penmux_module_notify_consumers() {
 
   while IFS= read -r m; do
     act_module_path="$(_module_convert_relative_path "$m")"
-    consumes="$(xmlstarlet sel -t -v "/PenmuxModule/Consumes[Name=\"$option_name\"]/Name/text()" "$act_module_path")"
+    consumes="$(xmlstarlet sel -t -v "/PenmuxModule/Consumes[Name=\"$option_name\"][boolean(@NoNotify)=0]/Name/text()" "$act_module_path")"
     if [ -n "$consumes" ]; then
       handle_script="$_PENMUX_MODULE_DIR/$(_module_get_handlescript "$act_module_path")"
 
@@ -151,56 +151,19 @@ penmux_module_notify_consumers() {
   done <<< "$loaded_modules"
 }
 
-penmux_module_set_provider() {
+penmux_module_expand_options_string() {
   local module_path="${1}"
-  local provider_name="${2}"
-  local value="${3}"
-  local tid="${4}"
-  local dst="${5}"
-  local unset
+  local input="${2}"
+  local pane_id="${3}"
+  local replacements="$(echo "$input" | grep -E '###([^###]*)###' -o | sed 's/###//g')"
 
-  provider_name="$(xmlstarlet sel -t -v "/PenmuxModule/Provides[Name=\"$provider_name\"]/Name/text()" "$module_path")"
+  while IFS= read -r r; do
+    local v="$(penmux_module_get_option "$module_path" "$r" "$pane_id")"
+    input="${input/"###${r}###"/$v}"
+    input="${input/\/\//\/}"
+  done <<< "$replacements"
 
-  if [ -z "$provider_name" ]; then
-    echo >&2 "Unable to receive provider '$provider_name' from '$module_path'"
-    return 1
-  fi
-
-  if [ -z "$value" ]; then
-    unset="-u"
-  fi
-
-
-  case "$dst" in
-    "window")
-      tmux set-option -t "$tid" -w $unset "@penmux-providers-$provider_name" "$value"
-      ;;
-    "session")
-      tmux set-option -t "$tid" $unset "@penmux-providers-$provider_name" "$value"
-      ;;
-    *)
-      tmux set-option -t "$tid" -p $unset "@penmux-providers-$provider_name" "$value"
-      ;;
-  esac
-}
-
-penmux_module_get_provider() {
-  local module_path="${1}"
-  local provider_name="${2}"
-  local id="${3}"
-  local provider_name_final
-
-  provider_name_final="$(xmlstarlet sel -t -v "/PenmuxModule/Provides[Name=\"$provider_name\"]/Name/text()" "$module_path")"
-  if [ -z "$provider_name_final" ]; then
-    provider_name_final="$(xmlstarlet sel -t -v "/PenmuxModule/Consumes[Name=\"$provider_name\"]/Name/text()" "$module_path")"
-    if [ -z "$provider_name_final" ]; then
-      echo >&2 "Unable to receive provider/consumer '$provider_name' from '$module_path'"
-      return 1
-    fi
-  fi
-  provider_name="$provider_name_final"
-
-  get_tmux_option "@penmux-providers-$provider_name" "" "$id"
+  echo "$input"
 }
 
 # generel helper functions
@@ -270,4 +233,11 @@ penmux_arrays_to_csv() {
       printf "\n"
     fi
   done <<< "$csv_content"
+}
+
+penmux_expand_tmux_format_path() {
+  local pane_id="$1"
+	local tmux_format_path="${2}"
+	local full_path=$(tmux display-message -t "$pane_id" -p "${tmux_format_path}")
+  echo "$full_path" | sed "s,\$HOME,$HOME,g; s,\$HOSTNAME,$(hostname),g; s,\~,$HOME,g"
 }

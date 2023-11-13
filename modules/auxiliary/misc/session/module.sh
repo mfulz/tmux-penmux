@@ -51,7 +51,7 @@ _cmd() {
 
   if [ -n "$session_name" ] && [ -n "$session_dir" ]; then
     penmux_module_set_option "$_MODULE_PATH" "SessionName" "$session_name" "$pane_id"
-    penmux_module_set_option "$_MODULE_PATH" "SessionDir" "$session_dir" "$pane_id"
+    penmux_module_set_option "$_MODULE_PATH" "SessionDir" "$session_dir/" "$pane_id"
 
     declare -A session_opts="($(penmux_module_get_exported_options "$calling_pane_id"))"
     for key in "${!session_opts[@]}"; do

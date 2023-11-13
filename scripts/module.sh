@@ -31,7 +31,7 @@ _module_get_handlescript() {
 _module_get_provides() {
   local module_path="${1}"
 
-  xmlstarlet sel -t -v '/PenmuxModule/Provides' -n "${module_path}"
+  xmlstarlet sel -t -v '/PenmuxModule/Option[boolean(@Provided)=1]' -n "${module_path}"
 }
 
 _module_get_consumes() {
@@ -85,6 +85,12 @@ _module_get_option_default_value() {
   local option_name="$2"
 
   xmlstarlet sel -t -v "/PenmuxModule/Option[Name=\"$option_name\"]/DefaultValue" "$module_path"
+}
+
+_module_has_run() {
+  local module_path="$1"
+
+  xmlstarlet sel -t -v "boolean(/PenmuxModule/HasRun)" "$module_path"
 }
 
 _module_convert_relative_path() {

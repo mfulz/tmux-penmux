@@ -35,7 +35,7 @@ _new() {
   fi
 
   penmux_module_set_option "$_MODULE_PATH" "SessionName" "$session_name" "$pane_id"
-  penmux_module_set_option "$_MODULE_PATH" "SessionDir" "$session_dir" "$pane_id"
+  penmux_module_set_option "$_MODULE_PATH" "SessionDir" "$session_dir/" "$pane_id"
 
   declare -A session_opts="($(penmux_module_get_exported_options "$pane_id"))"
   _array_to_session_file "$session_dir/.pmses" session_opts

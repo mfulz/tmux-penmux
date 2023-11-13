@@ -6,12 +6,43 @@ source "$CURRENT_DIR/variables.sh"
 source "$CURRENT_DIR/exported.sh"
 
 _list_modules() {
-  tmux set-option -p @penmux-hidden-module "$(find "$_PENMUX_MODULE_DIR" -type f -iname "*\.xml" -printf '%P\n' | fzf --cycle --preview="$CURRENT_DIR/_modules.sh -a info -m {}")"
+  local label="$1"
+
+  [[ -z "$label" ]] && label="Select module to load"
+
+  tmux set-option -p @penmux-hidden-module "$(find "$_PENMUX_MODULE_DIR" -type f -iname "*\.xml" -printf '%P\n' | fzf --border-label="$label" --border="sharp" --cycle --preview="$CURRENT_DIR/_modules.sh -a info -m {}")"
 }
 
 _list_loaded_modules() {
+  local label="$1"
   local loaded_modules="$(_module_get_loaded)"
-  tmux set-option -p @penmux-hidden-module "$(echo -n "$loaded_modules" | fzf --cycle --preview="$CURRENT_DIR/_modules.sh -a info -m {}")"
+  
+  [[ -z "$label" ]] && label="Select module to unload"
+
+  tmux set-option -p @penmux-hidden-module "$(echo -n "$loaded_modules" | fzf --border-label="$label" --border="sharp" --cycle --preview="$CURRENT_DIR/_modules.sh -a info -m {}")"
+}
+
+_list_runnable_modules() {
+  local label="$1"
+  local loaded_modules="$(_module_get_loaded)"
+  local runnable_modules
+  
+  [[ -z "$label" ]] && label="Select module to run"
+
+  while IFS= read -r m; do
+    local module_path="$(_module_convert_relative_path "$m")"
+    local has_run="$(_module_has_run "$module_path")"
+
+    if [[ "$has_run" == "true" ]]; then
+      if [[ -z "$runnable_modules" ]]; then
+        runnable_modules="$(printf "%s" "$m")"
+      else
+        runnable_modules="$(printf "%s\n%s" "$runnable_modules" "$m")"
+      fi
+    fi
+  done <<< "$loaded_modules"
+
+  tmux set-option -p @penmux-hidden-module "$(echo -n "$runnable_modules" | fzf --border-label="$label" --border="sharp" --cycle --preview="$CURRENT_DIR/_modules.sh -a info -m {}")"
 }
 
 _get_info() {
@@ -36,8 +67,13 @@ _get_info() {
 
 _list_module_options() {
   local module_file="$(_module_convert_relative_path "$1")"
+  local label="$2"
   local module_opts="$(_module_get_options "$module_file")"
-  tmux set-option -p @penmux-hidden-option "$(echo -n "$module_opts" | fzf --cycle --preview="$CURRENT_DIR/_modules.sh -a opt_info -m "$module_file" -o {}")"
+  local module_name="$(_module_get_name "$module_file")"
+
+  [[ -z "$label" ]] && label="Select option to change for module '$module_name'"
+
+  tmux set-option -p @penmux-hidden-option "$(echo -n "$module_opts" | fzf --border-label="$label" --border="sharp" --cycle --preview="$CURRENT_DIR/_modules.sh -a opt_info -m "$module_file" -o {}")"
 }
 
 _get_opt_info() {
@@ -45,10 +81,11 @@ _get_opt_info() {
   local module_opt="$2"
   local opt_private="$(_module_get_option_private "$module_file" "$module_opt")"
   local opt_exported="$(_module_get_option_exported "$module_file" "$module_opt")"
+  local opt_provided="$(_module_get_option_provided "$module_file" "$module_opt")"
   local opt_description="$(_module_get_option_description "$module_file" "$module_opt")"
   local opt_default_value="$(_module_get_option_default_value "$module_file" "$module_opt")"
 
-  printf "Option: %s (Private: %s | Exported: %s)\n\nDescription:\n  %s\n\nDefault:%s" "${module_opt}" "${opt_private}" "${opt_exported}" "${opt_description}" "${opt_default_value}"
+  printf "Option: %s (Private: %s | Exported: %s | Provided: %s)\n\nDescription:\n  %s\n\nDefault: %s" "${module_opt}" "${opt_private}" "${opt_exported}" "${opt_provided}" "${opt_description}" "${opt_default_value}"
 }
 
 _set_option() {
@@ -64,16 +101,27 @@ _set_option() {
 }
 
 _select_module() {
+  local label="$1"
   local module
-  tmux display-popup -w 80% -h 80% -E "$CURRENT_DIR/_modules.sh -a list"
+  tmux display-popup -w 80% -h 80% -E "$CURRENT_DIR/_modules.sh -a list -l \"$label\""
   module="$(tmux show-options -pqv "@penmux-hidden-module")"
   tmux set-option -pu "@penmux-hidden-module" > /dev/null
   echo "${module}"
 }
 
 _select_loaded() {
+  local label="$1"
   local module
-  tmux display-popup -w 80% -h 80% -E "$CURRENT_DIR/_modules.sh -a list_loaded"
+  tmux display-popup -w 80% -h 80% -E "$CURRENT_DIR/_modules.sh -a list_loaded -l \"$label\""
+  module="$(tmux show-options -pqv "@penmux-hidden-module")"
+  tmux set-option -pu "@penmux-hidden-module" > /dev/null
+  echo "${module}"
+}
+
+_select_runnable() {
+  local label="$1"
+  local module
+  tmux display-popup -w 80% -h 80% -E "$CURRENT_DIR/_modules.sh -a list_runnable -l \"$label\""
   module="$(tmux show-options -pqv "@penmux-hidden-module")"
   tmux set-option -pu "@penmux-hidden-module" > /dev/null
   echo "${module}"
@@ -93,9 +141,10 @@ main() {
   local module_file
   local module_opt
   local module_opt_val
+  local label
 
 	local OPTIND o
-	while getopts "a:m:o:v:" o; do
+	while getopts "a:m:o:v:l:" o; do
 		case "${o}" in
 		a)
 			action="${OPTARG}"
@@ -109,6 +158,9 @@ main() {
 		v)
 			module_opt_val="${OPTARG}"
 			;;
+		l)
+			label="${OPTARG}"
+			;;
 		*)
 			echo >&2 "Invalid parameter"
 			exit 1
@@ -119,16 +171,22 @@ main() {
 	if supported_tmux_version_ok; then
 		case "${action}" in
 		"list")
-			_list_modules
+			_list_modules "$label"
 			;;
 		"list_loaded")
-			_list_loaded_modules
+			_list_loaded_modules "$label"
+			;;
+		"list_runnable")
+			_list_runnable_modules "$label"
 			;;
     "select")
-      _select_module
+      _select_module "$label"
       ;;
     "select_loaded")
-      _select_loaded
+      _select_loaded "$label"
+      ;;
+    "select_runnable")
+      _select_runnable "$label"
       ;;
     "info")
 			_get_info "${module_file}"

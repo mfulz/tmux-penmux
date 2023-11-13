@@ -17,7 +17,7 @@ _get_new_session_dir() {
     final_session_dir="$session_dir/$session_name"
   fi
 
-  expand_tmux_format_path "$pane_id" "$final_session_dir"
+  penmux_expand_tmux_format_path "$pane_id" "$final_session_dir"
 }
 
 _session_file_to_array() {

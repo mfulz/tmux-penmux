@@ -11,14 +11,14 @@ _get_log_dir() {
     fi
   fi
 
-  expand_tmux_format_path "$pane_id" "$logdir"
+  penmux_expand_tmux_format_path "$pane_id" "$logdir"
 }
 
 _get_log_file() {
   local pane_id="$1"
   local logdir="$(_get_log_dir "$pane_id")"
   local logfile="$(penmux_module_get_option "$_MODULE_PATH" "Name")"
-  logfile="$(expand_tmux_format_path "$pane_id" "$logdir/$logfile")"
+  logfile="$(penmux_expand_tmux_format_path "$pane_id" "$logdir/$logfile")"
 
   # quickfix for handling pane title
   # TODO: correct handling

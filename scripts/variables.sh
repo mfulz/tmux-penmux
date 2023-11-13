@@ -19,3 +19,6 @@ default_unload_module_key="u"
 
 change_option_key_option="@penmux-change-option-key" # c
 default_change_option_key="c"
+
+run_key_option="@penmux-run-key" # r
+default_run_key="r"

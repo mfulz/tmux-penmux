@@ -89,18 +89,14 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:complexType name="PenmuxProvider">
-    <xs:sequence>
-      <xs:element name="Name" type="xs:string" />
-      <xs:element name="Description" type="xs:string" />
-    </xs:sequence>
-  </xs:complexType>
-
   <xs:complexType name="PenmuxConsumer">
     <xs:sequence>
       <xs:element name="Name" type="xs:string" />
       <xs:element name="Description" type="xs:string" />
     </xs:sequence>
+    <xs:attribute name="NoNotify"
+    type="xs:boolean"
+    use="optional" />
   </xs:complexType>
 
   <xs:element name="PenmuxModule">

@@ -13,10 +13,12 @@ main() {
   local load_module_key_option_value="$(get_tmux_option "$load_module_key_option" "$default_load_module_key")"
   local unload_module_key_option_value="$(get_tmux_option "$unload_module_key_option" "$default_unload_module_key")"
   local change_option_key_option_value="$(get_tmux_option "$change_option_key_option" "$default_change_option_key")"
+  local run_key_value="$(get_tmux_option "$run_key_option" "$default_run_key")"
   tmux bind -T prefix "$keytable_key_option_value" switch-client -T penmux_keytable
 	tmux bind -T penmux_keytable "$load_module_key_option_value" run-shell "$CURRENT_DIR/scripts/load_module.sh"
 	tmux bind -T penmux_keytable "$unload_module_key_option_value" run-shell "$CURRENT_DIR/scripts/unload_module.sh"
 	tmux bind -T penmux_keytable "$change_option_key_option_value" run-shell "$CURRENT_DIR/scripts/set_module_options.sh"
+	tmux bind -T penmux_keytable "$run_key_value" run-shell "$CURRENT_DIR/scripts/run_module.sh"
 }
 
 main

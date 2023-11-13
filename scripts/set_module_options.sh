@@ -21,7 +21,7 @@ main() {
     return
   fi
 
-  module_to_change="$("$CURRENT_DIR/_modules.sh" -a select_loaded)"
+  module_to_change="$("$CURRENT_DIR/_modules.sh" -a select_loaded -l 'Select module which options should be changed')"
   [ -z "$module_to_change" ] && exit 0
 
   module_path="$(_module_convert_relative_path "$module_to_change")"

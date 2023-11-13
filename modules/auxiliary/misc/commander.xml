@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PenmuxModule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../schemas/penmux-module.xsd">
+  <Name>Commander</Name>
+  <Description>Command launcher module that reads in csv files that have different commands predefined</Description>
+  <HasRun>true</HasRun>
+  <HandleScript>auxiliary/misc/commander/module.sh</HandleScript>
+  <Option xsi:type="OptionTypeString" Private="true" Exported="true">
+    <Name>CommandSearchPath</Name>
+    <Description>Path that contains CSV files that holds the command definitions</Description>
+    <DefaultValue>$HOME/.tmux/plugins/tmux-penmux/modules/auxiliary/misc/commander/commands</DefaultValue>
+  </Option>
+  <Option xsi:type="OptionTypeString">
+    <Name>RemoteHost</Name>
+    <Description>Defines the remote host(s)</Description>
+    <DefaultValue>127.0.0.1</DefaultValue>
+  </Option>
+  <Option xsi:type="OptionTypeInt">
+    <Name>RemotePort</Name>
+    <Description>Defines the remote port</Description>
+    <DefaultValue>80</DefaultValue>
+  </Option>
+  <Option xsi:type="OptionTypeString">
+    <Name>LocalHost</Name>
+    <Description>Defines the local host</Description>
+    <DefaultValue>127.0.0.1</DefaultValue>
+  </Option>
+  <Option xsi:type="OptionTypeInt">
+    <Name>LocalPort</Name>
+    <Description>Defines the local port</Description>
+    <DefaultValue>4444</DefaultValue>
+  </Option>
+  <Consumes NoNotify="true">
+    <Name>SessionDir</Name>
+    <Description>The final session directory. Can be used by other modules to store data.</Description>
+  </Consumes>
+</PenmuxModule>

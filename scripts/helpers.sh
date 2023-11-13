@@ -118,13 +118,3 @@ get_tmux_option() {
 	}
 	echo $default_value
 }
-
-#
-# Expanding tmux format in normal path
-# As example: expand %Y-%m-%d to current date
-expand_tmux_format_path() {
-  local pane_id="$1"
-	local tmux_format_path="${2}"
-	local full_path=$(tmux display-message -t "$pane_id" -p "${tmux_format_path}")
-  echo "$full_path" | sed "s,\$HOME,$HOME,g; s,\$HOSTNAME,$(hostname),g; s,\~,$HOME,g"
-}
