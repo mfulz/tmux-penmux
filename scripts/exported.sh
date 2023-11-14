@@ -165,7 +165,7 @@ penmux_module_expand_options_string() {
   done <<< "$replacements"
   # quickfix for no session dir
   # TODO: Valid handling
-  input="${input/\/\//\/}"
+  # input="${input/\/\//\/}"
 
   echo "$input"
 }
