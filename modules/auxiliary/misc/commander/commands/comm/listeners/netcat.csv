@@ -1,0 +1,5 @@
+name,description,command,path,restart
+tcpDefaultHostRestart,Default netcat listener using configured LocalHost (automatic restart),nc -nlv ###LocalHost### ###LocalPort###,.,true
+tcpDefaultRestart,Default netcat listener for all interfaces (automatic restart),nc -nlvp ###LocalPort###,.,true
+tcpDefaultHost,Default netcat listener using configured LocalHost,nc -nlv ###LocalHost### ###LocalPort###,.,false
+tcpDefault,Default netcat listener for all interfaces,nc -nlvp ###LocalPort###,.,false

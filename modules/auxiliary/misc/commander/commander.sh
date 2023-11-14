@@ -73,11 +73,19 @@ _list_cmd() {
       csv_path="$(penmux_module_expand_options_string "$_MODULE_PATH" "${csv_entry["path"]}" "$pane_id")"
       csv_path="$(penmux_expand_tmux_format_path "$pane_id" "$csv_path")"
 
+      if [[ "$csv_path" != /* ]]; then
+        csv_path="$(tmux display-message -t "$pane_id" -p '#{pane_current_path}')/${csv_path}"
+      fi
+
       if [[ ! -d "$csv_path" ]]; then
         mkdir -p "$csv_path" || return
       fi
 
-      tmux set-option -p @penmux-commander-hidden-cmd "$csv_command"
+      if [[ "${csv_entry["restart"]}" == "true" ]]; then
+        tmux set-option -p @penmux-commander-hidden-cmd "while true; do reset; $csv_command; done"
+      else
+        tmux set-option -p @penmux-commander-hidden-cmd "$csv_command"
+      fi
       return
     fi
   done <<< "$csv_arrays" 
@@ -100,7 +108,7 @@ _info_cmd() {
       csv_command="$(penmux_module_expand_options_string "$_MODULE_PATH" "${csv_entry["command"]}" "$pane_id")"
       csv_command="$(penmux_expand_tmux_format_path "$pane_id" "$csv_command")"
 
-      printf "Description: %s\n\nCommand: %s\n" "${csv_entry["description"]}" "$csv_command"
+      printf "Description: %s\nRestart on exit: %s\n\nCommand: %s\n" "${csv_entry["description"]}" "${csv_entry["restart"]}" "$csv_command"
       return
     fi
   done <<< "$csv_arrays"

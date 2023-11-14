@@ -9,6 +9,11 @@
     <Description>Path that contains CSV files that holds the command definitions</Description>
     <DefaultValue>$HOME/.tmux/plugins/tmux-penmux/modules/auxiliary/misc/commander/commands</DefaultValue>
   </Option>
+  <Option xsi:type="OptionTypeBool" Private="true" Exported="true">
+    <Name>NoConfirm</Name>
+    <Description>Start the command after selection. When enabled you can't edit the command before running</Description>
+    <DefaultValue>false</DefaultValue>
+  </Option>
   <Option xsi:type="OptionTypeString">
     <Name>RemoteHost</Name>
     <Description>Defines the remote host(s)</Description>

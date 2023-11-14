@@ -1,5 +1,5 @@
-name,description,command,path
-tcpAllDefault,Default nmap tcp scan including standard scripts for all ports,nmap -sC -sV -p- -oN ###SessionDir###nmap/###RemoteHost###-tcpAllDefault ###RemoteHost###,###SessionDir###nmap
-tcpDefault,Default nmap tcp scan including standard scripts for default ports,nmap -sC -sV -oN ###SessionDir###nmap/###RemoteHost###-tcpDefault ###RemoteHost###,###SessionDir###nmap
-udpAllDefault,Default nmap udp scan including standard scripts for all ports,nmap -sU -sV -p- -oN ###SessionDir###nmap/###RemoteHost###-udpAllDefault ###RemoteHost###,###SessionDir###nmap
-udpDefault,Default nmap udp scan including standard scripts for default ports,nmap -sU -sV -oN ###SessionDir###nmap/###RemoteHost###-udpAllDefault ###RemoteHost###,###SessionDir###nmap
+name,description,command,path,restart
+tcpAllDefault,Default nmap tcp scan including standard scripts for all ports,nmap -sC -sV -p- -oN ###SessionDir###nmap/###RemoteHost###-tcpAllDefault ###RemoteHost###,###SessionDir###nmap,false
+tcpDefault,Default nmap tcp scan including standard scripts for default ports,nmap -sC -sV -oN ###SessionDir###nmap/###RemoteHost###-tcpDefault ###RemoteHost###,###SessionDir###nmap,false
+udpAllDefault,Default nmap udp scan including standard scripts for all ports,nmap -sU -sV -p- -oN ###SessionDir###nmap/###RemoteHost###-udpAllDefault ###RemoteHost###,###SessionDir###nmap,false
+udpDefault,Default nmap udp scan including standard scripts for default ports,nmap -sU -sV -oN ###SessionDir###nmap/###RemoteHost###-udpAllDefault ###RemoteHost###,###SessionDir###nmap,false

@@ -19,6 +19,7 @@ _unload() {
 
 _run() {
   local pane_id="$1"
+  local no_confirm="$(penmux_module_get_option "$_MODULE_PATH" "NoConfirm" "$pane_id")"
   local csv
   local cmd
 
@@ -26,7 +27,12 @@ _run() {
   [[ -z "$csv" ]] && return
 
   cmd="$("$CURRENT_DIR/commander.sh" -a select_cmd -c "$_PENMUX_SCRIPTS" -m "$_MODULE_PATH" -p "$pane_id" -f "$csv")"
-  tmux send-keys "$cmd"
+
+  if [[ "$no_confirm" == "true" ]]; then
+    tmux send-keys "$cmd" Enter
+  else
+    tmux send-keys "$cmd"
+  fi
 }
 
 _cmd() {
