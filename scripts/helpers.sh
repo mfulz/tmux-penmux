@@ -68,9 +68,9 @@ get_tmux_option_window() {
 }
 
 get_tmux_option_pane() {
-	local option=$1
-	local default_value=$2
-	local pane_id=$3
+	local option="$1"
+	local default_value="$2"
+	local pane_id="$3"
 	local option_value
 
   if [ -z "$pane_id" ]; then

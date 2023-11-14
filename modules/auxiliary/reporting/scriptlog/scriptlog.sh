@@ -65,7 +65,7 @@ _revert() {
     _unset_stored_pane_title "$pane_id"
   }
   # tmux set-hook -t "$pane_id" -up pane-title-changed
-  tmux respawn-pane -k -t "$pane_id" "$SHELL"
+  tmux respawn-pane -k -t "$pane_id" "$SHELL -c ' cd . && $SHELL'"
 }
 
 # start logging
@@ -74,6 +74,8 @@ _start() {
   local log_file="$(_get_act_log_file "$pane_id")"
   local new_file="$(_get_log_file "$pane_id")"
   local logdir
+
+  echo "$pane_id a: $log_file n: $new_file" >> /tmp/fuckoff
 
   if [[ "$log_file" != "$new_file" ]]; then
     logdir="$(_get_log_dir "$pane_id")"
@@ -89,7 +91,7 @@ _start() {
     _set_logging_variable "$pane_id"
 
     # tmux set-hook -t "$pane_id" -p pane-title-changed "run-shell '\"$CURRENT_DIR/scriptlog.sh\" -a title -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\" -p \"$pane_id\"'"
-    tmux respawn-pane -k -t "$pane_id" "script -q -T \"${new_file}.time\" \"$new_file\""
+    tmux respawn-pane -k -t "$pane_id" "$SHELL -c ' cd . && script -q -T \"${new_file}.time\" \"$new_file\"'"
   fi
 }
 
@@ -100,6 +102,8 @@ _restart() {
   local new_file="$(_get_log_file "$pane_id")"
 
   # _is_logging "$pane_id" || exit 0
+
+  echo "$pane_id a: $log_file n: $new_file" >> /tmp/fuckoff
 
   if [[ "$log_file" != "$new_file" ]]; then
     _revert "$pane_id"
@@ -167,7 +171,7 @@ main() {
   # if supported_tmux_version_ok; then
   case "${action}" in
     "start")
-      err="$(_start "$pane_id" 2>&1 1>/dev/null)" || {
+      err="$(_start "$pane_id")" || {
         tmux display-message -d 5000 "Error: '$err'"
         exit 0
       }

@@ -41,6 +41,7 @@ penmux_module_get_option() {
   local option_default
   local tmux_option_name
 
+
   # xmlstarlet val sel -t -c "/PenmuxModule/Option[Name=\"$option_name\"]" "${module_path}" >/dev/null || { echo ""; return 1; }
   option_name_xml="$(xmlstarlet sel -t -v "/PenmuxModule/Option[Name=\"$option_name\"]/Name/text()" "$module_path")"
   if [[ -n "$option_name_xml" ]]; then
@@ -68,17 +69,17 @@ penmux_module_set_option() {
   local value="${3}"
   local pane_id="${4}"
   local module_name
-  local option_private
+  local opt_private="$(_module_get_option_private "$module_path" "$option_name")"
+  local opt_exported="$(_module_get_option_exported "$module_path" "$option_name")"
   local option_default
   local tmux_option_name
   local option_type
 
   # xmlstarlet val sel -t -c "/PenmuxModule/Option[Name=\"$option_name\"]" "${module_path}" >/dev/null || { echo ""; return 1; }
 
-  option_private="$(xmlstarlet sel -t -v "boolean(/PenmuxModule/Option[Name=\"$option_name\"]/@Private)" "$module_path")"
   module_name="$(xmlstarlet sel -t -v "/PenmuxModule/Name" "$module_path")"
 
-  if [ "$option_private" == "true" ]; then
+  if [[ "$opt_private" == "true" ]]; then
     tmux_option_name="@penmux-$module_name-$option_name"
   else
     tmux_option_name="@penmux-$option_name"
@@ -119,6 +120,7 @@ penmux_module_set_option() {
     esac
   fi
 
+  [[ "$opt_private" == "true" && "$opt_exported" == "false" ]] && return
   _module_notify_options "$tmux_option_name" "$pane_id" "$value"
 }
 
@@ -160,10 +162,18 @@ penmux_module_expand_options_string() {
   while IFS= read -r r; do
     local v="$(penmux_module_get_option "$module_path" "$r" "$pane_id")"
     input="${input/"###${r}###"/$v}"
-    input="${input/\/\//\/}"
   done <<< "$replacements"
+  # quickfix for no session dir
+  # TODO: Valid handling
+  input="${input/\/\//\/}"
 
   echo "$input"
+}
+
+penmux_module_is_loaded() {
+  local module="$1"
+
+  _module_get_loaded "$module"
 }
 
 # generel helper functions

@@ -71,8 +71,13 @@ _load() {
   local pane_id="$1"
   local session_file="$2"
   local session_dir_act="$(penmux_module_get_option "$_MODULE_PATH" "SessionDir" "$pane_id")"
-  local auto_load="$(penmux_module_get_option "$_MODULE_PATH" "AutoLoad")"
+  local auto_load="$(penmux_module_get_option "$_MODULE_PATH" "AutoLoad" "$pane_id")"
   local session_opts
+  local loaded="$(penmux_module_is_loaded "auxilliary/misc/session.xml")"
+
+  [[ -z "$loaded" ]] && exit 0
+
+  # tmux display-message -d 10000 "$auto_load"
 
   [[ "$auto_load" != "true" && -n "$session_file" ]] && exit 0
 
@@ -106,7 +111,11 @@ _load() {
 
   tmux set-option -t "$pane_id" -p remain-on-exit on
   tmux send-keys -t "$pane_id" " exit" Enter
-  tmux respawn-pane -k -t "$pane_id" -c "${session_opts["@penmux-SessionDir"]}" "$SHELL"
+  tmux respawn-pane -k -t "$pane_id" -c "${session_opts["@penmux-SessionDir"]}" "$SHELL -c ' cd . && $SHELL'"
+  # tmux respawn-pane -k -t "$pane_id" -c "${session_opts["@penmux-SessionDir"]}" "$SHELL"
+  # dirty hack (dunno what's wrong here)
+  # TODO:Fix
+  # tmux send-keys " cd . && reset" Enter
   tmux set-option -t "$pane_id" -p -u remain-on-exit
 
   penmux_module_notify_consumers "$_MODULE_PATH" "SessionName" "$pane_id"

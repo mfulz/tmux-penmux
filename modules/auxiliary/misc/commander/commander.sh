@@ -14,7 +14,7 @@ _list_csv() {
 
   [[ -z "$label" ]] && label="Select commander definition file"
 
-  tmux set-option -p @penmux-commander-hidden-csv "$(find "$command_search_path" -type f -iname "*\.csv" -printf '%P\n' | fzf --border-label="$label" --border="sharp" --cycle --preview="$CURRENT_DIR/commander.sh -a info_csv -c "$_PENMUX_SCRIPTS" -m "$_MODULE_PATH" -p "$pane_id" -f {}")"
+  tmux set-option -p @penmux-commander-hidden-csv "$(find "$command_search_path" -type f -iname "*\.csv" -printf '%P\n' | fzf --preview-window="top,60%" --border-label="$label" --border="sharp" --cycle --preview="$CURRENT_DIR/commander.sh -a info_csv -c "$_PENMUX_SCRIPTS" -m "$_MODULE_PATH" -p "$pane_id" -f {}")"
 }
 
 _info_csv() {
@@ -57,7 +57,7 @@ _list_cmd() {
 
   [[ -z "$label" ]] && label="Select command"
 
-  cmd="$(echo "$csv_names" | fzf --border-label="$label" --border="sharp" --cycle --preview="$CURRENT_DIR/commander.sh -a info_cmd -c "$_PENMUX_SCRIPTS" -m "$_MODULE_PATH" -p "$pane_id" -f "$csv_file" -s {}")"
+  cmd="$(echo "$csv_names" | fzf --preview-window="top,60%" --border-label="$label" --border="sharp" --cycle --preview="$CURRENT_DIR/commander.sh -a info_cmd -c "$_PENMUX_SCRIPTS" -m "$_MODULE_PATH" -p "$pane_id" -f "$csv_file" -s {}")"
 
   [[ -z "$cmd" ]] && return
 

@@ -20,6 +20,11 @@
     <DefaultValue>80</DefaultValue>
   </Option>
   <Option xsi:type="OptionTypeString">
+    <Name>RemoteProto</Name>
+    <Description>Defines the default remote protocol</Description>
+    <DefaultValue>http</DefaultValue>
+  </Option>
+  <Option xsi:type="OptionTypeString">
     <Name>LocalHost</Name>
     <Description>Defines the local host</Description>
     <DefaultValue>127.0.0.1</DefaultValue>

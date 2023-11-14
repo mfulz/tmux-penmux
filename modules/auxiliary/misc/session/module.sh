@@ -58,7 +58,10 @@ _cmd() {
       tmux set-option -p -t "$pane_id" "$key" "${session_opts[${key}]}"
     done
 
-    tmux respawn-pane -k -t "$pane_id" -c "$session_dir" "$SHELL"
+    tmux respawn-pane -k -t "$pane_id" -c "$session_dir" "$SHELL -c ' cd . && $SHELL'"
+    # dirty hack (dunno what's wrong here)
+    # TODO:Fix
+    # tmux send-keys " cd . && reset" Enter
 
     penmux_module_notify_consumers "$_MODULE_PATH" "SessionName" "$pane_id"
     penmux_module_notify_consumers "$_MODULE_PATH" "SessionDir" "$pane_id"

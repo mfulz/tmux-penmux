@@ -10,7 +10,7 @@ _list_modules() {
 
   [[ -z "$label" ]] && label="Select module to load"
 
-  tmux set-option -p @penmux-hidden-module "$(find "$_PENMUX_MODULE_DIR" -type f -iname "*\.xml" -printf '%P\n' | fzf --border-label="$label" --border="sharp" --cycle --preview="$CURRENT_DIR/_modules.sh -a info -m {}")"
+  tmux set-option -p @penmux-hidden-module "$(find "$_PENMUX_MODULE_DIR" -type f -iname "*\.xml" -printf '%P\n' | fzf --preview-window="top,60%" --border-label="$label" --border="sharp" --cycle --preview="$CURRENT_DIR/_modules.sh -a info -m {}")"
 }
 
 _list_loaded_modules() {
@@ -19,7 +19,7 @@ _list_loaded_modules() {
   
   [[ -z "$label" ]] && label="Select module to unload"
 
-  tmux set-option -p @penmux-hidden-module "$(echo -n "$loaded_modules" | fzf --border-label="$label" --border="sharp" --cycle --preview="$CURRENT_DIR/_modules.sh -a info -m {}")"
+  tmux set-option -p @penmux-hidden-module "$(echo -n "$loaded_modules" | fzf --preview-window="top,60%" --border-label="$label" --border="sharp" --cycle --preview="$CURRENT_DIR/_modules.sh -a info -m {}")"
 }
 
 _list_runnable_modules() {
@@ -42,7 +42,7 @@ _list_runnable_modules() {
     fi
   done <<< "$loaded_modules"
 
-  tmux set-option -p @penmux-hidden-module "$(echo -n "$runnable_modules" | fzf --border-label="$label" --border="sharp" --cycle --preview="$CURRENT_DIR/_modules.sh -a info -m {}")"
+  tmux set-option -p @penmux-hidden-module "$(echo -n "$runnable_modules" | fzf --preview-window="top,60%" --border-label="$label" --border="sharp" --cycle --preview="$CURRENT_DIR/_modules.sh -a info -m {}")"
 }
 
 _get_info() {
@@ -73,7 +73,7 @@ _list_module_options() {
 
   [[ -z "$label" ]] && label="Select option to change for module '$module_name'"
 
-  tmux set-option -p @penmux-hidden-option "$(echo -n "$module_opts" | fzf --border-label="$label" --border="sharp" --cycle --preview="$CURRENT_DIR/_modules.sh -a opt_info -m "$module_file" -o {}")"
+  tmux set-option -p @penmux-hidden-option "$(echo -n "$module_opts" | fzf --preview-window="top,60%" --border-label="$label" --border="sharp" --cycle --preview="$CURRENT_DIR/_modules.sh -a opt_info -m "$module_file" -o {}")"
 }
 
 _get_opt_info() {

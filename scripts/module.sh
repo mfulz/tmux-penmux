@@ -59,6 +59,13 @@ _module_get_option_private() {
   xmlstarlet sel -t -v "boolean(/PenmuxModule/Option[Name=\"$option_name\"]/@Private)" "$module_path"
 }
 
+_module_get_option_exported() {
+  local module_path="$1"
+  local option_name="$2"
+
+  xmlstarlet sel -t -v "boolean(/PenmuxModule/Option[Name=\"$option_name\"]/@Exported)" "$module_path"
+}
+
 _module_get_option_provided() {
   local module_path="$1"
   local option_name="$2"
@@ -121,18 +128,10 @@ _module_is_loaded() {
 
   while IFS= read -r m; do
     if [[ "$module" == "$m" ]]; then
-      return 0
+      echo "yes"
+      return
     fi
   done <<< "$loaded_modules"
-
-  return 1
-}
-
-_module_get_option_exported() {
-  local module_path="$1"
-  local option_name="$2"
-
-  xmlstarlet sel -t -v "boolean(/PenmuxModule/Option[Name=\"$option_name\"]/@Exported)" "$module_path"
 }
 
 _module_notify_options() {
@@ -144,7 +143,7 @@ _module_notify_options() {
 
   while IFS= read -r m; do
     act_module_path="$(_module_convert_relative_path "$m")"
-    opts_notify="$(xmlstarlet sel -t -v "boolean(/PenmuxModule/OptionsNotify)" "$act_module_path")"
+    opts_notify="$(xmlstarlet sel -t -v "boolean(/PenmuxModule/NotifyOptions)" "$act_module_path")"
     if [[ "$opts_notify" == "true" ]]; then
       handle_script="$_PENMUX_MODULE_DIR/$(_module_get_handlescript "$act_module_path")"
 
