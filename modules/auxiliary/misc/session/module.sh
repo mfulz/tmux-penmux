@@ -74,6 +74,8 @@ _optionsnotify() {
   local pane_id="$1"
   local opt="$2"
   local val="$3"
+  local session="$(tmux display-message -p "#{session_id}")"
+  local panes="$(tmux list-panes -s -t "$session" -F "#D")"
   local session_name="$(penmux_module_get_option "$_MODULE_PATH" "SessionName" "$pane_id")"
   local session_dir="$(penmux_module_get_option "$_MODULE_PATH" "SessionDir" "$pane_id")"
   local session_file="$(realpath $session_dir/.pmses)"
@@ -83,9 +85,21 @@ _optionsnotify() {
   [[ "$opt" == "@penmux-SessionName" ]] && return
   [[ "$opt" == "@penmux-SessionDir" ]] && return
 
-  [[ "$auto_save" == "true" ]] || exit 0
-
   if [ -n "$session_name" ] && [ -n "$session_dir" ]; then
+    while IFS= read -r p; do
+      local pane_session_name="$(penmux_module_get_option "$_MODULE_PATH" "SessionName" "$p")"
+      local pane_session_dir="$(penmux_module_get_option "$_MODULE_PATH" "SessionDir" "$p")"
+
+      if [[ "$session_name" == "$pane_session_name" ]] && [[ "$session_dir" == "$pane_session_dir" ]]; then
+        if [ -z "$val" ]; then
+          tmux set-option -t "$p" -u -p "$opt"
+        else
+          tmux set-option -t "$p" -p "$opt" "$val"
+        fi
+      fi
+    done <<< "$panes"
+
+    [[ "$auto_save" == "true" ]] || exit 0
     declare -A session_opts="($(_session_file_to_array "$session_file"))"
 
     if [ -z "$val" ]; then
