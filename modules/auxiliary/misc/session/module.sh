@@ -74,6 +74,7 @@ _optionsnotify() {
   local pane_id="$1"
   local opt="$2"
   local val="$3"
+  local volatile="$4"
   local session="$(tmux display-message -p "#{session_id}")"
   local panes="$(tmux list-panes -s -t "$session" -F "#D")"
   local session_name="$(penmux_module_get_option "$_MODULE_PATH" "SessionName" "$pane_id")"
@@ -100,6 +101,7 @@ _optionsnotify() {
     done <<< "$panes"
 
     [[ "$auto_save" == "true" ]] || exit 0
+    [[ "$volatile" == "true" ]] && exit 0
     declare -A session_opts="($(_session_file_to_array "$session_file"))"
 
     if [ -z "$val" ]; then
@@ -118,9 +120,10 @@ main() {
   local calling_pane_id
   local provider_name
   local provider_value
+  local opt_volatile
 
 	local OPTIND o
-	while getopts "a:vc:m:o:p:k:i:" o; do
+	while getopts "a:vc:m:o:p:k:i:s:" o; do
 		case "${o}" in
 		a)
 			action="${OPTARG}"
@@ -148,6 +151,9 @@ main() {
 			;;
 		i)
       provider_value="${OPTARG}"
+			;;
+		s)
+      opt_volatile="${OPTARG}"
 			;;
     *)
       # do not change !!! 
@@ -193,7 +199,7 @@ case "${action}" in
     # Will be called as default command for
     # new panes
     # If not needed just exit 0
-    _optionsnotify "$pane_id" "$provider_name" "$provider_value"
+    _optionsnotify "$pane_id" "$provider_name" "$provider_value" "$opt_volatile"
     exit 0
     ;;
   "consumes")

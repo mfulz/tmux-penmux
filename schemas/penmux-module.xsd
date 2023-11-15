@@ -18,6 +18,9 @@
     <xs:attribute name="Provided"
     type="xs:boolean"
     use="optional" />
+    <xs:attribute name="Volatile"
+    type="xs:boolean"
+    use="optional" />
   </xs:complexType>
   <xs:complexType name="OptionTypeString">
     <xs:complexContent>
@@ -37,6 +40,9 @@
         type="xs:boolean"
         use="optional" />
         <xs:attribute name="Provided"
+        type="xs:boolean"
+        use="optional" />
+        <xs:attribute name="Volatile"
         type="xs:boolean"
         use="optional" />
       </xs:restriction>
@@ -62,6 +68,9 @@
         <xs:attribute name="Provided"
         type="xs:boolean"
         use="optional" />
+        <xs:attribute name="Volatile"
+        type="xs:boolean"
+        use="optional" />
       </xs:restriction>
     </xs:complexContent>
   </xs:complexType>
@@ -83,6 +92,9 @@
         type="xs:boolean"
         use="optional" />
         <xs:attribute name="Provided"
+        type="xs:boolean"
+        use="optional" />
+        <xs:attribute name="Volatile"
         type="xs:boolean"
         use="optional" />
       </xs:restriction>

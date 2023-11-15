@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PenmuxModule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../schemas/penmux-module.xsd">
+  <Name>HttpExchange</Name>
+  <Description>HTTP server module that enables easy file downloading to targets</Description>
+  <HasRun>true</HasRun>
+  <HandleScript>auxiliary/comm/httpexchange/module.sh</HandleScript>
+  <Option xsi:type="OptionTypeString" Private="true" Exported="true">
+    <Name>CommandSearchPath</Name>
+    <Description>Path that contains CSV files that holds the download command definitions</Description>
+    <DefaultValue>$HOME/.tmux/plugins/tmux-penmux/modules/auxiliary/comm/httpexchange/commands</DefaultValue>
+  </Option>
+  <Option xsi:type="OptionTypeBool" Private="true" Exported="true">
+    <Name>NoConfirm</Name>
+    <Description>Start the download command after selection. When enabled you can't edit the command before running</Description>
+    <DefaultValue>false</DefaultValue>
+  </Option>
+  <Option xsi:type="OptionTypeString" Private="true" Exported="true">
+    <Name>HttpHost</Name>
+    <Description>Defines the local host</Description>
+    <DefaultValue>127.0.0.1</DefaultValue>
+  </Option>
+  <Option xsi:type="OptionTypeInt" Private="true" Exported="true">
+    <Name>HttpPort</Name>
+    <Description>Defines the local port</Description>
+    <DefaultValue>8080</DefaultValue>
+  </Option>
+  <Option xsi:type="OptionTypeBool" Private="true" Exported="true">
+    <Name>UseSessionDir</Name>
+    <Description>Use session directory as base dir if set. If not set use HttpRootDirBaseDir</Description>
+    <DefaultValue>true</DefaultValue>
+  </Option>
+  <Option xsi:type="OptionTypeString" Private="true" Exported="true">
+    <Name>HttpRootDirBase</Name>
+    <Description>Base directory to store http. All tmux placeholders can be used (ae. #W, #S, etc.)</Description>
+    <DefaultValue>$HOME/.tmux/penmux/httpexchange/#S/</DefaultValue>
+  </Option>
+  <Option xsi:type="OptionTypeBool" Private="true" Exported="true" Volatile="true">
+    <Name>HttpRunning</Name>
+    <Description>Status to know that the server is running</Description>
+  </Option>
+  <Option xsi:type="OptionTypeString" Provided="true">
+    <Name>HttpRootDir</Name>
+    <Description>Provides the final http server root directory which holds the files. Can be used by other modules to store files</Description>
+  </Option>
+  <Consumes NoNotify="true">
+    <Name>SessionDir</Name>
+    <Description>The final session directory. Can be used by other modules to store data.</Description>
+  </Consumes>
+</PenmuxModule>

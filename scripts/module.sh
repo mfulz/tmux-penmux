@@ -66,6 +66,13 @@ _module_get_option_exported() {
   xmlstarlet sel -t -v "boolean(/PenmuxModule/Option[Name=\"$option_name\"]/@Exported)" "$module_path"
 }
 
+_module_get_option_volatile() {
+  local module_path="$1"
+  local option_name="$2"
+
+  xmlstarlet sel -t -v "boolean(/PenmuxModule/Option[Name=\"$option_name\"]/@Volatile)" "$module_path"
+}
+
 _module_get_option_provided() {
   local module_path="$1"
   local option_name="$2"
@@ -138,6 +145,7 @@ _module_notify_options() {
   local opt_name="${1}"
   local pane_id="${2}"
   local opt_value="${3}"
+  local opt_volatile="${4}"
   local loaded_modules="$(_module_get_loaded)"
   local opts_notify
 
@@ -149,9 +157,9 @@ _module_notify_options() {
 
       [ -z "$handle_script" ] && continue
       if [ -z "$opt_value" ]; then
-        "$handle_script" -c "$_CURRENT_DIR" -a optionsnotify -m "$act_module_path" -p "$pane_id" -k "$opt_name"
+        "$handle_script" -c "$_CURRENT_DIR" -a optionsnotify -m "$act_module_path" -p "$pane_id" -k "$opt_name" -s "$opt_volatile"
       else
-        "$handle_script" -c "$_CURRENT_DIR" -a optionsnotify -m "$act_module_path" -p "$pane_id" -k "$opt_name" -i "$opt_value"
+        "$handle_script" -c "$_CURRENT_DIR" -a optionsnotify -m "$act_module_path" -p "$pane_id" -k "$opt_name" -s "$opt_volatile" -i "$opt_value"
       fi
     fi
   done <<< "$loaded_modules"

@@ -71,6 +71,7 @@ penmux_module_set_option() {
   local module_name
   local opt_private="$(_module_get_option_private "$module_path" "$option_name")"
   local opt_exported="$(_module_get_option_exported "$module_path" "$option_name")"
+  local opt_volatile="$(_module_get_option_volatile "$module_path" "$option_name")"
   local option_default
   local tmux_option_name
   local option_type
@@ -121,7 +122,7 @@ penmux_module_set_option() {
   fi
 
   [[ "$opt_private" == "true" && "$opt_exported" == "false" ]] && return
-  _module_notify_options "$tmux_option_name" "$pane_id" "$value"
+  _module_notify_options "$tmux_option_name" "$pane_id" "$value" "$opt_volatile"
 }
 
 penmux_module_notify_consumers() {
@@ -249,5 +250,11 @@ penmux_expand_tmux_format_path() {
   local pane_id="$1"
 	local tmux_format_path="${2}"
 	local full_path=$(tmux display-message -t "$pane_id" -p "${tmux_format_path}")
-  echo "$full_path" | sed "s,\$HOME,$HOME,g; s,\$HOSTNAME,$(hostname),g; s,\~,$HOME,g"
+  full_path="$(echo "$full_path" | sed "s,\$HOME,$HOME,g; s,\$HOSTNAME,$(hostname),g; s,\~,$HOME,g")"
+
+  if [[ "$full_path" != /* ]]; then
+    full_path="$(tmux display-message -t "$pane_id" -p '#{pane_current_path}')/${full_path}"
+  fi
+
+  echo "$full_path"
 }
