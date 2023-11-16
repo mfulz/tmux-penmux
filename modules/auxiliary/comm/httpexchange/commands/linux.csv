@@ -1,2 +1,7 @@
 name,description,command
-wgetHome,Download file using wget into home dir,wget -O $HOME/##fileName## http://###HttpHost###:###HttpPort###/##file##
+wgetHome,Download file using wget into home dir,wget -O $HOME/$$fileName$$ http://###HttpHost###:###HttpPort###/$$file$$
+wgetTemp,Download file using wget into temp dir,wget -O $TEMP/$$fileName$$ http://###HttpHost###:###HttpPort###/$$file$$
+wget,Download file using wget into act dir,wget -O $$fileName$$ http://###HttpHost###:###HttpPort###/$$file$$
+curlHome,Download file using curl into home dir,curl -o $HOME/$$fileName## http://###HttpHost###:###HttpPort###/$$file$$
+curlTemp,Download file using curl into temp dir,curl -o $TEMP/$$fileName## http://###HttpHost###:###HttpPort###/$$file$$
+curl,Download file using curl into act dir,curl -o $$fileName$$ http://###HttpHost###:###HttpPort###/$$file$$

@@ -12,7 +12,7 @@ _list_file() {
   local file_search_path="$(penmux_module_get_option "$_MODULE_PATH" "HttpRootDir" "$pane_id")"
   file_search_path="$(penmux_expand_tmux_format_path "$pane_id" "$file_search_path")"
 
-  [[ -z "$label" ]] && label="Select file from http server"
+  [[ -z "$label" ]] && label="Select file from http server ($file_search_path)"
 
   tmux set-option -p @penmux-httpexchange-hidden-file "$(find "$file_search_path" -type f  -printf '%P\n' | fzf --border-label="$label" --border="sharp" --cycle)"
 }
@@ -23,7 +23,7 @@ _list_csv() {
   local command_search_path="$(penmux_module_get_option "$_MODULE_PATH" "CommandSearchPath" "$pane_id")"
   command_search_path="$(penmux_expand_tmux_format_path "$pane_id" "$command_search_path")"
 
-  [[ -z "$label" ]] && label="Select commander definition file"
+  [[ -z "$label" ]] && label="Select httpexchange definition file"
 
   tmux set-option -p @penmux-httpexchange-hidden-csv "$(find "$command_search_path" -type f -iname "*\.csv" -printf '%P\n' | fzf --preview-window="top,60%" --border-label="$label" --border="sharp" --cycle --preview="$CURRENT_DIR/httpexchange.sh -a info_csv -c "$_PENMUX_SCRIPTS" -m "$_MODULE_PATH" -p "$pane_id" -f {}")"
 }

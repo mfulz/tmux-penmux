@@ -22,8 +22,8 @@ _expand_cmd_string() {
   local file="${3}"
   local filename="$(basename "$file")"
 
-  input="${input/"##fileName##"/${filename}}"
-  input="${input/"##file##"/${file}}"
+  input="${input/"\$\$fileName\$\$"/${filename}}"
+  input="${input/"\$\$file\$\$"/${file}}"
 
   echo "$input"
 }
