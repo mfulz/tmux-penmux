@@ -14,7 +14,7 @@ _list_csv() {
 
   [[ -z "$label" ]] && label="Select commander definition file"
 
-  tmux set-option -p @penmux-commander-hidden-csv "$(find "$command_search_path" -type f -iname "*\.csv" -printf '%P\n' | fzf --preview-window="top,60%" --border-label="$label" --border="sharp" --cycle --preview="$CURRENT_DIR/commander.sh -a info_csv -c "$_PENMUX_SCRIPTS" -m "$_MODULE_PATH" -p "$pane_id" -f {}")"
+  tmux set-option -p @penmux-commander-hidden-csv "$(find "$command_search_path" -type f '(' -iname '*.csv' -o -iname '*.sh' ')' -printf '%P\n' | fzf --preview-window="top,60%" --border-label="$label" --border="sharp" --cycle --preview="$CURRENT_DIR/commander.sh -a info_csv -c "$_PENMUX_SCRIPTS" -m "$_MODULE_PATH" -p "$pane_id" -f {}")"
 }
 
 _info_csv() {

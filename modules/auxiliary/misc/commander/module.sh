@@ -26,6 +26,16 @@ _run() {
   csv="$("$CURRENT_DIR/commander.sh" -a select_csv -c "$_PENMUX_SCRIPTS" -m "$_MODULE_PATH" -p "$pane_id")"
   [[ -z "$csv" ]] && return
 
+  if [[ "$csv" == *.sh ]]; then
+    local command_search_path="$(penmux_module_get_option "$_MODULE_PATH" "CommandSearchPath" "$pane_id")"
+    local cmd_file="$(penmux_expand_tmux_format_path "$pane_id" "$command_search_path/$csv")"
+
+    source "$cmd_file"
+    commander_run "$pane_id"
+
+    return
+  fi
+
   cmd="$("$CURRENT_DIR/commander.sh" -a select_cmd -c "$_PENMUX_SCRIPTS" -m "$_MODULE_PATH" -p "$pane_id" -f "$csv")"
 
   if [[ "$no_confirm" == "true" ]]; then

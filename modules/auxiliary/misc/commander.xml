@@ -39,7 +39,12 @@
     <Description>Defines the local port</Description>
     <DefaultValue>4444</DefaultValue>
   </Option>
-  <Consumes NoNotify="true">
+  <Option xsi:type="OptionTypeInt" Private="true" Exported="true">
+    <Name>LocalTempPort</Name>
+    <Description>Defines a local port to be used for temporary internal tasks</Description>
+    <DefaultValue>8800</DefaultValue>
+  </Option>
+   <Consumes NoNotify="true">
     <Name>SessionDir</Name>
     <Description>The final session directory. Can be used by other modules to store data.</Description>
   </Consumes>
