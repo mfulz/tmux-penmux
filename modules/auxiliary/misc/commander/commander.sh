@@ -69,7 +69,7 @@ _list_cmd() {
 
     if [[ "${csv_entry["name"]}" == "$cmd" ]]; then
       csv_command="$(penmux_module_expand_options_string "$_MODULE_PATH" "${csv_entry["command"]}" "$pane_id")"
-      csv_command="$(penmux_expand_tmux_format_path "$pane_id" "$csv_command")"
+      csv_command="$(penmux_expand_tmux_format_path "$pane_id" "$csv_command" "1")"
       csv_path="$(penmux_module_expand_options_string "$_MODULE_PATH" "${csv_entry["path"]}" "$pane_id")"
       csv_path="$(penmux_expand_tmux_format_path "$pane_id" "$csv_path")"
 
@@ -102,7 +102,7 @@ _info_cmd() {
 
     if [[ "${csv_entry["name"]}" == "$cmd" ]]; then
       csv_command="$(penmux_module_expand_options_string "$_MODULE_PATH" "${csv_entry["command"]}" "$pane_id")"
-      csv_command="$(penmux_expand_tmux_format_path "$pane_id" "$csv_command")"
+      csv_command="$(penmux_expand_tmux_format_path "$pane_id" "$csv_command" "1")"
 
       printf "Description: %s\nRestart on exit: %s\n\nCommand: %s\n" "${csv_entry["description"]}" "${csv_entry["restart"]}" "$csv_command"
       return

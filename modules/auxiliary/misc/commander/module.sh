@@ -37,6 +37,7 @@ _run() {
   fi
 
   cmd="$("$CURRENT_DIR/commander.sh" -a select_cmd -c "$_PENMUX_SCRIPTS" -m "$_MODULE_PATH" -p "$pane_id" -f "$csv")"
+  tmux display-message -d 10000 "${cmd}"
 
   if [[ "$no_confirm" == "true" ]]; then
     tmux send-keys "$cmd" Enter
