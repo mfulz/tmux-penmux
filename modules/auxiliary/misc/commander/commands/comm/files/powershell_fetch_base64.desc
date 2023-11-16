@@ -1,1 +1,5 @@
 Fetch file from target via powershell webrequest encoded as base64.
+This is not stable and you have to enter on the nc listener after the file is
+transfered
+
+!!!! USE WITH CARE !!!!
