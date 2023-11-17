@@ -48,4 +48,8 @@
     <Name>SessionDir</Name>
     <Description>The final session directory. Can be used by other modules to store data.</Description>
   </Consumes>
+  <Consumes NoNotify="true">
+    <Name>HttpRootDir</Name>
+    <Description>Provides the final http server root directory which holds the files. Can be used by other modules to store files</Description>
+  </Consumes>
 </PenmuxModule>

