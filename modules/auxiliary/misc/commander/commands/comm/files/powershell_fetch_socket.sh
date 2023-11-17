@@ -38,7 +38,12 @@ _fetch_file() {
 
   while true; do
     tmux has-session -t "$nc_window" >/dev/null 2>&1 || break
-    sleep 1
+    sleep 10
+
+    local user_select="$(tmux command-prompt -p "If you got an error in PS perhaps you need to close the listener. Kill Listener? (y/n)" -1 "display-message -p '%%'")"
+    if [[ "$user_select" == "y" ]]; then
+      tmux kill-window -t "$nc_window"
+    fi
   done
 }
 
