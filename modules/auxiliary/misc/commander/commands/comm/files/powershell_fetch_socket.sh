@@ -15,7 +15,8 @@ _fetch_file() {
   local pane_id="$1"
   local src="$2"
   local dst="$3"
-  local lport="$4"
+  local lhost="$4"
+  local lport="$5"
   local dst_dir="$(dirname "$dst")"
   local nc_window
 
@@ -43,6 +44,7 @@ _fetch_file() {
 
 _list_files() {
   local pane_id="$1"
+  local lhost="$(penmux_module_get_option "$_MODULE_PATH" "LocalHost" "$pane_id")"
   local lport="$(penmux_module_get_option "$_MODULE_PATH" "LocalTempPort" "$pane_id")"
   local files="$(mktemp)"
 
@@ -50,7 +52,7 @@ _list_files() {
   tmux send-keys -t "$pane_id" 'Get-ChildItem -File -recurse | Select Name -ExpandProperty FullName > $FileName' Enter
   tmux send-keys -t "$pane_id" 'Get-ChildItem -Hidden -File -recurse | Select Name -ExpandProperty FullName >> $FileName' Enter
 
-  _fetch_file "$pane_id" '$TEMP\fl.txt' "$files" "$lport"
+  _fetch_file "$pane_id" '$TEMP\fl.txt' "$files" "$lhost" "$lport"
 
   tmux set-option -t "$pane_id" -p "@penmux-commander-pfs-hidden-file" "$(cat "$files_list_file" | fzf --cycle --border="sharp")"
   rm "$files"
@@ -58,6 +60,8 @@ _list_files() {
 
 _run() {
   local pane_id="$1"
+  local lhost="$(penmux_module_get_option "$_MODULE_PATH" "LocalHost" "$pane_id")"
+  local lport="$(penmux_module_get_option "$_MODULE_PATH" "LocalTempPort" "$pane_id")"
   tmux display-popup -w 80% -h 80% -E "$_CMD_CURRENT_DIR/powershell_fetch_socket.sh -a list_files -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\" -p \"$pane_id\""
   local file_to_fetch="$(tmux show-options -t "$pane_id" -pqv "@penmux-commander-pfs-hidden-file")"
   tmux set-option -pu "@penmux-commander-pfs-hidden-file"
@@ -77,7 +81,7 @@ _run() {
   dst_file="$(penmux_module_expand_options_string "$_MODULE_PATH" "$dst_file" "$pane_id")"
   dst_file="$(penmux_expand_tmux_format_path "$pane_id" "$dst_file")"
 
-  _fetch_file "$pane_id" "$file_to_fetch" "$dst_file" "$lport"
+  _fetch_file "$pane_id" "$file_to_fetch" "$dst_file" "$lhost" "$lport"
 }
 
 main() {
