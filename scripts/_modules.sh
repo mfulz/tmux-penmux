@@ -7,10 +7,30 @@ source "$CURRENT_DIR/exported.sh"
 
 _list_modules() {
   local label="$1"
+  local loaded_modules="$(_module_get_loaded)"
+  local modules="$(find "$_PENMUX_MODULE_DIR" -type f -iname "*\.xml" -printf '%P\n')"
+  local unloaded_modules
+
+  while IFS= read -r m; do
+    local loaded=""
+    while IFS= read -r lm; do
+      if [[ "$m" == "$lm" ]]; then
+        loaded="yes"
+        break
+      fi
+    done <<< "$loaded_modules"
+    if [[ -z "$loaded" ]]; then
+      if [[ -z "$unloaded_modules" ]]; then
+        unloaded_modules="$m"
+      else
+        unloaded_modules=$(printf "%s\n%s" "$unloaded_modules" "$m")
+      fi
+    fi
+  done <<< "$modules"
 
   [[ -z "$label" ]] && label="Select module to load"
 
-  tmux set-option -p @penmux-hidden-module "$(find "$_PENMUX_MODULE_DIR" -type f -iname "*\.xml" -printf '%P\n' | fzf --preview-window="top,60%" --border-label="$label" --border="sharp" --cycle --preview="$CURRENT_DIR/_modules.sh -a info -m {}")"
+  tmux set-option -p @penmux-hidden-module "$(echo "$unloaded_modules" | fzf --preview-window="top,60%" --border-label="$label" --border="sharp" --cycle --preview="$CURRENT_DIR/_modules.sh -a info -m {}")"
 }
 
 _list_loaded_modules() {
