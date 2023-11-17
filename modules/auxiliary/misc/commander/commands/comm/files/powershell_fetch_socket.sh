@@ -37,8 +37,10 @@ _fetch_file() {
   tmux send-keys -t "$pane_id" '$TcpClient.Dispose()' Enter
 
   while true; do
+    tmux has-session -t "$nc_window" >/dev/null 2>&1 || break
     sleep 1
     tmux has-session -t "$nc_window" >/dev/null 2>&1 || break
+    sleep 5
     local user_select="$(tmux command-prompt -p "If you got an error in PS perhaps you need to close the listener. Kill Listener? (y/n)" -1 "display-message -p '%%'")"
     if [[ "$user_select" == "y" ]]; then
       tmux kill-window -t "$nc_window"
@@ -77,6 +79,8 @@ _run() {
   local lhost="$(penmux_module_get_option "$_MODULE_PATH" "LocalHost" "$pane_id")"
   local lport="$(penmux_module_get_option "$_MODULE_PATH" "LocalTempPort" "$pane_id")"
   local files="$(_fetch_file_list "$pane_id")"
+  [[ -e "$files" ]] || return
+
   tmux display-popup -w 80% -h 80% -E "$_CMD_CURRENT_DIR/powershell_fetch_socket.sh -a list_files -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\" -p \"$pane_id\" -f \"$files\""
   local file_to_fetch="$(tmux show-options -t "$pane_id" -pqv "@penmux-commander-pfs-hidden-file")"
   tmux set-option -pu "@penmux-commander-pfs-hidden-file"
