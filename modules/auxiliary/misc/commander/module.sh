@@ -30,9 +30,7 @@ _run() {
     local command_search_path="$(penmux_module_get_option "$_MODULE_PATH" "CommandSearchPath" "$pane_id")"
     local cmd_file="$(penmux_expand_tmux_format_path "$pane_id" "$command_search_path/$csv")"
 
-    source "$cmd_file"
-    commander_run "$pane_id"
-
+    "$cmd_file" -a run -c "$_PENMUX_SCRIPTS" -m "$_MODULE_PATH" -p "$pane_id"
     return
   fi
 
