@@ -48,7 +48,7 @@ _list_files() {
   local lport="$(penmux_module_get_option "$_MODULE_PATH" "LocalTempPort" "$pane_id")"
   local files="$(mktemp)"
 
-  tmux send-keys -t "$pane_id" '$FileName = Get-ChildItem $TEMP\fl.txt | Select Name -ExpandProperty FullName' Enter
+  tmux send-keys -t "$pane_id" '$FileName = $TEMP\fl.txt' Enter
   tmux send-keys -t "$pane_id" 'Get-ChildItem -File -recurse | Select Name -ExpandProperty FullName > $FileName' Enter
   tmux send-keys -t "$pane_id" 'Get-ChildItem -Hidden -File -recurse | Select Name -ExpandProperty FullName >> $FileName' Enter
 
