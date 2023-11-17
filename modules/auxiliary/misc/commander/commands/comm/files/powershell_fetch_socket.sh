@@ -53,6 +53,8 @@ _list_files() {
 
   _fetch_file "$pane_id" '$TEMP\fl.txt' "$files" "$lhost" "$lport"
 
+  dos2unix "$files" > /dev/null
+
   tmux set-option -t "$pane_id" -p "@penmux-commander-pfs-hidden-file" "$(cat "$files" | fzf --cycle --border="sharp")"
   rm "$files"
 }
@@ -67,10 +69,6 @@ _run() {
 
   if [[ -z "$file_to_fetch" ]]; then
     file_to_fetch="$(tmux command-prompt -p "Enter file to fetch: " "display-message -p '%%'")"
-  else
-#    file_to_fetch="$(echo "$file_to_fetch" | sed 's/\\/\\\\/g')"
-#    file_to_fetch="$(echo "$file_to_fetch" | sed 's/C:/C\:/g')"
-    file_to_fetch="${file_to_fetch:2:-1}"
   fi
 
   [[ -z "$file_to_fetch" ]] && return
