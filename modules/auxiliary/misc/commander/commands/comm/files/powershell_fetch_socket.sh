@@ -48,7 +48,7 @@ _fetch_file() {
   done
 }
 
-_list_files() {
+_fetch_file_list() {
   local pane_id="$1"
   local lhost="$(penmux_module_get_option "$_MODULE_PATH" "LocalHost" "$pane_id")"
   local lport="$(penmux_module_get_option "$_MODULE_PATH" "LocalTempPort" "$pane_id")"
@@ -61,6 +61,13 @@ _list_files() {
 
   dos2unix "$files" > /dev/null
 
+  echo "$files"
+}
+
+_list_files() {
+  local pane_id="$1"
+  local files="$2"
+
   tmux set-option -t "$pane_id" -p "@penmux-commander-pfs-hidden-file" "$(cat "$files" | fzf --cycle --border="sharp")"
   rm "$files"
 }
@@ -69,7 +76,8 @@ _run() {
   local pane_id="$1"
   local lhost="$(penmux_module_get_option "$_MODULE_PATH" "LocalHost" "$pane_id")"
   local lport="$(penmux_module_get_option "$_MODULE_PATH" "LocalTempPort" "$pane_id")"
-  tmux display-popup -w 80% -h 80% -E "$_CMD_CURRENT_DIR/powershell_fetch_socket.sh -a list_files -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\" -p \"$pane_id\""
+  local files="$(_fetch_file_list "$pane_id")"
+  tmux display-popup -w 80% -h 80% -E "$_CMD_CURRENT_DIR/powershell_fetch_socket.sh -a list_files -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\" -p \"$pane_id\" -f \"$files\""
   local file_to_fetch="$(tmux show-options -t "$pane_id" -pqv "@penmux-commander-pfs-hidden-file")"
   tmux set-option -pu "@penmux-commander-pfs-hidden-file"
 
@@ -90,11 +98,12 @@ _run() {
 main() {
   local action
   local pane_id
+  local files
 
   pane_id="$(tmux display-message -p "#D")"
 
   local OPTIND o
-  while getopts "a:c:m:p:f:l:s:" o; do
+  while getopts "a:c:m:p:f:" o; do
     case "${o}" in
       a)
         action="${OPTARG}"
@@ -107,6 +116,9 @@ main() {
         ;;
       p)
         pane_id="${OPTARG}"
+        ;;
+      f)
+        files="${OPTARG}"
         ;;
       *)
         echo >&2 "Invalid parameter"
@@ -124,7 +136,7 @@ main() {
       exit 0
       ;;
     "list_files")
-      _list_files "$pane_id"
+      _list_files "$pane_id" "$files"
       exit 0
       ;;
     *)
