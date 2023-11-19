@@ -6,6 +6,11 @@ _variables_to_arrays() {
 
   declare -A variable_array
 
+  if [[ -z "$csv_variables" ]]; then
+    echo ""
+    return
+  fi
+
   while IFS= read -r v; do
     variable_array["name"]="$(echo "$v" | awk -F'§' '{print $1}')"
     variable_array["value"]="$(echo "$v" | awk -F'§' '{print $2}')"
