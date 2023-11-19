@@ -42,6 +42,10 @@
     <Name>HttpRootDir</Name>
     <Description>Provides the final http server root directory which holds the files. Can be used by other modules to store files</Description>
   </Option>
+  <Option xsi:type="OptionTypeString" Provided="true" Volatile="true">
+    <Name>HttpUri</Name>
+    <Description>Provides the final http server base uri. Can be used by other modules to store files</Description>
+  </Option>
   <Consumes NoNotify="true">
     <Name>SessionDir</Name>
     <Description>The final session directory. Can be used by other modules to store data.</Description>

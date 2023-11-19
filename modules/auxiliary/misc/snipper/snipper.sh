@@ -148,7 +148,7 @@ _select_snippet() {
         echo ""
         return
       fi
-      snippet="${snippet/"§§§${variable["name"]}§§§"/$val}"
+      snippet="${snippet//"§§§${variable["name"]}§§§"/$val}"
     done <<< "$variables"
   fi
   echo "${snippet}"

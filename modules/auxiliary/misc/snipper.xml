@@ -14,4 +14,8 @@
     <Description>Command used for copying snippet to clipboard</Description>
     <DefaultValue>echo $$snippet$$ | xclip -i -sel c</DefaultValue>
   </Option>
+  <Consumes NoNotify="true">
+    <Name>HttpUri</Name>
+    <Description>Provides the final http server base uri. Can be used by other modules to store files</Description>
+  </Consumes>
 </PenmuxModule>

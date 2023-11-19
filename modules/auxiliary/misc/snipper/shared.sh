@@ -1,6 +1,6 @@
 _variables_to_arrays() {
   local csv_variables="$1"
-  local variables="$(echo "$csv_variables" | sed 's/§§§/###/g')"
+  local variables="${csv_variables//§§§/###}"
   variables="$(echo "$variables" | grep -E '#{3}([^###]*)#{3}' -o | sed 's/###//g')"
   local variable_array
 

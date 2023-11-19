@@ -162,7 +162,7 @@ penmux_module_expand_options_string() {
 
   while IFS= read -r r; do
     local v="$(penmux_module_get_option "$module_path" "$r" "$pane_id")"
-    input="${input/"###${r}###"/$v}"
+    input="${input//"###${r}###"/$v}"
   done <<< "$replacements"
   # quickfix for no session dir
   # TODO: Valid handling
