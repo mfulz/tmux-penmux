@@ -22,6 +22,7 @@ _run() {
   local clipboard_command="$(penmux_module_get_option "$_MODULE_PATH" "ClipboardCommand" "$pane_id")"
   local csv
   local snippet
+  local cp_win
 
   csv="$("$CURRENT_DIR/snipper.sh" -a select_csv -c "$_PENMUX_SCRIPTS" -m "$_MODULE_PATH" -p "$pane_id")"
   [[ -z "$csv" ]] && return
@@ -31,8 +32,10 @@ _run() {
 
   clipboard_command="${clipboard_command/"\$\$snippet\$\$"/"${snippet}"}"
 
-  tmux run-shell -t "$pane_id" "$clipboard_command"
+  cp_win="$(tmux new-window -d -P "$SHELL")"
+  tmux send-keys -t "$cp_win" " $clipboard_command" Enter
   tmux display-message -d 5000 "Snippet copied to clipboard"
+  tmux send-keys -t "$cp_win" " exit" Enter
 }
 
 _cmd() {

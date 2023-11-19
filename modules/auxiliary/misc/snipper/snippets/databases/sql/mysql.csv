@@ -1,3 +1,3 @@
-name,snippet
-MySQLVersion,'SELECT VERSION();'
-MySQLUsers,'SELECT user FROM mysql.user;'
+name,description,snippet,variables
+MySQLVersion,MySql / MariaDB get Version,SELECT VERSION(),
+MySQLUsers,MySql / MariaDB get users,SELECT user FROM mysql.user,
