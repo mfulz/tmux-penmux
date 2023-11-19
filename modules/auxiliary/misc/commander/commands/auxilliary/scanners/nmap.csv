@@ -1,7 +1,13 @@
 name,description,command,path,restart
 tcpAllDefault,Default nmap tcp scan including standard scripts for all ports,nmap -sC -sV -p- -oN ###SessionDir###nmap/###RemoteHost###-tcpAllDefault ###RemoteHost###,###SessionDir###nmap,false
 tcpDefault,Default nmap tcp scan including standard scripts for default ports,nmap -sC -sV -oN ###SessionDir###nmap/###RemoteHost###-tcpDefault ###RemoteHost###,###SessionDir###nmap,false
+tcpAllDefaultNoHost,Default nmap tcp scan including standard scripts for all ports without host discovery,nmap -Pn -sC -sV -p- -oN ###SessionDir###nmap/###RemoteHost###-tcpAllDefaultNoHost ###RemoteHost###,###SessionDir###nmap,false
+tcpDefaultNoHost,Default nmap tcp scan including standard scripts for default ports without host discovery,nmap -Pn -sC -sV -oN ###SessionDir###nmap/###RemoteHost###-tcpDefaultNoHost ###RemoteHost###,###SessionDir###nmap,false
 udpAllDefault,Default nmap udp scan including standard scripts for all ports,sudo nmap -sU -sV -p- -oN ###SessionDir###nmap/###RemoteHost###-udpAllDefault ###RemoteHost###,###SessionDir###nmap,false
 udpDefault,Default nmap udp scan including standard scripts for default ports,sudo nmap -sU -sV -oN ###SessionDir###nmap/###RemoteHost###-udpAllDefault ###RemoteHost###,###SessionDir###nmap,false
+udpAllDefaultNoHost,Default nmap udp scan including standard scripts for all ports without host discovery,sudo nmap -Pn -sU -sV -p- -oN ###SessionDir###nmap/###RemoteHost###-udpAllDefaultNoHost ###RemoteHost###,###SessionDir###nmap,false
+udpDefaultNoHost,Default nmap udp scan including standard scripts for default ports without host discovery,sudo nmap -Pn -sU -sV -oN ###SessionDir###nmap/###RemoteHost###-udpAllDefaultNoHost ###RemoteHost###,###SessionDir###nmap,false
 vulnAllDefault,Default nmap scan for vulnerabilities,nmap --script vuln -oN ###SessionDir###nmap/###RemoteHost###-vulnAllDefault ###RemoteHost###,###SessionDir###nmap,false
 vulnPortDefault,Default nmap scan for vulnerabilities against the remote port,nmap --script vuln -p ###RemotePort### -oN ###SessionDir###nmap/###RemoteHost###-vulnAllDefault ###RemoteHost###,###SessionDir###nmap,false
+vulnAllDefaultNoHost,Default nmap scan for vulnerabilities without host discovery,nmap --script vuln -Pn -oN ###SessionDir###nmap/###RemoteHost###-vulnAllDefaultNoHost ###RemoteHost###,###SessionDir###nmap,false
+vulnPortDefaultNoHost,Default nmap scan for vulnerabilities against the remote port without host discovery,nmap --script vuln -Pn -p ###RemotePort### -oN ###SessionDir###nmap/###RemoteHost###-vulnAllDefaultNoHost ###RemoteHost###,###SessionDir###nmap,false
