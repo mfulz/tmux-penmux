@@ -7,7 +7,7 @@ CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 _PENMUX_SCRIPTS=""
 _MODULE_PATH=""
 
-# source "$CURRENT_DIR/shared.sh"
+source "$CURRENT_DIR/shared.sh"
 
 _load() {
   return
@@ -27,9 +27,12 @@ _run() {
   [[ -z "$csv" ]] && return
 
   snippet="$("$CURRENT_DIR/snipper.sh" -a select_snippet -c "$_PENMUX_SCRIPTS" -m "$_MODULE_PATH" -p "$pane_id" -f "$csv")"
+  [[ -z "$snippet" ]] && return
+
   clipboard_command="${clipboard_command/"\$\$snippet\$\$"/"${snippet}"}"
 
   tmux run-shell -t "$pane_id" "$clipboard_command"
+  tmux display-message -d 5000 "Snippet copied to clipboard"
 }
 
 _cmd() {

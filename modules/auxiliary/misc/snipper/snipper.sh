@@ -4,7 +4,7 @@ CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 _PENMUX_SCRIPTS=""
 _MODULE_PATH=""
 
-# source "$CURRENT_DIR/shared.sh"
+source "$CURRENT_DIR/shared.sh"
 
 _list_csv() {
   local label="$1"
@@ -71,6 +71,7 @@ _list_snippet() {
       csv_snippet="$(penmux_expand_tmux_format_path "$pane_id" "$csv_snippet" "1")"
 
       tmux set-option -p @penmux-snipper-hidden-snippet "$csv_snippet"
+      tmux set-option -p @penmux-snipper-hidden-snippet-variables "${csv_entry["variables"]}"
       return
     fi
   done <<< "$csv_arrays" 
@@ -94,6 +95,18 @@ _info_snippet() {
       csv_snippet="$(penmux_expand_tmux_format_path "$pane_id" "$csv_snippet" "1")"
 
       printf "Description: %s\n\nSnippet: %s\n" "${csv_entry["description"]}" "$csv_snippet"
+      if [[ -n "${csv_entry["variables"]}" ]]; then
+        printf "\nVariables: \n"
+        local variables="$(_variables_to_arrays "${csv_entry["variables"]}")"
+
+        while IFS= read -r v; do
+          local variable
+          declare -A variable="($(echo "$v"))"
+
+          printf "  Name: %s\n  Value: %s\n  Description: %s\n\n" "${variable["name"]}" "${variable["value"]}" "${variable["desc"]}"
+        done <<< "$variables"
+      fi
+
       return
     fi
   done <<< "$csv_arrays"
@@ -115,10 +128,29 @@ _select_snippet() {
   local pane_id="$2"
   local csv="$3"
   local snippet
+  local variables
 
   tmux display-popup -w 80% -h 80% -E "$CURRENT_DIR/snipper.sh -a list_snippet -c \"$_PENMUX_SCRIPTS\" -l \"$label\" -m \"$_MODULE_PATH\" -p \"$pane_id\" -f \"$csv\""
   snippet="$(tmux show-options -pqv "@penmux-snipper-hidden-snippet")"
+  variables="$(tmux show-options -pqv "@penmux-snipper-hidden-snippet-variables")"
+  variables="$(_variables_to_arrays "$variables")"
   tmux set-option -pu "@penmux-snipper-hidden-snippet" > /dev/null
+  tmux set-option -pu "@penmux-snipper-hidden-snippet-variables" > /dev/null
+
+  if [[ -n "$variables" ]]; then
+    while IFS= read -r v; do
+      local val
+      local variable
+      declare -A variable="($(echo "$v"))"
+
+      val="$(tmux command-prompt -p "Set value for '${variable["name"]}': " -I "${variable["value"]}" "display-message -p '%%'")"
+      if [[ -z "$val" ]]; then
+        echo ""
+        return
+      fi
+      snippet="${snippet/"§§§${variable["name"]}§§§"/$val}"
+    done <<< "$variables"
+  fi
   echo "${snippet}"
 }
 

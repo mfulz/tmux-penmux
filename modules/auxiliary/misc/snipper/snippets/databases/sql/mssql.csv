@@ -1,2 +1,2 @@
-name,snippet
-MsSQLExecuteCommand,"xp_cmdshell 'dir';"
+name,description,snippet,variables
+MsSQLExecuteCommand,MsSQL comamnd execution via xp_cmdshell,"xp_cmdshell '§§§command§§§';",§§§command§whoami§command that should be executed§§§
