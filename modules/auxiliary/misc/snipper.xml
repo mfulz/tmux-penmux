@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PenmuxModule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../schemas/penmux-module.xsd">
+  <Name>Snipper</Name>
+  <Description>Snipper module that reads in csv files that have different useful snippets. Will be copied into clipboard</Description>
+  <HasRun>true</HasRun>
+  <HandleScript>auxiliary/misc/snipper/module.sh</HandleScript>
+  <Option xsi:type="OptionTypeString" Private="true" Exported="true">
+    <Name>SnippetSearchPath</Name>
+    <Description>Path that contains CSV files that holds the snippets</Description>
+    <DefaultValue>$HOME/.tmux/plugins/tmux-penmux/modules/auxiliary/misc/snipper/snippets</DefaultValue>
+  </Option>
+  <Option xsi:type="OptionTypeString" Private="true" Exported="true">
+    <Name>ClipboardCommand</Name>
+    <Description>Command used for copying snippet to clipboard</Description>
+    <DefaultValue>echo $$snippet$$ | xclip -i -sel c</DefaultValue>
+  </Option>
+</PenmuxModule>
