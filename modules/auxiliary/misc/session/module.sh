@@ -11,6 +11,8 @@ source "$CURRENT_DIR/shared.sh"
 
 _load() {
   local session="$(tmux display-message -p "#{session_id}")"
+  local session_name="$(tmux display-message -p "#{S}")"
+  local panes="$(tmux list-panes -s -t "$session" -F "#D")"
 
   tmux bind -T penmux_keytable "s" switch-client -T penmux_module_session_keytable
   tmux bind -T penmux_module_session_keytable "n" "run-shell '\"$CURRENT_DIR/session.sh\" -a new -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\"'"
@@ -18,13 +20,16 @@ _load() {
   tmux bind -T penmux_module_session_keytable "l" "run-shell '\"$CURRENT_DIR/session.sh\" -a load -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\"'"
   tmux bind -T penmux_module_session_keytable "s" "run-shell '\"$CURRENT_DIR/session.sh\" -a save -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\"'"
   
-  tmux set-option -t "$session" -g automatic-rename-format '#{?#{==:#{@penmux-SessionName},},No Session,#{@penmux-SessionName}} (#{?#{==:#{@penmux-SessionDir},},CWD: #{pane_current_path},CSD: #{@penmux-SessionDir}})'
-  tmux set-option -t "$session" -g status-interval 5
-  tmux set-option -t "$session" -g automatic-rename on
+  while IFS= read -r p; do
+    tmux set-option -t "$p" automatic-rename-format '#{?#{==:#{@penmux-SessionName},},No Session,#{@penmux-SessionName}} (#{?#{==:#{@penmux-SessionDir},},CWD: #{pane_current_path},CSD: #{@penmux-SessionDir}})'
+    tmux set-option -t "$p" status-interval 5
+    tmux set-option -t "$p" automatic-rename on
+  done <<< "$panes"
 }
 
 _unload() {
   local session="$(tmux display-message -p "#{session_id}")"
+  local session_name="$(tmux display-message -p "#{S}")"
   local panes="$(tmux list-panes -s -t "$session" -F "#D")"
 
   tmux unbind -T penmux_module_session_keytable "s"
@@ -35,11 +40,11 @@ _unload() {
 
   while IFS= read -r p; do
     tmux run-shell "\"$CURRENT_DIR/session.sh\" -a stop -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\" -p \"$p\""
-  done <<< "$panes"
 
-  tmux set-option -t "$session" -g -u automatic-rename-format
-  tmux set-option -t "$session" -g -u status-interval
-  tmux set-option -t "$session" -g -u automatic-rename
+    tmux set-option -t "$p" -u automatic-rename-format
+    tmux set-option -t "$p" -u status-interval
+    tmux set-option -t "$p" -u automatic-rename
+  done <<< "$panes"
 }
 
 _cmd() {
@@ -68,6 +73,10 @@ _cmd() {
   else
     tmux respawn-pane -k -t "$pane_id" "$SHELL"
   fi
+
+  tmux set-option automatic-rename-format '#{?#{==:#{@penmux-SessionName},},No Session,#{@penmux-SessionName}} (#{?#{==:#{@penmux-SessionDir},},CWD: #{pane_current_path},CSD: #{@penmux-SessionDir}})'
+  tmux set-option status-interval 5
+  tmux set-option automatic-rename on
 }
 
 _optionsnotify() {
