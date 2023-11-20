@@ -201,7 +201,11 @@ penmux_csv_to_arrays() {
       declare -A csv_line
       for (( i=0 ; i<csv_col_nums ; i++ )); do
         y=$((i+1))
-        csv_line[${csv_header[$i]}]="$(echo "$l" | awk -F"$csv_sep" '{print $'$y'}')"
+        if [[ "$y" -eq "$csv_col_nums" ]]; then
+          csv_line[${csv_header[$i]}]="$(echo "$l" | cut -d"$csv_sep" -f$y-)"
+        else
+          csv_line[${csv_header[$i]}]="$(echo "$l" | awk -F"$csv_sep" '{print $'$y'}')"
+        fi
       done
       echo "${csv_line[@]@K}"
     fi

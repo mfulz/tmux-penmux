@@ -1,0 +1,2 @@
+name,description,variables,snippet
+ListeningServicesPS,Retrieve listening services overview via powershell (using netstat and tasklist),,powershell -ep bypass -nop $ports=netstat -ano | findstr LISTEN; $ports[4..$ports.length] | ConvertFrom-String -PropertyNames Name,Proto,Local,Remote,State,PID | foreach { $_.Name = (tasklist /FO CSV | convertfrom-csv | where PID -eq $_.PID)."Image Name"; $_ } | Format-Table -AutoSize
