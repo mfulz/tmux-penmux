@@ -1,3 +1,5 @@
 name,description,snippet,variables
 MySQLVersion,MySql / MariaDB get Version,SELECT VERSION(),
 MySQLUsers,MySql / MariaDB get users,SELECT user FROM mysql.user,
+MySQLReadFile, MySql/ MariaDB read file,SELECT LOAD_FILE("§§§file§§§"),§§§file§/etc/passwd§file to read from filesystem§§§
+MySQLExecuteCommand, MySql/ MariaDB command execution,SYSTEM §§§command§§§,§§§command§whoami§command that should be executed§§§
