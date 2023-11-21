@@ -8,6 +8,10 @@ custom_modules_dir=""
 custom_keytables_dir_option="@penmux-custom-keytables-dir"
 default_custom_keytables_dir="$HOME/.tmux/penmux/keytables"
 
+# custom module options path
+custom_module_options_dir_option="@penmux-custom-module-options-dir"
+default_custom_module_options_dir="$HOME/.tmux/penmux/options"
+
 # The modules listed will be autoloaded by the penmux plugin
 autoload_modules_option="@penmux-autoload-modules"
 

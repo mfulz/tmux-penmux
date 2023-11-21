@@ -2,6 +2,8 @@ SUPPORTED_VERSION="1.9"
 
 _CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+source "$_CURRENT_DIR/variables.sh"
+
 _PENMUX_MODULE_SCHEMA="${_CURRENT_DIR}/../schemas/penmux-module.xsd"
 _PENMUX_MODULE_DIR="${_CURRENT_DIR}/../modules"
 _PENMUX_KEYTABLES_DIR="${_CURRENT_DIR}/../keytables"

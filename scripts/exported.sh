@@ -36,18 +36,32 @@ penmux_module_get_option() {
   local option_name="${2}"
   local pane_id="${3}"
   local option_name_xml
-  local module_name
   local option_private
   local option_default
+  local option_user_default
   local tmux_option_name
+  local module_name="$(_module_get_name "$module_path")"
+  local custom_module_options_dir_value="$(get_tmux_option "$custom_module_options_dir_option" "$default_custom_module_options_dir")"
+  local options_file
 
+  if [[ -e "$custom_module_options_dir_value/$module_name.xml" ]]; then
+    options_file="$custom_module_options_dir_value/$module_name.xml"
+  fi
 
   # xmlstarlet val sel -t -c "/PenmuxModule/Option[Name=\"$option_name\"]" "${module_path}" >/dev/null || { echo ""; return 1; }
   option_name_xml="$(xmlstarlet sel -t -v "/PenmuxModule/Option[Name=\"$option_name\"]/Name/text()" "$module_path")"
   if [[ -n "$option_name_xml" ]]; then
     option_private="$(xmlstarlet sel -t -v "boolean(/PenmuxModule/Option[Name=\"$option_name\"]/@Private)" "$module_path")"
-    option_default="$(xmlstarlet sel -t -v "/PenmuxModule/Option[Name=\"$option_name\"]/DefaultValue" "$module_path")"
-    module_name="$(xmlstarlet sel -t -v "/PenmuxModule/Name" "$module_path")"
+
+    if [[ -n "$options_file" ]]; then
+      option_user_default="$(xmlstarlet sel -t -v "/PenmuxModuleOptions/Option[Name=\"$option_name\"]/DefaultValue" "$options_file")"
+    fi
+
+    if [[ -z "$option_user_default" ]]; then
+      option_default="$(xmlstarlet sel -t -v "/PenmuxModule/Option[Name=\"$option_name\"]/DefaultValue" "$module_path")"
+    else
+      option_default="$option_user_default"
+    fi
   else
     option_name_xml="$(xmlstarlet sel -t -v "/PenmuxModule/Consumes[Name=\"$option_name\"]/Name/text()" "$module_path")"
   fi
