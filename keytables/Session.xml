@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PenmuxModuleKeytable xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/penmux-module-keytable.xsd">
+  <PrefixKey>s</PrefixKey>
+  <Key>
+    <Key>n</Key>
+    <Func>new</Func>
+    <Description>Creates a new session</Description>
+  </Key>
+  <Key>
+    <Key>e</Key>
+    <Func>exit</Func>
+    <Description>Exits a session</Description>
+  </Key>
+  <Key>
+    <Key>l</Key>
+    <Func>load</Func>
+    <Description>Loads a session from .pmses file</Description>
+  </Key>
+  <Key>
+    <Key>s</Key>
+    <Func>save</Func>
+    <Description>Saves a session to .pmses file</Description>
+  </Key>
+</PenmuxModuleKeytable>

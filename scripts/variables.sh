@@ -4,6 +4,10 @@ SUPPORTED_VERSION="1.9"
 custom_modules_dir_option="@penmux-custom-modules-dir"
 custom_modules_dir=""
 
+# custom keytables path
+custom_keytables_dir_option="@penmux-custom-keytables-dir"
+default_custom_keytables_dir="~/.tmux/penmux/keytables"
+
 # The modules listed will be autoloaded by the penmux plugin
 autoload_modules_option="@penmux-autoload-modules"
 

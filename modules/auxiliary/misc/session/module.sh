@@ -123,6 +123,32 @@ _optionsnotify() {
   fi
 }
 
+_keyfunc() {
+  local calling_pane_id="$1"
+  local pane_id="$2"
+  lcoal func_name="$3"
+
+  case "$func_name" in
+    "new")
+      "$CURRENT_DIR/session.sh" -a new -c "$_PENMUX_SCRIPTS" -m "$_MODULE_PATH"
+      ;;
+    "exit")
+      "$CURRENT_DIR/session.sh" -a stop -c "$_PENMUX_SCRIPTS" -m "$_MODULE_PATH"
+      ;;
+    "load")
+      "$CURRENT_DIR/session.sh" -a load -c "$_PENMUX_SCRIPTS" -m "$_MODULE_PATH"
+      ;;
+    "save")
+      "$CURRENT_DIR/session.sh" -a save -c "$_PENMUX_SCRIPTS" -m "$_MODULE_PATH"
+      ;;
+    *)
+      echo >&2 "Unknown func name: '$func_name'"
+      ;;
+  esac
+
+  return
+}
+
 main() {
   local action
   local pane_id
@@ -130,9 +156,10 @@ main() {
   local provider_name
   local provider_value
   local opt_volatile
+  local func_name
 
 	local OPTIND o
-	while getopts "a:vc:m:o:p:k:i:s:" o; do
+	while getopts "a:vc:m:o:p:k:i:s:f:" o; do
 		case "${o}" in
 		a)
 			action="${OPTARG}"
@@ -163,6 +190,9 @@ main() {
 			;;
 		s)
       opt_volatile="${OPTARG}"
+			;;
+		f)
+      func_name="${OPTARG}"
 			;;
     *)
       # do not change !!! 
@@ -215,6 +245,11 @@ case "${action}" in
     # Will be called as default command for
     # new panes
     # If not needed just exit 0
+    exit 0
+    ;;
+  "keyfunc")
+    # Will be called from keytable definition
+    _keyfunc "$calling_pane_id" "$pane_id" "$func_name"
     exit 0
     ;;
   *)

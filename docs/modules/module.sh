@@ -19,16 +19,17 @@ _unload() {
 }
 
 _cmd() {
-  # local calling_pane_id="$1"
-  # local pane_id="$2"
+  local calling_pane_id="$1"
+  local pane_id="$2"
 
   return
 }
 
 _optionsnotify() {
-  # local pane_id="$1"
-  # local opt="$2"
-  # local val="$3"
+  local pane_id="$1"
+  local opt="$2"
+  local val="$3"
+  local volatile="$4"
 
   return
 }
@@ -41,15 +42,31 @@ _consumes() {
   return
 }
 
+_keyfunc() {
+  local calling_pane_id="$1"
+  local pane_id="$2"
+  lcoal func_name="$3"
+
+  case "$func_name" in
+    *)
+      echo >&2 "Unknown func name: '$func_name'"
+      ;;
+  esac
+
+  return
+}
+
 main() {
   local action
   local pane_id
   local calling_pane_id
   local provider_name
   local provider_value
+  local opt_volatile
+  local func_name
 
 	local OPTIND o
-	while getopts "a:vc:m:o:p:k:i:" o; do
+	while getopts "a:vc:m:o:p:k:i:s:f:" o; do
 		case "${o}" in
 		a)
 			action="${OPTARG}"
@@ -82,6 +99,12 @@ main() {
 		i)
       # do not change !!! 
       provider_value="${OPTARG}"
+			;;
+		s)
+      opt_volatile="${OPTARG}"
+			;;
+		f)
+      func_name="${OPTARG}"
 			;;
     *)
       # do not change !!! 
@@ -126,12 +149,18 @@ case "${action}" in
   "optionsnotify")
     # Will be called when options are set
     # If not needed just exit 0
-    _optionsnotify "$pane_id" "$provider_name" "$provider_value"
+    _optionsnotify "$pane_id" "$provider_name" "$provider_value" "$opt_volatile"
     exit 0
+    ;;
   "consumes")
     # Will be called when options are set
     # If not needed just exit 0
     _consumes "$pane_id" "$provider_name" "$provider_value"
+    exit 0
+    ;;
+  "keyfunc")
+    # Will be called from keytable definition
+    _keyfunc "$calling_pane_id" "$pane_id" "$func_name"
     exit 0
     ;;
   *)

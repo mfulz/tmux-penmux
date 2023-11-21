@@ -164,3 +164,47 @@ _module_notify_options() {
     fi
   done <<< "$loaded_modules"
 }
+
+# keytables
+_keytables_get_file() {
+  local module_path="$1"
+  local module_name="$(_module_get_name "$module_path")"
+  local custom_keytables_dir_value="$(get_tmux_option "$custom_keytables_dir_option" "$default_custom_keytables_dir")"
+  local keytable_file
+
+  if [[ -e "$custom_keytables_dir_value/$module_name.xml" ]]; then
+    keytable_file="$custom_keytables_dir_value/$module_name.xml"
+  elif [[ -e "$_PENMUX_KEYTABLES_DIR/$module_name.xml" ]]; then
+    keytable_file="$_PENMUX_KEYTABLES_DIR/$module_name.xml"
+  else
+    keytable_file=""
+  fi
+
+  echo "$keytable_file"
+}
+
+_keytables_get_prefixkey() {
+  local keytable_file="$1"
+
+  xmlstarlet sel -t -v "/PenmuxModuleKeytable/PrefixKey/text()" "$keytable_file"
+}
+
+_keytables_get_keys() {
+  local keytable_file="$1"
+
+  xmlstarlet sel -t -v "/PenmuxModuleKeytable/Key/Key/text()" "$keytable_file"
+}
+
+_keytables_get_key_func() {
+  local keytable_file="$1"
+  local key="$2"
+
+  xmlstarlet sel -t -v "/PenmuxModuleKeytable/Key[Key=\"$key\"]/Func/text())" "$keytable_file"
+}
+
+_keytables_get_key_description() {
+  local keytable_file="$1"
+  local key="$2"
+
+  xmlstarlet sel -t -v "/PenmuxModuleKeytable/Key[Key=\"$key\"]/Description/text())" "$keytable_file"
+}

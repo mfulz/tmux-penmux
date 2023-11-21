@@ -73,6 +73,9 @@ _get_info() {
   local module_consumes
   local module_provides_plain="$(_module_get_provides "$module_file")"
   local module_provides
+  local module_keytable_file="$(_keytables_get_file "$module_file")"
+
+  tmux display-message -d 10000 "$module_keytable_file"
 
   while IFS= read -r e; do
     module_consumes=$(printf "%s\n  %s" "$module_consumes" "$e")
@@ -83,6 +86,19 @@ _get_info() {
   done <<< "$module_provides_plain"
 
   printf "Module: %s\n\nDescription:\n  %s\n\nConsumes:%s\nProvides:%s" "${module_name}" "${module_description}" "${module_consumes}" "${module_provides}"
+
+  if [[ -n "$module_keytable_file" ]]; then
+    local prefix_key="$(_keytables_get_prefixkey "$module_keytable_file")"
+    local keys="$(_keytables_get_keys "$module_keytable_file")"
+
+    printf "\n\nKeys:\nSelect Module: '%s'" "$prefix_key"
+
+    while IFS= read -r k; do
+      local key_desc="$(_keytables_get_key_description "$module_keytable_file" "$k")"
+      
+      printf "\nKey '%s': %s" "$k" "$key_desc"
+    done <<< "$keys"
+  fi
 }
 
 _list_module_options() {

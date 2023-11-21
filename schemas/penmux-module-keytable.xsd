@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:complexType name="KeyType">
+    <xs:sequence>
+      <xs:element name="Key" type="xs:string" />
+      <xs:element name="Func" type="xs:string" />
+      <xs:element name="Description" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="PenmuxModuleKeytable">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="PrefixKey" type="xs:string" />
+        <xs:element name="Key" type="KeyType" minOccurs="1" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
