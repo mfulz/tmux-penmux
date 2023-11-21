@@ -78,21 +78,24 @@ This plugin is basically just an API to provide features via modules. The main f
 - `prefix + P + c` - change module options
 - `prefix + P + r` - run module
 
-#### Standard modules
+#### Modules
 
 **TODO**
+
+### 3. Configuration
+
+- [Core configuration](docs/configuration_core.md).
+- [Modules configuration](docs/configuration_modules.md).
 
 ### Tasks by PRIO
 
 - [x] Migrate Repo
-- [ ] Installation / Usage Documentation
+- [x] Installation / Usage Documentation
+- [ ] Core configuration Documentation
+- [ ] Module usage Documentation
+- [ ] Module configuration Documentation
 - [ ] Stabilizing API
 - [ ] Development / Contribution Documentation
-
-### Configuration Docs
-
-- [Core configuration](docs/configuration_core.md).
-- [Modules configuration](docs/configuration_modules.md).
 
 ### License
 
