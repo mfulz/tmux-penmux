@@ -22,7 +22,7 @@ Follow this chapter to install tmux-penmux
 
 Add plugin to the list of TPM plugins in `.tmux.conf`:
 
-    set -g @plugin 'tmux-plugins/tmux-penmux'
+    set -g @plugin 'mfulz/tmux-penmux'
 
 Hit `prefix + I` to fetch the plugin and source it.
 
@@ -36,7 +36,7 @@ Clone the repo:
 
 Add this line to the bottom of `.tmux.conf`:
 
-    run-shell ~/clone/path/logging.tmux
+    run-shell ~/clone/path/penmux.tmux
 
 Reload TMUX environment:
 
