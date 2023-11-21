@@ -58,7 +58,7 @@ that are included and how to use them.
 
 **TODO**
 
-### 1. Tasks by PRIO
+### Tasks by PRIO
 
 - [x] Migrate Repo
 - [ ] Installation / Usage Documentation
