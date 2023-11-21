@@ -14,11 +14,11 @@ _load() {
   local session_name="$(tmux display-message -p "#{S}")"
   local panes="$(tmux list-panes -s -t "$session" -F "#D")"
 
-  tmux bind -T penmux_keytable "s" switch-client -T penmux_module_session_keytable
-  tmux bind -T penmux_module_session_keytable "n" "run-shell '\"$CURRENT_DIR/session.sh\" -a new -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\"'"
-  tmux bind -T penmux_module_session_keytable "e" "run-shell '\"$CURRENT_DIR/session.sh\" -a stop -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\"'"
-  tmux bind -T penmux_module_session_keytable "l" "run-shell '\"$CURRENT_DIR/session.sh\" -a load -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\"'"
-  tmux bind -T penmux_module_session_keytable "s" "run-shell '\"$CURRENT_DIR/session.sh\" -a save -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\"'"
+  # tmux bind -T penmux_keytable "s" switch-client -T penmux_module_session_keytable
+  # tmux bind -T penmux_module_session_keytable "n" "run-shell '\"$CURRENT_DIR/session.sh\" -a new -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\"'"
+  # tmux bind -T penmux_module_session_keytable "e" "run-shell '\"$CURRENT_DIR/session.sh\" -a stop -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\"'"
+  # tmux bind -T penmux_module_session_keytable "l" "run-shell '\"$CURRENT_DIR/session.sh\" -a load -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\"'"
+  # tmux bind -T penmux_module_session_keytable "s" "run-shell '\"$CURRENT_DIR/session.sh\" -a save -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\"'"
   
   while IFS= read -r p; do
     tmux set-option -t "$p" automatic-rename-format '#{?#{==:#{@penmux-SessionName},},No Session,#{@penmux-SessionName}} (#{?#{==:#{@penmux-SessionDir},},CWD: #{pane_current_path},CSD: #{@penmux-SessionDir}})'
@@ -32,11 +32,11 @@ _unload() {
   local session_name="$(tmux display-message -p "#{S}")"
   local panes="$(tmux list-panes -s -t "$session" -F "#D")"
 
-  tmux unbind -T penmux_module_session_keytable "s"
-  tmux unbind -T penmux_module_session_keytable "l"
-  tmux unbind -T penmux_module_session_keytable "e"
-  tmux unbind -T penmux_module_session_keytable "n"
-  tmux unbind -T penmux_keytable "s"
+  # tmux unbind -T penmux_module_session_keytable "s"
+  # tmux unbind -T penmux_module_session_keytable "l"
+  # tmux unbind -T penmux_module_session_keytable "e"
+  # tmux unbind -T penmux_module_session_keytable "n"
+  # tmux unbind -T penmux_keytable "s"
 
   while IFS= read -r p; do
     tmux run-shell "\"$CURRENT_DIR/session.sh\" -a stop -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\" -p \"$p\""
@@ -249,7 +249,7 @@ case "${action}" in
     ;;
   "keyfunc")
     # Will be called from keytable definition
-    _keyfunc "$calling_pane_id" "$pane_id" "$func_name"
+    _keyfunc "$func_name"
     exit 0
     ;;
   *)

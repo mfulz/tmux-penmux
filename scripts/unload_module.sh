@@ -31,6 +31,19 @@ main() {
 
   module_path="$(_module_convert_relative_path "$module_to_unload")"
 
+  local module_keytable_file="$(_keytables_get_file "$module_path")"
+  if [[ -n "$module_keytable_file" ]]; then
+    local module_name="$(_module_get_name "$module_path")"
+    local prefix_key="$(_keytables_get_prefixkey "$module_keytable_file")"
+    local keytable_name="penmux_module_${module_name}_keytable"
+    local keys="$(_keytables_get_keys "$module_keytable_file")"
+
+    while IFS= read -r k; do
+      tmux unbind -T "$keytable_name" "$k"
+    done <<< "$keys"
+    tmux unbind -T penmux_keytable "$prefix_key"
+  fi
+
   handle_script="$(_module_get_handlescript "$module_path")"
   if [ -z "$handle_script" ]; then
     tmux display-message -d 5000 "Module handle script missing in xml"

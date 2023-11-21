@@ -88,6 +88,21 @@ main() {
     tmux display-message -d 5000 "Module load error: '$err'"
     return
   }
+
+  local module_keytable_file="$(_keytables_get_file "$module_path")"
+  if [[ -n "$module_keytable_file" ]]; then
+    local module_name="$(_module_get_name "$module_path")"
+    local prefix_key="$(_keytables_get_prefixkey "$module_keytable_file")"
+    local keytable_name="penmux_module_${module_name}_keytable"
+    local keys="$(_keytables_get_keys "$module_keytable_file")"
+
+    tmux bind -T penmux_keytable "$prefix_key" switch-client -T "$keytable_name"
+    while IFS= read -r k; do
+      local key_func="$(_keytables_get_key_func "$module_keytable_file" "$k")"
+      tmux bind -T "$keytable_name" "$k" "run-shell '\"$handle_script\" -c \"$CURRENT_DIR\" -m \"$module_path\" -a keyfunc -f \"$key_func\"'"
+    done <<< "$keys"
+  fi
+
   tmux display-message -d 5000 "Module '$module_to_load' loaded"
 
   if [ -z "$loaded_modules" ]; then
