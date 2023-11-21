@@ -199,12 +199,12 @@ _keytables_get_key_func() {
   local keytable_file="$1"
   local key="$2"
 
-  xmlstarlet sel -t -v "/PenmuxModuleKeytable/Key[Key=\"$key\"]/Func/text())" "$keytable_file"
+  xmlstarlet sel -t -v "/PenmuxModuleKeytable/Key[Key=\"$key\"]/Func/text()" "$keytable_file"
 }
 
 _keytables_get_key_description() {
   local keytable_file="$1"
   local key="$2"
 
-  xmlstarlet sel -t -v "/PenmuxModuleKeytable/Key[Key=\"$key\"]/Description/text())" "$keytable_file"
+  xmlstarlet sel -t -v "/PenmuxModuleKeytable/Key[Key=\"$key\"]/Description/text()" "$keytable_file"
 }
