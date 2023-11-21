@@ -16,7 +16,20 @@ Follow this chapter to install tmux-penmux
 
 #### Requirements
 
-**TODO**
+The following tools are required by the core:
+
+- [xmlstarlet](https://xmlstar.sourceforge.net)
+- [awk](https://github.com/onetrueawk/awk)
+- [sed](https://www.gnu.org/software/sed/)
+- [fzf](https://github.com/junegunn/fzf)
+- [bash](https://www.gnu.org/software/bash/)
+
+The following tools are used by the standard modules. They are used to provide the core functionality for the modules.
+The modules will provide further features, that needs additional tools but these are for the pentesting itself and therefore
+not included here:
+
+- [util-linux (script)](https://github.com/util-linux/util-linux)
+- [xclip (can be replaced by configuration)](https://sourceforge.net/projects/xclip/)
 
 #### Installation with [Tmux Plugin Manager](https://github.com/tmux-plugins/tpm) (recommended)
 
