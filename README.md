@@ -1,76 +1,38 @@
-# Tmux Logging
+# Tmux Penmux
 
-Features:
+A tmux plugin that supports penetration testing.
 
-1. Logging of all output in the current pane<br/>
-   After you start logging, everything that's typed and all the output will be
-   saved to a file. Convenient for keeping track of your work.
-2. Current pane "Screen Capture"<br/>
-   All the text visible in the current pane is saved to a file. Like a
-   screenshot, but textual.
-3. Save a complete history of current pane<br/>
-   Everything that has been typed and all the output since the creation of the
-   current pane can be saved to a file.
-4. Clear pane history with `prefix + alt + c`
+This plugin is by no means any competitor to existing exploit frameworks like metasploit, etc.
+It is meant to be a helping hand for pentest sessions including stuff like session management
+snippets, reuse, etc. pp.
 
-Tested and working on Linux, OSX and Cygwin.
+It is inspired from metasploit's modules and can be extended by modules.
 
-### 1. Logging
+**This is early WIP and the plugin API could change breaking everything ;)**
 
-Toggle (start/stop) logging in the current pane.
+### 1. Installation
 
-* Key binding: `prefix + shift + p`
-* File name format: `tmux-#{session_name}-#{window_index}-#{pane_index}-%Y%m%dT%H%M%S.log`
-* File path: `$HOME` (user home dir)
-  * Example file: `~/tmux-my-session-0-1-20140527T165614.log`
+Follow this chapter to install tmux-penmux
 
-### 2. "Screen Capture"
+#### Requirements
 
-Save visible text, in the current pane. Equivalent of a "textual screenshot".
+**TODO**
 
-* Key binding: `prefix + alt + p`
-* File name format: `tmux-screen-capture-#{session_name}-#{window_index}-#{pane_index}-%Y%m%dT%H%M%S.log`
-* File path: `$HOME` (user home dir)
-  * Example file: `tmux-screen-capture-my-session-0-1-20140527T165614.log`
-
-### 3. Save complete history
-
-Save complete pane history to a file. Convenient if you retroactively remember
-you need to log/save all the work.
-
-* Key binding: `prefix + alt + shift + p`
-* File name format: `tmux-history-#{session_name}-#{window_index}-#{pane_index}-%Y%m%dT%H%M%S.log`
-* File path: `$HOME` (user home dir)
-  * Example file: `tmux-history-my-session-0-1-20140527T165614.log`
-
-**NOTE**: this functionality depends on the value of `history-limit` - the number
-of lines Tmux keeps in the scrollback buffer. Only what Tmux kept will also be saved,
-to a file.
-
-Use `set -g history-limit 50000` in .tmux.conf, with modern computers
-it is ok to set this option to a high number.
-
-### 4. Clear pane history
-
-Key binding: `prefix + alt + c`
-
-This is just a convenience key binding.
-
-### Installation with [Tmux Plugin Manager](https://github.com/tmux-plugins/tpm) (recommended)
+#### Installation with [Tmux Plugin Manager](https://github.com/tmux-plugins/tpm) (recommended)
 
 Add plugin to the list of TPM plugins in `.tmux.conf`:
 
-    set -g @plugin 'tmux-plugins/tmux-logging'
+    set -g @plugin 'tmux-plugins/tmux-penmux'
 
 Hit `prefix + I` to fetch the plugin and source it.
 
-You should now have all `tmux-logging` key bindings defined.
+You should now have all `tmux-penmux` key bindings defined.
 
-### Manual Installation
+#### Manual Installation
 
 Clone the repo:
 
-    $ git clone https://github.com/tmux-plugins/tmux-logging ~/clone/path
+    $ git clone https://github.com/mfulz/tmux-penmux ~/clone/path
 
 Add this line to the bottom of `.tmux.conf`:
 
@@ -81,47 +43,32 @@ Reload TMUX environment:
     # type this in terminal
     $ tmux source-file ~/.tmux.conf
 
-You should now have all `tmux-logging` key bindings defined.
+You should now have all `tmux-penmux` key bindings defined.
 
-### Installing `ansifilter` (recommended for OSX users)
+### 2. Usage
 
-If you're on OSX, it is recommended to install `ansifilter`:
-`$ brew install ansifilter`
+This chapter descripes how to use this plugin and it's modules. It will give an overview of the standard modules
+that are included and how to use them.
 
-[ansifilter](http://www.andre-simon.de/doku/ansifilter/en/ansifilter.php)
-is a program specialized for removing (or working with) ANSI codes.
+#### Core Plugin
 
-It helps with removing ANSI codes from the log. If `ansifilter` is not present,
-ANSI codes are removed with `sed`.
+**TODO**
 
-This feature improves the default `pipe-pane` logging mechanism by stripping
-ANSI codes. This is how the plain `pipe-pane` log output looks like if you're
-using terminal with coloring:
+#### Standard modules
 
-![garbled log output](/screenshots/garbled_log_output.png)
+**TODO**
 
-Garbled characters are called ANSI codes. They enable colors in terminal, but
-are just making 'noise' in the textual log output.
+### 1. Tasks by PRIO
 
-A user will probably want to filter ANSI codes out of the log. Here's the same
-log as above when this plugin is used:
-
-![proper log output](/screenshots/proper_log_output.png)
+- [x] Migrate Repo
+- [ ] Installation / Usage Documentation
+- [ ] Stabilizing API
+- [ ] Development / Contribution Documentation
 
 ### Configuration Docs
 
-- [Changing default options](docs/configuration.md).
-
-### Other plugins
-
-You might also find these useful:
-
-- [resurrect](https://github.com/tmux-plugins/tmux-resurrect) - restore tmux
-  environment after system restart
-- [pain control](https://github.com/tmux-plugins/tmux-pain-control) - useful standard
-  bindings for controlling panes
-- [sessionist](https://github.com/tmux-plugins/tmux-sessionist) - lightweight
-  tmux utils for switching and creating sessions
+- [Core configuration](docs/configuration_core.md).
+- [Modules configuration](docs/configuration_modules.md).
 
 ### License
 
