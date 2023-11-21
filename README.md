@@ -63,9 +63,20 @@ You should now have all `tmux-penmux` key bindings defined.
 This chapter descripes how to use this plugin and it's modules. It will give an overview of the standard modules
 that are included and how to use them.
 
-#### Core Plugin
+#### Core
 
-**TODO**
+This plugin is basically just an API to provide features via modules. The main features are just loading, unloading, running modules and changing their options.
+
+##### Screencast
+
+![core](https://github.com/mfulz/tmux-penmux/raw/master/screencasts/core.gif)
+
+##### Key bindings
+
+- `prefix + P + l` - load module
+- `prefix + P + u` - unload module
+- `prefix + P + c` - change module options
+- `prefix + P + r` - run module
 
 #### Standard modules
 
