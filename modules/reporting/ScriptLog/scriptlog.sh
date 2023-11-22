@@ -89,7 +89,7 @@ _start() {
     _set_logging_variable "$pane_id"
 
     # tmux set-hook -t "$pane_id" -p pane-title-changed "run-shell '\"$CURRENT_DIR/scriptlog.sh\" -a title -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_FILE\" -p \"$pane_id\"'"
-    tmux respawn-pane -k -t "$pane_id" "$SHELL -c ' cd . && script -q -T \"${new_file}.time\" \"$new_file\"'"
+    tmux respawn-pane -k -t "$pane_id" "$SHELL -c ' cd . && script -a -q -T \"${new_file}.time\" \"$new_file\"'"
   fi
 }
 
