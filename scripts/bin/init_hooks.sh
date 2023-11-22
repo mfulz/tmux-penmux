@@ -2,8 +2,8 @@
 
 CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-source "$CURRENT_DIR/variables.sh"
-source "$CURRENT_DIR/exported.sh"
+source "$CURRENT_DIR/../include/variables.sh"
+source "$CURRENT_DIR/../include/exported.sh"
 
 main() {
   local pane_id="$(tmux display-message -p "#D")"

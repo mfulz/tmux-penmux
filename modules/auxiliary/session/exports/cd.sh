@@ -11,6 +11,6 @@ cd_session() {
 
   if [ -e ".pmses" ]; then
     session_file="$(realpath .pmses)"
-    tmux run-shell "\"$HOME/.tmux/plugins/tmux-penmux/modules/auxiliary/session/session.sh\" -a load -m \"$HOME/.tmux/plugins/tmux-penmux/modules/auxiliary/session.xml\" -c \"$HOME/.tmux/plugins/tmux-penmux/scripts\" -f \"$session_file\""
+    tmux run-shell "\"$HOME/.tmux/plugins/tmux-penmux/modules/auxiliary/session/session.sh\" -a load -m \"$HOME/.tmux/plugins/tmux-penmux/modules/auxiliary/session.xml\" -c \"$HOME/.tmux/plugins/tmux-penmux/scripts/include\" -f \"$session_file\""
   fi
 }

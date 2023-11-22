@@ -2,8 +2,8 @@
 
 CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-source "$CURRENT_DIR/variables.sh"
-source "$CURRENT_DIR/exported.sh"
+source "$CURRENT_DIR/../include/variables.sh"
+source "$CURRENT_DIR/../include/exported.sh"
 
 main() {
   local calling_pane_id="$1"
@@ -22,9 +22,9 @@ main() {
       local mpath="${c:0:$idx_mpath}"
       local handle_script="${c:$((idx_prio+1)):$len}"
       if [ -z "$to_run" ]; then
-        to_run="$handle_script -c $CURRENT_DIR -a cmd -m $mpath -p $pane_id -o $calling_pane_id"
+        to_run="$handle_script -c $CURRENT_DIR/../include -a cmd -m $mpath -p $pane_id -o $calling_pane_id"
       else
-        to_run="$to_run; $handle_script -c $CURRENT_DIR -a cmd -m $mpath -p $pane_id -o $calling_pane_id"
+        to_run="$to_run; $handle_script -c $CURRENT_DIR/../include -a cmd -m $mpath -p $pane_id -o $calling_pane_id"
       fi
     done
 

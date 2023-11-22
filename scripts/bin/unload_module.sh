@@ -2,8 +2,8 @@
 
 CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-source "$CURRENT_DIR/variables.sh"
-source "$CURRENT_DIR/exported.sh"
+source "$CURRENT_DIR/../include/variables.sh"
+source "$CURRENT_DIR/../include/exported.sh"
 
 main() {
   local module_to_unload
@@ -84,7 +84,7 @@ main() {
     tmux set-option -t "$session" "@penmux-default-cmds" "$new_cmds"
   fi
 
-  err="$($handle_script -c "$CURRENT_DIR" -a unload -m "$module_path")" || {
+  err="$($handle_script -c "$CURRENT_DIR/../include" -a unload -m "$module_path")" || {
     tmux display-message -d 5000 "Module unload error: '$err'"
     return
   }

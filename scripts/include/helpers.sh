@@ -4,10 +4,10 @@ _CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 source "$_CURRENT_DIR/variables.sh"
 
-_PENMUX_MODULE_SCHEMA="${_CURRENT_DIR}/../schemas/penmux-module.xsd"
-_PENMUX_MODULE_DIR="${_CURRENT_DIR}/../modules"
-_PENMUX_MODULE_OPTIONS_DIR="${_CURRENT_DIR}/../options"
-_PENMUX_KEYTABLES_DIR="${_CURRENT_DIR}/../keytables"
+_PENMUX_MODULE_SCHEMA="${_CURRENT_DIR}/../../schemas/penmux-module.xsd"
+_PENMUX_MODULE_DIR="${_CURRENT_DIR}/../../modules"
+_PENMUX_MODULE_OPTIONS_DIR="${_CURRENT_DIR}/../../options"
+_PENMUX_KEYTABLES_DIR="${_CURRENT_DIR}/../../keytables"
 
 supported_tmux_version_ok() {
 	"$_CURRENT_DIR/check_tmux_version.sh" "$SUPPORTED_VERSION"
