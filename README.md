@@ -60,7 +60,7 @@ You should now have all `tmux-penmux` key bindings defined.
 
 ### 2. Usage
 
-This chapter descripes how to use this plugin and it's modules. It will give an overview of the standard modules
+This chapter describes how to use this plugin and it's modules. It will give an overview of the standard modules
 that are included and how to use them.
 
 #### Core
@@ -85,7 +85,7 @@ This plugin is basically just an API to provide features via modules. The main f
 | Config | Default | Description |
 |--------|---------|-------------|
 |`set -g @penmux-custom-keytables-dir "$HOME/.tmux/penmux/keytables"` | $HOME/.tmux/penmux/keytables | This directory can hold keytable definitions for modules to override the defaults |
-|`set -g @penmux-custom-module-options-dir "$HOME/.tmux/penmux/keytables"` | $HOME/.tmux/penmux/options | This directory can hold option definitions for modules to override the defaults |
+|`set -g @penmux-custom-module-options-dir "$HOME/.tmux/penmux/options"` | $HOME/.tmux/penmux/options | This directory can hold option definitions for modules to override the defaults |
 
 #### Keybindings
 
@@ -99,11 +99,77 @@ This plugin is basically just an API to provide features via modules. The main f
 
 ### 4. Modules
 
+The modules are providing the functionality for penmux. Therefore the core is providing a basic API / Guideline to let the modules work in a cooperative way to *hopefully* provide usable features to other users and not only myself ;)
+
+#### Basic Configuration
+
+The modules can have two type of files, that let the user configure them.
+
+##### Options
+
+The first type are the general options, that a module has. If you want to adjust the default values for a module, you copy the module's options xml from options/moduleName.xml to the penmux-custom-module-options-dir (default: $HOME/.tmux/penmux/options) and adjust them to your needs.
+
+As an example if you want to change the default directory to store sessions for the Session module, you would do the following:
+```
+mkdir -p $HOME/.tmux/penmux/options
+cp $HOME/.tmux/plugins/tmux-penmux/options/Session.xml $HOME/.tmux/penmux/options/
+```
+
+Then change the line for the "SessionDirBase" from:
+```
+<Option>
+    <Name>SessionDirBase</Name>
+    <DefaultValue>$HOME/.tmux/penmux/sessions</DefaultValue>
+</Option>
+```
+to your likes:
+```
+<Option>
+    <Name>SessionDirBase</Name>
+    <DefaultValue>$HOME/my/new/penmux/session/folder</DefaultValue>
+</Option>
+```
+
+##### Keytables
+
+If a module has some functions that are bound to keys it has a file under keytables/moduleName.xml. To adjust the default keys for the module you have to copy the keytable xml to the penmux-custom-keytables-dir (default: $HOME/.tmux/penmux/keytables).
+
+**Not all modules are using keytables**
+
+As an example if you want to change the default keys for creating a new session for the Session module, you would do the following:
+```
+mkdir -p $HOME/.tmux/penmux/keytables
+cp $HOME/.tmux/plugins/tmux-penmux/keytables/Session.xml $HOME/.tmux/penmux/keytables/
+```
+Then change the key for 'new' from:
+```
+<Key>
+  <Key>n</Key>
+  <Func>new</Func>
+  <Description>Creates a new session</Description>
+</Key>
+```
+to your likes:
+```
+<Key>
+  <Key>t</Key>
+  <Func>new</Func>
+  <Description>Creates a new session</Description>
+</Key>
+```
+
+The 'PrefixKey' is used as a module prefix. It can be changed to your likes, too.
+That means that if you want to run any module functions you would need to use the tmux prefix + penmux prefix + module prefix + module function key.
+
+As example to create a new session with all defaults you would press: `prefix + P + s + n`
+
+##### Standard modules
+
 | Module | Path | Description |
 |--------|------|-------------|
 |[Session](docs/modules/auxilliary/Session.md) | auxilliary | Module to handle penmux sessions (persisting options, etc.) |
-|[Commander](docs/modules/auxilliary/Commander.md) | auxilliary | Module to run commands that are read from csv fiels |
-|[Snipper](docs/modules/auxilliary/Snipper.md) | auxilliary | Module to copy snippets to clipboard that are read from csv fiels |
+|[Commander](docs/modules/auxilliary/Commander.md) | auxilliary | Module to run commands that are read from csv files |
+|[Snipper](docs/modules/auxilliary/Snipper.md) | auxilliary | Module to copy snippets to clipboard that are read from csv files |
 |[Scriptlog](docs/modules/reporting/Scriptlog.md) | reporting | Module to log all terminal input / output via script |
 |[HttpExchange](docs/modules/comm/HttpExchange.md) | comm | Module to provide a python webserver including predifined fetch commands |
 
