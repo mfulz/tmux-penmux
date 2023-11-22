@@ -8,7 +8,7 @@ snippets, reuse, etc. pp.
 
 It is inspired from metasploit's modules and can be extended by modules.
 
-**This is early WIP and the plugin API could change breaking everything ;)**
+**This is early WIP ~~and the plugin API could change breaking everything ;)~~**
 
 ### 1. Installation
 
