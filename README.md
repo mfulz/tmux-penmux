@@ -80,14 +80,14 @@ This plugin is basically just an API to provide features via modules. The main f
 
 ### 3. Configuration
 
-## Directories
+#### Directories
 
 | Config | Default | Description |
 |--------|---------|-------------|
 |`set -g @penmux-custom-keytables-dir "$HOME/.tmux/penmux/keytables"` | $HOME/.tmux/penmux/keytables | This directory can hold keytable definitions for modules to override the defaults |
 |`set -g @penmux-custom-module-options-dir "$HOME/.tmux/penmux/keytables"` | $HOME/.tmux/penmux/options | This directory can hold option definitions for modules to override the defaults |
 
-## Keybindings
+#### Keybindings
 
 | Config | Default | Description |
 |--------|---------|-------------|
