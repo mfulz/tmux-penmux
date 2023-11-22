@@ -69,7 +69,7 @@ This plugin is basically just an API to provide features via modules. The main f
 
 ##### Screencast
 
-![core](https://github.com/mfulz/tmux-penmux/blob/master/screencasts/core.gif?raw=true)
+![core](https://seafile.olznet.de/f/5589273ff92c4508b6c5/?dl=1)
 
 ##### Key bindings
 
