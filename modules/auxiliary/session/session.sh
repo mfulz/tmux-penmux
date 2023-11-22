@@ -73,7 +73,7 @@ _load() {
   local session_dir_act="$(penmux_module_get_option "$_MODULE_PATH" "SessionDir" "$pane_id")"
   local auto_load="$(penmux_module_get_option "$_MODULE_PATH" "AutoLoad" "$pane_id")"
   local session_opts
-  local loaded="$(penmux_module_is_loaded "auxilliary/misc/session.xml")"
+  local loaded="$(penmux_module_is_loaded "auxilliary/session.xml")"
 
   [[ -z "$loaded" ]] && exit 0
 

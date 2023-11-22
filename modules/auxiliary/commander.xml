@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<PenmuxModule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../schemas/penmux-module.xsd">
+<PenmuxModule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../schemas/penmux-module.xsd">
   <Name>Commander</Name>
   <Description>Command launcher module that reads in csv files that have different commands predefined</Description>
   <HasRun>true</HasRun>
-  <HandleScript>auxiliary/misc/commander/module.sh</HandleScript>
+  <HandleScript>auxiliary/commander/module.sh</HandleScript>
   <Option xsi:type="OptionTypeString" Private="true" Exported="true">
     <Name>CommandSearchPath</Name>
     <Description>Path that contains CSV files that holds the command definitions</Description>
-    <DefaultValue>$HOME/.tmux/plugins/tmux-penmux/modules/auxiliary/misc/commander/commands</DefaultValue>
+    <DefaultValue>$HOME/.tmux/plugins/tmux-penmux/modules/auxiliary/commander/commands</DefaultValue>
   </Option>
   <Option xsi:type="OptionTypeBool" Private="true" Exported="true">
     <Name>NoConfirm</Name>

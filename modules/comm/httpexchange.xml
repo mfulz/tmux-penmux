@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<PenmuxModule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../schemas/penmux-module.xsd">
+<PenmuxModule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../schemas/penmux-module.xsd">
   <Name>HttpExchange</Name>
   <Description>HTTP server module that enables easy file downloading to targets</Description>
   <HasRun>true</HasRun>

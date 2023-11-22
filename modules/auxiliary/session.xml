@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<PenmuxModule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../schemas/penmux-module.xsd">
+<PenmuxModule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../schemas/penmux-module.xsd">
   <Name>Session</Name>
   <Description>Module to persist penmux sessions and provide easy to use storage of module options</Description>
   <CmdPrio>100</CmdPrio>
   <NotifyOptions>true</NotifyOptions>
-  <HandleScript>auxiliary/misc/session/module.sh</HandleScript>
+  <HandleScript>auxiliary/session/module.sh</HandleScript>
   <Option xsi:type="OptionTypeBool" Private="true" Exported="true">
     <Name>AutoLoad</Name>
     <Description>If enabled sessions will be loaded automatically after cd into a directory that includes a session file</Description>
