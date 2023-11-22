@@ -22,11 +22,12 @@ main() {
       local mpath="${c:0:$idx_mpath}"
       local handle_script="${c:$((idx_prio+1)):$len}"
       if [ -z "$to_run" ]; then
-        to_run="$handle_script -c $CURRENT_DIR/../penmux -a cmd -m $mpath -p $pane_id -o $calling_pane_id"
+        to_run="$CURRENT_DIR/handler.sh $mpath -a cmd -p $pane_id -c $calling_pane_id"
       else
-        to_run="$to_run; $handle_script -c $CURRENT_DIR/../penmux -a cmd -m $mpath -p $pane_id -o $calling_pane_id"
+        to_run="$to_run; $CURRENT_DIR/handler.sh $mpath -a cmd -p $pane_id -c $calling_pane_id"
       fi
     done
+    echo "$to_run" >> /tmp/to_run
 
     tmux run-shell -t "$pane_id" "$to_run"
   fi

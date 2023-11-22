@@ -3,7 +3,6 @@
   <Name>ScriptLog</Name>
   <Description>Module to log terminal input / output to files (using util/linux script)</Description>
   <CmdPrio>200</CmdPrio>
-  <HandleScript>reporting/scriptlog/module.sh</HandleScript>
   <Option xsi:type="OptionTypeBool" Private="true" Exported="true">
     <Name>LogExisting</Name>
     <Description>If enabled all existing panes will start logging</Description>

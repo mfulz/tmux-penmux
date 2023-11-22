@@ -115,7 +115,6 @@
         <xs:element name="HasRun" type="xs:boolean" minOccurs="0" maxOccurs="1" />
         <xs:element name="CmdPrio" type="xs:int" minOccurs="0" maxOccurs="1" />
         <xs:element name="NotifyOptions" type="xs:boolean" minOccurs="0" maxOccurs="1" />
-        <xs:element name="HandleScript" type="xs:string" minOccurs="0" maxOccurs="1" />
         <xs:element name="Depend" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
         <xs:element name="Option" type="OptionType" minOccurs="0" maxOccurs="unbounded" />
         <xs:element name="Consumes" type="PenmuxConsumer" minOccurs="0" maxOccurs="unbounded" />

@@ -3,7 +3,6 @@
   <Name>Commander</Name>
   <Description>Command launcher module that reads in csv files that have different commands predefined</Description>
   <HasRun>true</HasRun>
-  <HandleScript>auxiliary/commander/module.sh</HandleScript>
   <Option xsi:type="OptionTypeString" Private="true" Exported="true">
     <Name>CommandSearchPath</Name>
     <Description>Path that contains CSV files that holds the command definitions</Description>

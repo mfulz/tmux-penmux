@@ -1,8 +1,8 @@
 _get_new_session_dir() {
   local pane_id="$1"
   local session_name="$2"
-  local use_cwd="$(penmux_module_get_option "$_MODULE_PATH" "UseCwd")"
-  local session_dir="$(penmux_module_get_option "$_MODULE_PATH" "SessionDirBase")"
+  local use_cwd="$(penmux_module_get_option "$_MODULE_FILE" "UseCwd")"
+  local session_dir="$(penmux_module_get_option "$_MODULE_FILE" "SessionDirBase")"
   local final_session_dir
   local pwd
 

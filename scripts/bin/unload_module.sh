@@ -11,7 +11,6 @@ main() {
   local loaded_modules="$(get_tmux_option "@penmux-loaded-modules" "")"
   local cmds="$(get_tmux_option "@penmux-default-cmds" "" "")"
   local session="$(tmux display-message -p "#{session_id}")"
-  local handle_script
   local module_path
   local err
 
@@ -44,19 +43,7 @@ main() {
     tmux unbind -T penmux_keytable "$prefix_key"
   fi
 
-  handle_script="$(_module_get_handlescript "$module_path")"
-  if [ -z "$handle_script" ]; then
-    tmux display-message -d 5000 "Module handle script missing in xml"
-    return
-  fi
-
-  handle_script="$_PENMUX_MODULE_DIR/$handle_script"
-  if [ ! -e "$handle_script" ]; then
-    tmux display-message -d 5000 "Module handle script not found"
-    return
-  fi
-
-  cmdprio="$(_module_get_cmdprio "$module_path")"
+    cmdprio="$(_module_get_cmdprio "$module_path")"
   if [ -n "$cmdprio" ]; then
     local new_cmds=""
     if [ -n "$cmds" ]; then
@@ -84,7 +71,7 @@ main() {
     tmux set-option -t "$session" "@penmux-default-cmds" "$new_cmds"
   fi
 
-  err="$($handle_script -c "$CURRENT_DIR/../penmux" -a unload -m "$module_path")" || {
+  err="$($CURRENT_DIR/internal/handler.sh "$module_path" -a unload)" || {
     tmux display-message -d 5000 "Module unload error: '$err'"
     return
   }

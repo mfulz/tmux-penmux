@@ -1,13 +1,13 @@
 _get_root_dir() {
   local pane_id="$1"
-  local use_session_dir="$(penmux_module_get_option "$_MODULE_PATH" "UseSessionDir" "$pane_id")"
-  local root_dir_base="$(penmux_module_get_option "$_MODULE_PATH" "HttpRootDirBase" "$pane_id")"
+  local use_session_dir="$(penmux_module_get_option "$_MODULE_FILE" "UseSessionDir" "$pane_id")"
+  local root_dir_base="$(penmux_module_get_option "$_MODULE_FILE" "HttpRootDirBase" "$pane_id")"
   local root_dir="$root_dir_base/http_root"
   local root_dir_session
 
 
   if [[ "$use_session_dir" == "true" ]]; then
-    root_dir_session="$(penmux_module_get_option "$_MODULE_PATH" "SessionDir" "$pane_id")"
+    root_dir_session="$(penmux_module_get_option "$_MODULE_FILE" "SessionDir" "$pane_id")"
     if [[ -n "$root_dir_session" ]]; then
       root_dir="$root_dir_session/http_root"
     fi

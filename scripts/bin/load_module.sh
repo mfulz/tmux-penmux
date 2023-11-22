@@ -10,7 +10,6 @@ main() {
   local loaded_modules="$(_module_get_loaded)"
   local cmds="$(get_tmux_option "@penmux-default-cmds" "" "")"
   local session="$(tmux display-message -p "#{session_id}")"
-  local handle_script
   local module_path
   local cmdprio
   local err
@@ -30,22 +29,10 @@ main() {
 
   module_path="$(_module_convert_relative_path "$module_to_load")"
 
-  handle_script="$(_module_get_handlescript "$module_path")"
-  if [ -z "$handle_script" ]; then
-      tmux display-message -d 5000 "Module handle script missing in xml"
-      return
-  fi
-
-  handle_script="$_PENMUX_MODULE_DIR/$handle_script"
-  if [ ! -e "$handle_script" ]; then
-      tmux display-message -d 5000 "Module handle script not found"
-      return
-  fi
-
   cmdprio="$(_module_get_cmdprio "$module_path")"
   if [ -n "$cmdprio" ]; then
     local new_cmds=""
-    local cmd_script="$module_path:$cmdprio:$handle_script"
+    local cmd_script="$module_path:$cmdprio"
     if [ -z "$cmds" ]; then
       new_cmds="$cmd_script"
     else
@@ -84,7 +71,7 @@ main() {
     tmux set-option -t "$session" "@penmux-default-cmds" "$new_cmds"
   fi
 
-  err="$($handle_script -c "$CURRENT_DIR/../penmux" -a load -m "$module_path" 2>&1 1>/dev/null)" || {
+  err="$("$CURRENT_DIR/internal/handler.sh" "$module_path" -a load 2>&1 1>/dev/null)" || {
     tmux display-message -d 5000 "Module load error: '$err'"
     return
   }
@@ -99,7 +86,7 @@ main() {
     tmux bind -T penmux_keytable "$prefix_key" switch-client -T "$keytable_name"
     while IFS= read -r k; do
       local key_func="$(_keytables_get_key_func "$module_keytable_file" "$k")"
-      tmux bind -T "$keytable_name" "$k" "run-shell '\"$handle_script\" -c \"$CURRENT_DIR/../penmux\" -m \"$module_path\" -a keyfunc -f \"$key_func\"'"
+      tmux bind -T "$keytable_name" "$k" "run-shell '\"$CURRENT_DIR/internal/handler.sh\" \"$module_path\" -a keyfunc -f \"$key_func\"'"
     done <<< "$keys"
   fi
 

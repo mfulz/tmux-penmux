@@ -3,7 +3,6 @@
   <Name>HttpExchange</Name>
   <Description>HTTP server module that enables easy file downloading to targets</Description>
   <HasRun>true</HasRun>
-  <HandleScript>comm/httpexchange/module.sh</HandleScript>
   <Option xsi:type="OptionTypeString" Private="true" Exported="true">
     <Name>CommandSearchPath</Name>
     <Description>Path that contains CSV files that holds the download command definitions</Description>

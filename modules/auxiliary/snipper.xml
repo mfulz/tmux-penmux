@@ -3,7 +3,6 @@
   <Name>Snipper</Name>
   <Description>Snipper module that reads in csv files that have different useful snippets. Will be copied into clipboard</Description>
   <HasRun>true</HasRun>
-  <HandleScript>auxiliary/snipper/module.sh</HandleScript>
   <Option xsi:type="OptionTypeString" Private="true" Exported="true">
     <Name>SnippetSearchPath</Name>
     <Description>Path that contains CSV files that holds the snippets</Description>

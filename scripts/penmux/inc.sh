@@ -122,7 +122,6 @@ penmux_module_notify_consumers() {
   local option_private="$(_module_get_option_private "$module_path" "$option_name")"
   local option_provided="$(_module_get_option_provided "$module_path" "$option_name")"
   local act_module_path
-  local handle_script
   local consumes
   local value
 
@@ -135,10 +134,7 @@ penmux_module_notify_consumers() {
     act_module_path="$(_module_convert_relative_path "$m")"
     consumes="$(xmlstarlet sel -t -v "/PenmuxModule/Consumes[Name=\"$option_name\"][boolean(@NoNotify)=0]/Name/text()" "$act_module_path")"
     if [ -n "$consumes" ]; then
-      handle_script="$_PENMUX_MODULE_DIR/$(_module_get_handlescript "$act_module_path")"
-
-      [ -z "$handle_script" ] && continue
-      "$handle_script" -c "$_INC_CURRENT_DIR" -a consumes -m "$act_module_path" -p "$pane_id" -k "$option_name" -i "$value"
+      "$_INC_CURRENT_DIR/../bin/internal/handler.sh" "$act_module_path" -a consumes -p "$pane_id" -n "$option_name" -v "$value"
     fi
   done <<< "$loaded_modules"
 }
