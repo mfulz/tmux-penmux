@@ -114,7 +114,7 @@ This plugin is basically just an API to provide features via modules. The main f
 - [x] Core configuration Documentation
 - [ ] Module usage Documentation
 - [ ] Module configuration Documentation
-- [ ] Stabilizing API
+- [x] Stabilizing API
 - [ ] Development / Contribution Documentation
 
 ### License
