@@ -101,11 +101,11 @@ This plugin is basically just an API to provide features via modules. The main f
 
 | Module | Path | Description |
 |--------|------|-------------|
-|[Session](docs/auxilliary/Session.md) | auxilliary | Module to handle penmux sessions (persisting options, etc.) |
-|[Commander](docs/auxilliary/Commander.md) | auxilliary | Module to run commands that are read from csv fiels |
-|[Snipper](docs/auxilliary/Snipper.md) | auxilliary | Module to copy snippets to clipboard that are read from csv fiels |
-|[Scriptlog](docs/reporting/Scriptlog.md) | reporting | Module to log all terminal input / output via script |
-|[HttpExchange](docs/comm/HttpExchange.md) | comm | Module to provide a python webserver including predifined fetch commands |
+|[Session](docs/moduels/auxilliary/Session.md) | auxilliary | Module to handle penmux sessions (persisting options, etc.) |
+|[Commander](docs/moduels/auxilliary/Commander.md) | auxilliary | Module to run commands that are read from csv fiels |
+|[Snipper](docs/moduels/auxilliary/Snipper.md) | auxilliary | Module to copy snippets to clipboard that are read from csv fiels |
+|[Scriptlog](docs/moduels/reporting/Scriptlog.md) | reporting | Module to log all terminal input / output via script |
+|[HttpExchange](docs/moduels/comm/HttpExchange.md) | comm | Module to provide a python webserver including predifined fetch commands |
 
 ### Tasks by PRIO
 
