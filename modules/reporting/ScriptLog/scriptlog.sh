@@ -2,24 +2,24 @@
 
 CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 _PENMUX_SCRIPTS=""
-_MODULE_PATH=""
+_MODULE_FILE=""
 
 source "$CURRENT_DIR/shared.sh"
 
 _set_logging_variable() {
   local pane_id="$1"
   local log_file="$(_get_log_file "$pane_id")"
-  penmux_module_set_option "$_MODULE_PATH" "LogFile" "$log_file" "$pane_id"
+  penmux_module_set_option "$_MODULE_FILE" "LogFile" "$log_file" "$pane_id"
 }
 
 _unset_logging_variable() {
   local pane_id="$1"
-  penmux_module_set_option "$_MODULE_PATH" "LogFile" "" "$pane_id"
+  penmux_module_set_option "$_MODULE_FILE" "LogFile" "" "$pane_id"
 }
 
 _unset_stored_pane_title() {
   local pane_id="$1"
-  penmux_module_set_option "$_MODULE_PATH" "Title" "" "$pane_id"
+  penmux_module_set_option "$_MODULE_FILE" "Title" "" "$pane_id"
 }
 
 _get_pane_title() {
@@ -33,12 +33,12 @@ _get_pane_title() {
 _store_pane_title() {
   local pane_id="$1"
 	local pane_title="$(_get_pane_title "$pane_id")"
-  penmux_module_set_option "$_MODULE_PATH" "Title" "$pane_title" "$pane_id"
+  penmux_module_set_option "$_MODULE_FILE" "Title" "$pane_title" "$pane_id"
 }
 
 _get_stored_pane_title() {
   local pane_id="$1"
-  local pane_title="$(penmux_module_get_option "$_MODULE_PATH" "Title" "$pane_id")"
+  local pane_title="$(penmux_module_get_option "$_MODULE_FILE" "Title" "$pane_id")"
 
   echo "$pane_title"
 }
@@ -51,9 +51,9 @@ _set_pane_title() {
 
 _restore_pane_title() {
   local pane_id="$1"
-  local pane_title="$(penmux_module_get_option "$_MODULE_PATH" "Title" "$pane_id")"
+  local pane_title="$(penmux_module_get_option "$_MODULE_FILE" "Title" "$pane_id")"
 	tmux select-pane -t "${pane_id}" -T "${pane_title}"
-  penmux_module_set_option "$_MODULE_PATH" "Title" "" "$pane_id"
+  penmux_module_set_option "$_MODULE_FILE" "Title" "" "$pane_id"
 }
 
 # revert logging
@@ -88,7 +88,7 @@ _start() {
     _set_pane_title "$pane_id"
     _set_logging_variable "$pane_id"
 
-    # tmux set-hook -t "$pane_id" -p pane-title-changed "run-shell '\"$CURRENT_DIR/scriptlog.sh\" -a title -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\" -p \"$pane_id\"'"
+    # tmux set-hook -t "$pane_id" -p pane-title-changed "run-shell '\"$CURRENT_DIR/scriptlog.sh\" -a title -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_FILE\" -p \"$pane_id\"'"
     tmux respawn-pane -k -t "$pane_id" "$SHELL -c ' cd . && script -q -T \"${new_file}.time\" \"$new_file\"'"
   fi
 }
@@ -105,10 +105,10 @@ _restart() {
 
   if [[ "$log_file" != "$new_file" ]]; then
     _revert "$pane_id"
-    # tmux run-shell "\"$CURRENT_DIR/scriptlog.sh\" -a revert -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\" -p \"$pane_id\""
+    # tmux run-shell "\"$CURRENT_DIR/scriptlog.sh\" -a revert -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_FILE\" -p \"$pane_id\""
 
-    # tmux respawn-pane -k -t "$pane_id" "\"$CURRENT_DIR/scriptlog.sh\" -a start -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\" -p \"$pane_id\""
-    tmux run-shell -t "$pane_id" "\"$CURRENT_DIR/scriptlog.sh\" -a start -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\" -p \"$pane_id\""
+    # tmux respawn-pane -k -t "$pane_id" "\"$CURRENT_DIR/scriptlog.sh\" -a start -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_FILE\" -p \"$pane_id\""
+    tmux run-shell -t "$pane_id" "\"$CURRENT_DIR/scriptlog.sh\" -a start -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_FILE\" -p \"$pane_id\""
     # tmux set-hook -t "$pane_id" -up pane-title-changed
   fi
 }
@@ -132,7 +132,7 @@ _title() {
     tmux set-hook -t "$pane_id" -up pane-title-changed
     _store_pane_title "$pane_id"
     _set_pane_title "$pane_id"
-    tmux set-hook -t "$pane_id" -p pane-title-changed "run-shell '\"$CURRENT_DIR/scriptlog.sh\" -a title -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_PATH\" -p \"$pane_id\"'"
+    tmux set-hook -t "$pane_id" -p pane-title-changed "run-shell '\"$CURRENT_DIR/scriptlog.sh\" -a title -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_FILE\" -p \"$pane_id\"'"
   fi
 }
 
@@ -152,7 +152,7 @@ main() {
 			_PENMUX_SCRIPTS="${OPTARG}"
 			;;
 		m)
-      _MODULE_PATH="${OPTARG}"
+      _MODULE_FILE="${OPTARG}"
 			;;
 		p)
       pane_id="${OPTARG}"

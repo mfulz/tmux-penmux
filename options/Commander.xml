@@ -2,7 +2,7 @@
 <PenmuxModuleOptions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/penmux-module-options.xsd">
   <Option>
     <Name>CommandSearchPath</Name>
-    <DefaultValue>$HOME/.tmux/plugins/tmux-penmux/modules/auxiliary/commander/commands</DefaultValue>
+    <DefaultValue>$HOME/.tmux/plugins/tmux-penmux/modules/auxiliary/Commander/commands</DefaultValue>
   </Option>
   <Option>
     <Name>NoConfirm</Name>
