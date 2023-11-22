@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PenmuxModuleOptions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/penmux-module-options.xsd">
+  <Option>
+    <Name>AutoLoad</Name>
+    <DefaultValue>true</DefaultValue>
+  </Option>
+  <Option>
+    <Name>AutoSave</Name>
+    <DefaultValue>true</DefaultValue>
+  </Option>
+  <Option>
+    <Name>NoConfirm</Name>
+    <DefaultValue>false</DefaultValue>
+  </Option>
+  <Option>
+    <Name>UseCwd</Name>
+    <DefaultValue>true</DefaultValue>
+  </Option>
+  <Option>
+    <Name>SessionDirBase</Name>
+    <DefaultValue>$HOME/.tmux/penmux/sessions</DefaultValue>
+  </Option>
+</PenmuxModuleOptions>

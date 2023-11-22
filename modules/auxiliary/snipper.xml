@@ -7,22 +7,18 @@
   <Option xsi:type="OptionTypeString" Private="true" Exported="true">
     <Name>SnippetSearchPath</Name>
     <Description>Path that contains CSV files that holds the snippets</Description>
-    <DefaultValue>$HOME/.tmux/plugins/tmux-penmux/modules/auxiliary/snipper/snippets</DefaultValue>
   </Option>
   <Option xsi:type="OptionTypeString" Private="true" Exported="true">
     <Name>ClipboardCommand</Name>
     <Description>Command used for copying snippet to clipboard</Description>
-    <DefaultValue>echo '$$snippet$$' | xclip -i -sel c</DefaultValue>
   </Option>
   <Option xsi:type="OptionTypeString">
     <Name>LocalHost</Name>
     <Description>Defines the local host</Description>
-    <DefaultValue>127.0.0.1</DefaultValue>
   </Option>
   <Option xsi:type="OptionTypeInt">
     <Name>LocalPort</Name>
     <Description>Defines the local port</Description>
-    <DefaultValue>4444</DefaultValue>
   </Option>
   <Consumes NoNotify="true">
     <Name>HttpUri</Name>

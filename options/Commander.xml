@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PenmuxModuleOptions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/penmux-module-options.xsd">
+  <Option>
+    <Name>CommandSearchPath</Name>
+    <DefaultValue>$HOME/.tmux/plugins/tmux-penmux/modules/auxiliary/commander/commands</DefaultValue>
+  </Option>
+  <Option>
+    <Name>NoConfirm</Name>
+    <DefaultValue>false</DefaultValue>
+  </Option>
+  <Option>
+    <Name>RemoteHost</Name>
+    <DefaultValue>127.0.0.1</DefaultValue>
+  </Option>
+  <Option>
+    <Name>RemotePort</Name>
+    <DefaultValue>80</DefaultValue>
+  </Option>
+  <Option>
+    <Name>RemoteProto</Name>
+    <DefaultValue>http</DefaultValue>
+  </Option>
+  <Option>
+    <Name>LocalHost</Name>
+    <DefaultValue>127.0.0.1</DefaultValue>
+  </Option>
+  <Option>
+    <Name>LocalPort</Name>
+    <DefaultValue>4444</DefaultValue>
+  </Option>
+  <Option>
+    <Name>LocalTempPort</Name>
+    <DefaultValue>8800</DefaultValue>
+  </Option>
+</PenmuxModuleOptions>

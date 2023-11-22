@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PenmuxModuleOptions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/penmux-module-options.xsd">
+  <Option>
+    <Name>SnippetSearchPath</Name>
+    <DefaultValue>$HOME/.tmux/plugins/tmux-penmux/modules/auxiliary/snipper/snippets</DefaultValue>
+  </Option>
+  <Option>
+    <Name>ClipboardCommand</Name>
+    <DefaultValue>echo '$$snippet$$' | xclip -i -sel c</DefaultValue>
+  </Option>
+  <Option>
+    <Name>LocalHost</Name>
+    <DefaultValue>127.0.0.1</DefaultValue>
+  </Option>
+  <Option>
+    <Name>LocalPort</Name>
+    <DefaultValue>4444</DefaultValue>
+  </Option>
+  <Option>
+    <Name>LocalTempPort</Name>
+    <DefaultValue>8800</DefaultValue>
+  </Option>
+</PenmuxModuleOptions>

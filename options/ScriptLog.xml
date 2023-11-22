@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PenmuxModuleOptions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/penmux-module-options.xsd">
+  <Option>
+    <Name>LogExisting</Name>
+    <DefaultValue>true</DefaultValue>
+  </Option>
+  <Option>
+    <Name>Name</Name>
+    <DefaultValue>%Y%m%d-#T-(#D).log</DefaultValue>
+  </Option>
+  <Option>
+    <Name>LogPenmuxSessionDir</Name>
+    <DefaultValue>true</DefaultValue>
+  </Option>
+  <Option>
+    <Name>LogDir</Name>
+    <DefaultValue>$HOME/.tmux/penmux/scriptlog/#S</DefaultValue>
+  </Option>
+</PenmuxModuleOptions>

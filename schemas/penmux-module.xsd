@@ -4,7 +4,6 @@
     <xs:sequence>
       <xs:element name="Name" type="xs:string" />
       <xs:element name="Description" type="xs:string" />
-      <xs:element name="DefaultValue" type="xs:anySimpleType" minOccurs="0" maxOccurs="1" />
     </xs:sequence>
     <xs:attribute name="Mandatory"
     type="xs:boolean"
@@ -28,7 +27,6 @@
         <xs:sequence>
           <xs:element name="Name" type="xs:string" />
           <xs:element name="Description" type="xs:string" />
-          <xs:element name="DefaultValue" type="xs:string" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
         <xs:attribute name="Mandatory"
         type="xs:boolean"
@@ -54,7 +52,6 @@
         <xs:sequence>
           <xs:element name="Name" type="xs:string" />
           <xs:element name="Description" type="xs:string" />
-          <xs:element name="DefaultValue" type="xs:boolean" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
         <xs:attribute name="Mandatory"
         type="xs:boolean"
@@ -80,7 +77,6 @@
         <xs:sequence>
           <xs:element name="Name" type="xs:string" />
           <xs:element name="Description" type="xs:string" />
-          <xs:element name="DefaultValue" type="xs:int" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
         <xs:attribute name="Mandatory"
         type="xs:boolean"

@@ -52,6 +52,19 @@ _module_get_options() {
   xmlstarlet sel -t -v "/PenmuxModule/Option/Name/text()" "$module_path"
 }
 
+_module_get_option_name() {
+  local module_path="$1"
+  local option_name="$2"
+  local option_name_xml
+
+  option_name_xml="$(xmlstarlet sel -t -v "/PenmuxModule/Option[Name=\"$option_name\"]/Name/text()" "$module_path")"
+  if [[ -z "$option_name_xml" ]]; then
+    option_name_xml="$(xmlstarlet sel -t -v "/PenmuxModule/Consumes[Name=\"$option_name\"]/Name/text()" "$module_path")"
+  fi
+
+  echo "$option_name_xml"
+}
+
 _module_get_option_private() {
   local module_path="$1"
   local option_name="$2"
@@ -94,27 +107,36 @@ _module_get_option_description() {
   xmlstarlet sel -t -v "/PenmuxModule/Option[Name=\"$option_name\"]/Description/text()" "$module_path"
 }
 
+_module_get_options_file() {
+  local module_path="$1"
+  local module_name="$(_module_get_name "$module_path")"
+  local custom_module_options_dir_value="$(get_tmux_option "$custom_module_options_dir_option" "$default_custom_module_options_dir")"
+  local options_file
+
+  if [[ -e "$custom_module_options_dir_value/$module_name.xml" ]]; then
+    options_file="$custom_module_options_dir_value/$module_name.xml"
+  elif [[ -e "$_PENMUX_MODULE_OPTIONS_DIR/$module_name.xml" ]]; then
+    options_file="$_PENMUX_MODULE_OPTIONS_DIR/$module_name.xml"
+  else
+    options_file=""
+  fi
+
+  echo "$options_file"
+}
+
 _module_get_option_default_value() {
   local module_path="$1"
   local option_name="$2"
   local module_name="$(_module_get_name "$module_path")"
   local custom_module_options_dir_value="$(get_tmux_option "$custom_module_options_dir_option" "$default_custom_module_options_dir")"
-  local options_file
+  local options_file="$(_module_get_options_file "$module_path")"
   local option_default
-
-  if [[ -e "$custom_module_options_dir_value/$module_name.xml" ]]; then
-    options_file="$custom_module_options_dir_value/$module_name.xml"
-  fi
 
   if [[ -n "$options_file" ]]; then
     option_default="$(xmlstarlet sel -t -v "/PenmuxModuleOptions/Option[Name=\"$option_name\"]/DefaultValue" "$options_file")"
   fi
 
-  if [[ -n "$option_default" ]]; then
-    echo "$option_default"
-  else
-    xmlstarlet sel -t -v "/PenmuxModule/Option[Name=\"$option_name\"]/DefaultValue" "$module_path"
-  fi
+  echo "$option_default"
 }
 
 _module_has_run() {

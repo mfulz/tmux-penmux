@@ -75,8 +75,6 @@ _start() {
   local new_file="$(_get_log_file "$pane_id")"
   local logdir
 
-  echo "$pane_id a: $log_file n: $new_file" >> /tmp/fuckoff
-
   if [[ "$log_file" != "$new_file" ]]; then
     logdir="$(_get_log_dir "$pane_id")"
     if [ ! -d "$logdir" ]; then

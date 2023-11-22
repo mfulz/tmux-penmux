@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PenmuxModuleOptions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/penmux-module-options.xsd">
+  <Option>
+    <Name>CommandSearchPath</Name>
+    <DefaultValue>$HOME/.tmux/plugins/tmux-penmux/modules/auxiliary/comm/httpexchange/commands</DefaultValue>
+  </Option>
+  <Option>
+    <Name>NoConfirm</Name>
+    <DefaultValue>false</DefaultValue>
+  </Option>
+  <Option>
+    <Name>HttpHost</Name>
+    <DefaultValue>127.0.0.1</DefaultValue>
+  </Option>
+  <Option>
+    <Name>HttpPort</Name>
+    <DefaultValue>8080</DefaultValue>
+  </Option>
+  <Option>
+    <Name>UseSessionDir</Name>
+    <DefaultValue>true</DefaultValue>
+  </Option>
+  <Option>
+    <Name>HttpRootDirBase</Name>
+    <DefaultValue>$HOME/.tmux/penmux/httpexchange/#S/</DefaultValue>
+  </Option>
+  <Option>
+    <Name>LocalPort</Name>
+    <DefaultValue>4444</DefaultValue>
+  </Option>
+  <Option>
+    <Name>LocalTempPort</Name>
+    <DefaultValue>8800</DefaultValue>
+  </Option>
+</PenmuxModuleOptions>
