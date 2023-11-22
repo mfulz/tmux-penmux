@@ -78,20 +78,40 @@ This plugin is basically just an API to provide features via modules. The main f
 - `prefix + P + c` - change module options
 - `prefix + P + r` - run module
 
-#### Modules
-
-**TODO**
-
 ### 3. Configuration
 
-- [Core configuration](docs/configuration_core.md).
-- [Modules configuration](docs/configuration_modules.md).
+## Directories
+
+| Config | Default | Description |
+|--------|---------|-------------|
+|`set -g @penmux-custom-keytables-dir "$HOME/.tmux/penmux/keytables"` | $HOME/.tmux/penmux/keytables | This directory can hold keytable definitions for modules to override the defaults |
+|`set -g @penmux-custom-module-options-dir "$HOME/.tmux/penmux/keytables"` | $HOME/.tmux/penmux/options | This directory can hold option definitions for modules to override the defaults |
+
+## Keybindings
+
+| Config | Default | Description |
+|--------|---------|-------------|
+|`set -g @penmux-keytable-key "P"` | P | This is the prefix key for penmux |
+|`set -g @penmux-load-module-key "l"` | l | Load module |
+|`set -g @penmux-unload-module-key "u"` | u | Unload module |
+|`set -g @penmux-change-option-key "c"` | c | Change module options |
+|`set -g @penmux-run-key "r"` | r | Run module |
+
+### 4. Modules
+
+| Module | Path | Description |
+|--------|------|-------------|
+|[Session](docs/auxilliary/Session.md) | auxilliary | Module to handle penmux sessions (persisting options, etc.) |
+|[Commander](docs/auxilliary/Commander.md) | auxilliary | Module to run commands that are read from csv fiels |
+|[Snipper](docs/auxilliary/Snipper.md) | auxilliary | Module to copy snippets to clipboard that are read from csv fiels |
+|[Scriptlog](docs/reporting/Scriptlog.md) | reporting | Module to log all terminal input / output via script |
+|[HttpExchange](docs/comm/HttpExchange.md) | comm | Module to provide a python webserver including predifined fetch commands |
 
 ### Tasks by PRIO
 
 - [x] Migrate Repo
 - [x] Installation / Usage Documentation
-- [ ] Core configuration Documentation
+- [x] Core configuration Documentation
 - [ ] Module usage Documentation
 - [ ] Module configuration Documentation
 - [ ] Stabilizing API
