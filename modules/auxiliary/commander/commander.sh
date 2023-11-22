@@ -174,7 +174,7 @@ main() {
     esac
   done
 
-  source "$_PENMUX_SCRIPTS/exported.sh"
+  source "$_PENMUX_SCRIPTS/inc.sh"
 
   # if supported_tmux_version_ok; then
   case "${action}" in

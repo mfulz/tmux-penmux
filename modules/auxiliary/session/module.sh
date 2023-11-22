@@ -202,7 +202,7 @@ main() {
   esac
 done
 
-source "${_PENMUX_SCRIPTS}/exported.sh"
+source "${_PENMUX_SCRIPTS}/inc.sh"
 
 case "${action}" in
   "load")

@@ -1,6 +1,6 @@
-_CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+_INC_CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-source "$_CURRENT_DIR/module.sh"
+source "$_INC_CURRENT_DIR/../include/module.sh"
 
 # penmux module functions
 penmux_module_get_exported_options() {
@@ -138,7 +138,7 @@ penmux_module_notify_consumers() {
       handle_script="$_PENMUX_MODULE_DIR/$(_module_get_handlescript "$act_module_path")"
 
       [ -z "$handle_script" ] && continue
-      "$handle_script" -c "$_CURRENT_DIR" -a consumes -m "$act_module_path" -p "$pane_id" -k "$option_name" -i "$value"
+      "$handle_script" -c "$_INC_CURRENT_DIR" -a consumes -m "$act_module_path" -p "$pane_id" -k "$option_name" -i "$value"
     fi
   done <<< "$loaded_modules"
 }

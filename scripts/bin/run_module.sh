@@ -3,7 +3,7 @@
 CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 source "$CURRENT_DIR/../include/variables.sh"
-source "$CURRENT_DIR/../include/exported.sh"
+source "$CURRENT_DIR/../penmux/inc.sh"
 
 main() {
   local module_to_run
@@ -30,7 +30,7 @@ main() {
       return
   fi
 
-  err="$($handle_script -a run -c "$CURRENT_DIR/../include" -m "$module_path" -p "$pane_id" 2>&1 1>/dev/null)" || {
+  err="$($handle_script -a run -c "$CURRENT_DIR/../penmux" -m "$module_path" -p "$pane_id" 2>&1 1>/dev/null)" || {
     tmux display-message -d 5000 "Module run error: '$err'"
     return
   }

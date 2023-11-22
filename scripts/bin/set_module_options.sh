@@ -3,7 +3,7 @@
 CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 source "$CURRENT_DIR/../include/variables.sh"
-source "$CURRENT_DIR/../include/exported.sh"
+source "$CURRENT_DIR/../penmux/inc.sh"
 
 main() {
   local module_to_change

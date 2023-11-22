@@ -1,6 +1,6 @@
-_CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+_MODULE_CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-source "$_CURRENT_DIR/helpers.sh"
+source "$_MODULE_CURRENT_DIR/helpers.sh"
 
 #
 # module stuff
@@ -195,9 +195,9 @@ _module_notify_options() {
 
       [ -z "$handle_script" ] && continue
       if [ -z "$opt_value" ]; then
-        "$handle_script" -c "$_CURRENT_DIR" -a optionsnotify -m "$act_module_path" -p "$pane_id" -k "$opt_name" -s "$opt_volatile"
+        "$handle_script" -c "$_MODULE_CURRENT_DIR/../penmux" -a optionsnotify -m "$act_module_path" -p "$pane_id" -k "$opt_name" -s "$opt_volatile"
       else
-        "$handle_script" -c "$_CURRENT_DIR" -a optionsnotify -m "$act_module_path" -p "$pane_id" -k "$opt_name" -s "$opt_volatile" -i "$opt_value"
+        "$handle_script" -c "$_MODULE_CURRENT_DIR/../penmux" -a optionsnotify -m "$act_module_path" -p "$pane_id" -k "$opt_name" -s "$opt_volatile" -i "$opt_value"
       fi
     fi
   done <<< "$loaded_modules"

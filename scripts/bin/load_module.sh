@@ -3,7 +3,7 @@
 CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 source "$CURRENT_DIR/../include/variables.sh"
-source "$CURRENT_DIR/../include/exported.sh"
+source "$CURRENT_DIR/../penmux/inc.sh"
 
 main() {
   local module_to_load
@@ -84,7 +84,7 @@ main() {
     tmux set-option -t "$session" "@penmux-default-cmds" "$new_cmds"
   fi
 
-  err="$($handle_script -c "$CURRENT_DIR/../include" -a load -m "$module_path" 2>&1 1>/dev/null)" || {
+  err="$($handle_script -c "$CURRENT_DIR/../penmux" -a load -m "$module_path" 2>&1 1>/dev/null)" || {
     tmux display-message -d 5000 "Module load error: '$err'"
     return
   }
@@ -99,7 +99,7 @@ main() {
     tmux bind -T penmux_keytable "$prefix_key" switch-client -T "$keytable_name"
     while IFS= read -r k; do
       local key_func="$(_keytables_get_key_func "$module_keytable_file" "$k")"
-      tmux bind -T "$keytable_name" "$k" "run-shell '\"$handle_script\" -c \"$CURRENT_DIR/../include\" -m \"$module_path\" -a keyfunc -f \"$key_func\"'"
+      tmux bind -T "$keytable_name" "$k" "run-shell '\"$handle_script\" -c \"$CURRENT_DIR/../penmux\" -m \"$module_path\" -a keyfunc -f \"$key_func\"'"
     done <<< "$keys"
   fi
 
