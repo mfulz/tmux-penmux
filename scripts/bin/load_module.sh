@@ -16,9 +16,9 @@ main() {
   local err
 
   # dirty hack to set hooks for plugin
-  "$CURRENT_DIR/init_hooks.sh"
+  "$CURRENT_DIR/internal/init_hooks.sh"
 
-  module_to_load="$("$CURRENT_DIR/_modules.sh" -a select)"
+  module_to_load="$("$CURRENT_DIR/internal/modules.sh" -a select)"
   [ -z "$module_to_load" ] && exit 0
 
   while IFS= read -r m; do

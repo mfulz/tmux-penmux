@@ -2,8 +2,8 @@
 
 CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-source "$CURRENT_DIR/../include/variables.sh"
-source "$CURRENT_DIR/../penmux/inc.sh"
+source "$CURRENT_DIR/../../include/variables.sh"
+source "$CURRENT_DIR/../../penmux/inc.sh"
 
 _list_modules() {
   local label="$1"
@@ -30,7 +30,7 @@ _list_modules() {
 
   [[ -z "$label" ]] && label="Select module to load"
 
-  tmux set-option -p @penmux-hidden-module "$(echo "$unloaded_modules" | fzf --preview-window="top,60%" --border-label="$label" --border="sharp" --cycle --preview="$CURRENT_DIR/_modules.sh -a info -m {}")"
+  tmux set-option -p @penmux-hidden-module "$(echo "$unloaded_modules" | fzf --preview-window="top,60%" --border-label="$label" --border="sharp" --cycle --preview="$CURRENT_DIR/modules.sh -a info -m {}")"
 }
 
 _list_loaded_modules() {
@@ -39,7 +39,7 @@ _list_loaded_modules() {
   
   [[ -z "$label" ]] && label="Select module to unload"
 
-  tmux set-option -p @penmux-hidden-module "$(echo -n "$loaded_modules" | fzf --preview-window="top,60%" --border-label="$label" --border="sharp" --cycle --preview="$CURRENT_DIR/_modules.sh -a info -m {}")"
+  tmux set-option -p @penmux-hidden-module "$(echo -n "$loaded_modules" | fzf --preview-window="top,60%" --border-label="$label" --border="sharp" --cycle --preview="$CURRENT_DIR/modules.sh -a info -m {}")"
 }
 
 _list_runnable_modules() {
@@ -62,7 +62,7 @@ _list_runnable_modules() {
     fi
   done <<< "$loaded_modules"
 
-  tmux set-option -p @penmux-hidden-module "$(echo -n "$runnable_modules" | fzf --preview-window="top,60%" --border-label="$label" --border="sharp" --cycle --preview="$CURRENT_DIR/_modules.sh -a info -m {}")"
+  tmux set-option -p @penmux-hidden-module "$(echo -n "$runnable_modules" | fzf --preview-window="top,60%" --border-label="$label" --border="sharp" --cycle --preview="$CURRENT_DIR/modules.sh -a info -m {}")"
 }
 
 _get_info() {
@@ -107,7 +107,7 @@ _list_module_options() {
 
   [[ -z "$label" ]] && label="Select option to change for module '$module_name'"
 
-  tmux set-option -p @penmux-hidden-option "$(echo -n "$module_opts" | fzf --preview-window="top,60%" --border-label="$label" --border="sharp" --cycle --preview="$CURRENT_DIR/_modules.sh -a opt_info -m "$module_file" -o {}")"
+  tmux set-option -p @penmux-hidden-option "$(echo -n "$module_opts" | fzf --preview-window="top,60%" --border-label="$label" --border="sharp" --cycle --preview="$CURRENT_DIR/modules.sh -a opt_info -m "$module_file" -o {}")"
 }
 
 _get_opt_info() {
@@ -137,7 +137,7 @@ _set_option() {
 _select_module() {
   local label="$1"
   local module
-  tmux display-popup -w 80% -h 80% -E "$CURRENT_DIR/_modules.sh -a list -l \"$label\""
+  tmux display-popup -w 80% -h 80% -E "$CURRENT_DIR/modules.sh -a list -l \"$label\""
   module="$(tmux show-options -pqv "@penmux-hidden-module")"
   tmux set-option -pu "@penmux-hidden-module" > /dev/null
   echo "${module}"
@@ -146,7 +146,7 @@ _select_module() {
 _select_loaded() {
   local label="$1"
   local module
-  tmux display-popup -w 80% -h 80% -E "$CURRENT_DIR/_modules.sh -a list_loaded -l \"$label\""
+  tmux display-popup -w 80% -h 80% -E "$CURRENT_DIR/modules.sh -a list_loaded -l \"$label\""
   module="$(tmux show-options -pqv "@penmux-hidden-module")"
   tmux set-option -pu "@penmux-hidden-module" > /dev/null
   echo "${module}"
@@ -155,7 +155,7 @@ _select_loaded() {
 _select_runnable() {
   local label="$1"
   local module
-  tmux display-popup -w 80% -h 80% -E "$CURRENT_DIR/_modules.sh -a list_runnable -l \"$label\""
+  tmux display-popup -w 80% -h 80% -E "$CURRENT_DIR/modules.sh -a list_runnable -l \"$label\""
   module="$(tmux show-options -pqv "@penmux-hidden-module")"
   tmux set-option -pu "@penmux-hidden-module" > /dev/null
   echo "${module}"
@@ -164,7 +164,7 @@ _select_runnable() {
 _select_option() {
   local module_file="$1"
   local option
-  tmux display-popup -w 80% -h 80% -E "$CURRENT_DIR/_modules.sh -a list_options -m \"$module_file\""
+  tmux display-popup -w 80% -h 80% -E "$CURRENT_DIR/modules.sh -a list_options -m \"$module_file\""
   option="$(tmux show-options -pqv "@penmux-hidden-option")"
   tmux set-option -pu "@penmux-hidden-option" > /dev/null
   echo "${option}"

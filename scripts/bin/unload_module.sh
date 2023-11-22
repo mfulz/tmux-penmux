@@ -20,7 +20,7 @@ main() {
     return
   fi
 
-  module_to_unload="$("$CURRENT_DIR/_modules.sh" -a select_loaded)"
+  module_to_unload="$("$CURRENT_DIR/internal/modules.sh" -a select_loaded)"
   [ -z "$module_to_unload" ] && exit 0
 
   new_modules="${loaded_modules/\#$module_to_unload/}"

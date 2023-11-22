@@ -13,7 +13,7 @@ main() {
   local module_path
   local err
 
-  module_to_run="$("$CURRENT_DIR/_modules.sh" -a select_runnable -l "Select Module to run")"
+  module_to_run="$("$CURRENT_DIR/internal/modules.sh" -a select_runnable -l "Select Module to run")"
   [ -z "$module_to_run" ] && exit 0
 
   module_path="$(_module_convert_relative_path "$module_to_run")"

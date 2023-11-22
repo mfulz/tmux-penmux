@@ -21,14 +21,14 @@ main() {
     return
   fi
 
-  module_to_change="$("$CURRENT_DIR/_modules.sh" -a select_loaded -l 'Select module which options should be changed')"
+  module_to_change="$("$CURRENT_DIR/internal/modules.sh" -a select_loaded -l 'Select module which options should be changed')"
   [ -z "$module_to_change" ] && exit 0
 
   module_path="$(_module_convert_relative_path "$module_to_change")"
 
   module_name="$(_module_get_name "$module_path")"
 
-  option="$("$CURRENT_DIR/_modules.sh" -a select_option -m "$module_to_change")"
+  option="$("$CURRENT_DIR/internal/modules.sh" -a select_option -m "$module_to_change")"
   [ -z "$option" ] && exit 0
 
   value="$(penmux_module_get_option "$module_path" "$option")"
@@ -40,17 +40,17 @@ main() {
     "OptionTypeBool")
       tmux display-menu -T "Change '$option' for '$module_name'" \
         "true" "t" \
-        "run-shell '\"$CURRENT_DIR/_modules.sh\" -a set_option -m \"$module_path\" -o \"$option\" -v \"true\"'" \
+        "run-shell '\"$CURRENT_DIR/internal/modules.sh\" -a set_option -m \"$module_path\" -o \"$option\" -v \"true\"'" \
         "false" "f" \
-        "run-shell '\"$CURRENT_DIR/_modules.sh\" -a set_option -m \"$module_path\" -o \"$option\" -v \"false\"'" \
+        "run-shell '\"$CURRENT_DIR/internal/modules.sh\" -a set_option -m \"$module_path\" -o \"$option\" -v \"false\"'" \
         "unset" "u" \
-        "run-shell '\"$CURRENT_DIR/_modules.sh\" -a set_option -m \"$module_path\" -o \"$option\" -v \"\"'"
+        "run-shell '\"$CURRENT_DIR/internal/modules.sh\" -a set_option -m \"$module_path\" -o \"$option\" -v \"\"'"
       ;;
     "OptionTypeString")
-      tmux command-prompt -p "Change '$option' for '$module_name': " -I "$value" "run-shell '\"$CURRENT_DIR/_modules.sh\" -a set_option -m \"$module_path\" -o \"$option\" -v \"%%\"'"
+      tmux command-prompt -p "Change '$option' for '$module_name': " -I "$value" "run-shell '\"$CURRENT_DIR/internal/modules.sh\" -a set_option -m \"$module_path\" -o \"$option\" -v \"%%\"'"
       ;;
     "OptionTypeInt")
-      tmux command-prompt -p "Change '$option' for '$module_name': " -I "$value" "run-shell '\"$CURRENT_DIR/_modules.sh\" -a set_option -m \"$module_path\" -o \"$option\" -v \"%%\"'"
+      tmux command-prompt -p "Change '$option' for '$module_name': " -I "$value" "run-shell '\"$CURRENT_DIR/internal/modules.sh\" -a set_option -m \"$module_path\" -o \"$option\" -v \"%%\"'"
       ;;
     *)
       exit 1
