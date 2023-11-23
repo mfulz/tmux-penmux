@@ -163,7 +163,7 @@ That means that if you want to run any module functions you would need to use th
 
 As example to create a new session with all defaults you would press: `prefix + P + s + n`
 
-##### Standard modules
+#### Standard modules
 
 | Module | Path | Description |
 |--------|------|-------------|
