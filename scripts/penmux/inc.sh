@@ -17,6 +17,20 @@ source "$_INC_CURRENT_DIR/../include/module.sh"
 # @section penmux module functions
 # @description The following functions can be used to handle penmux module specific stuff.
 
+# @description This function will return all options that are exported or not Private
+# from all loaded modules.
+#
+# This function will return the options as an array with the plain tmux option names and should
+# be used with care.
+# Most of the modules should not care about all exported options but for some specific modules
+# like Session it is crucial to retrieve all exported options.
+#
+# @example
+#   declare -A exported_options="$(penmux_module_get_exported_options "$pane_id")"
+#
+# @arg $1 string The ID of the tmux pane that requests the exported options
+#
+# @stdout Output either "" or the options as parsable array string
 penmux_module_get_exported_options() {
   local pane_id="$1"
   local loaded_modules="$(_module_get_loaded)"
@@ -45,6 +59,19 @@ penmux_module_get_exported_options() {
   echo "${opts_arr[@]@K}"
 }
 
+# @description This function will return the value for a requested option.
+# The requested option must either belong to the calling module or it has
+# to be defined as Consumer for the module when it is an external option.
+# Only non private options can be retrieved from external modules.
+#
+# @example
+#   option_value="$(penmux_module_get_option "$module_file" "SessionDir" "$pane_id")"
+#
+# @arg $1 string The absolute path to the module xml definition file
+# @arg $2 string The name of the option that is requested (as defined in the xml file)
+# @arg $3 string The ID of the tmux pane that requests the option
+#
+# @stdout Output either "" (if no default value found), the default value or the actual value that was set by the user
 penmux_module_get_option() {
   local module_path="${1}"
   local option_name="${2}"
@@ -66,6 +93,21 @@ penmux_module_get_option() {
   get_tmux_option_pane "$tmux_option_name" "$option_default" "$pane_id"
 }
 
+# @description This function will set a value for a requested option.
+# The requested option must  belong to the calling module.
+#
+# @example
+#   penmux_module_set_option "$module_file" "HttpPort" "80" "$pane_id"
+#
+# @arg $1 string The absolute path to the module xml definition file
+# @arg $2 string The name of the option that is should be set (as defined in the xml file)
+# @arg $3 string The new value that should be set
+# @arg $4 string The ID of the tmux pane which option should be set
+#
+# @stderr Output an error that describes what went wrong on error
+#
+# @exitcode 0 If successful
+# @exitcode 1 If an error happend
 penmux_module_set_option() {
   local module_path="${1}"
   local option_name="${2}"
@@ -128,6 +170,23 @@ penmux_module_set_option() {
   _module_notify_options "$tmux_option_name" "$pane_id" "$value" "$opt_volatile"
 }
 
+# @description This function will notify all loaded modules that
+# has a consumer for this option and not flagged it NoNotify about
+# the change.
+#
+# The requested option must  belong to the calling module and flagged 
+# Provided. Further it must not be flagged Private.
+#
+# @example
+#   penmux_module_notify_consumers "$module_file" "SessionDir" "$pane_id"
+#
+# @arg $1 string The absolute path to the module xml definition file
+# @arg $2 string The name of the option that was set
+# @arg $3 string The ID of the tmux pane which set the option
+#
+# @exitcode 0 If successful
+# @exitcode 1 If option is private
+# @exitcode 2 If option is not provided
 penmux_module_notify_consumers() {
   local module_path="${1}"
   local option_name="${2}"
@@ -139,8 +198,8 @@ penmux_module_notify_consumers() {
   local consumes
   local value
 
-  [[ "$option_private" == "true" ]] && return
-  [[ "$option_provided" == "true" ]] || return
+  [[ "$option_private" == "true" ]] && return 1
+  [[ "$option_provided" == "true" ]] || return 2
 
   value="$(get_tmux_option "$module_path" "$option_name" "$pane_id")"
 
@@ -153,6 +212,20 @@ penmux_module_notify_consumers() {
   done <<< "$loaded_modules"
 }
 
+# @description This function will expand a given string by replacing
+# penmux format specifiers
+#
+# It will use penmux_module_get_option internally so all the rules
+# for retrieving an option will match here too.
+#
+# @example
+#   final_command="$(penmux_module_expand_options_string "$module_file" "###SessionDir###mymodule" "$pane_id")"
+#
+# @arg $1 string The absolute path to the module xml definition file
+# @arg $2 string The input string that should be expanded
+# @arg $3 string The ID of the tmux pane where the options should be read from
+#
+# @stdout Outputs the expanded input string
 penmux_module_expand_options_string() {
   local module_path="${1}"
   local input="${2}"
@@ -170,6 +243,19 @@ penmux_module_expand_options_string() {
   echo "$input"
 }
 
+# @description This function tells if a module is loaded
+#
+# @example
+#   loaded="$(penmux_module_is_loaded "auxilliary/Session.xml")"
+#   if [[ "$loaded" == "yes" ]]; then
+#     do anything when module is loaded
+#   else
+#     do anything when module is not loaded
+#   fi
+#
+# @arg $1 string The path to the module xml relative to the module search path
+#
+# @stdout Outputs yes if module is loaded or "" when it is not loaded
 penmux_module_is_loaded() {
   local module="$1"
 
@@ -179,6 +265,23 @@ penmux_module_is_loaded() {
 # @section general helper functions
 # @description The following functions can be used to for general recurring tasks.
 
+# @description This function parse a given csv content and print parsable lines
+# that can be assigned to arrays.
+#
+# The lines will contain an array with the heading columns as key and the
+# matching column content as value.
+#
+# @example
+#   csv_content="$(cat input.csv)"
+#   csv_parsed="$(penmux_csv_to_arrays "$csv_content")"
+#   while IFS= read -r e; do
+#     declare -A earr="($(echo "$e"))"
+#   done <<< "$csv_parsed"
+#
+# @arg $1 string The content from the csv file
+# @arg $2 char A separator. This is optional and ',' will be used when not given
+#
+# @stdout Output either "" or the parsed csv data
 penmux_csv_to_arrays() {
   local csv_content="$1"
   local csv_sep="$2"
@@ -213,6 +316,18 @@ penmux_csv_to_arrays() {
   done <<< "$csv_content"
 }
 
+# @description This function parse a given array content and
+# print the corresponding csv content.
+#
+# @example
+#   csv_parsed="$(penmux_csv_to_arrays "$csv_content")"
+#   csv_content="$(penmux_arrays_to_csv "$csv_parsed")"
+#   echo "$csv_content" > output.csv
+#
+# @arg $1 string The content of the csv like array
+# @arg $2 char A separator. This is optional and ',' will be used when not given
+#
+# @stdout Output either "" or the parsed csv data
 penmux_arrays_to_csv() {
   local csv_content="$1"
   local csv_sep="$2"
@@ -251,6 +366,17 @@ penmux_arrays_to_csv() {
   done <<< "$csv_content"
 }
 
+# @description This function will expand a given string by replacing
+# tmux format specifiers
+#
+# @example
+#   final_path="$(penmux_expand_tmux_format_path "$pane_id" "%H-#S.log")"
+#
+# @arg $1 string The ID of the tmux pane where the options should be read from
+# @arg $2 string The input string that should be expanded
+# @arg $3 boolean If the path should be kept relative
+#
+# @stdout Outputs the expanded input string
 penmux_expand_tmux_format_path() {
   local pane_id="$1"
 	local tmux_format_path="${2}"

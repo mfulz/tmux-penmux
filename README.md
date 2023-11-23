@@ -173,6 +173,12 @@ As example to create a new session with all defaults you would press: `prefix + 
 |[ScriptLog](docs/modules/reporting/ScriptLog.md) | reporting | No | Module to log all terminal input / output via script |
 |[HttpExchange](docs/modules/comm/HttpExchange.md) | comm | Yes | Module to provide a python webserver including predifined fetch commands |
 
+### 5. Development
+
+Here you can find the guides for developing modules.
+
+The [Penmux Module Library](docs/dev/API/PenmuxModuleLibrary.md) should be used to interact with Options and other penmux modules.
+
 ### Tasks by PRIO
 
 - [x] Migrate Repo
@@ -181,7 +187,8 @@ As example to create a new session with all defaults you would press: `prefix + 
 - [x] Module usage Documentation
 - [x] Module configuration Documentation
 - [x] Stabilizing API
-- [ ] Development / Contribution Documentation
+- [ ] Development Guide
+- [ ] Contribution Guide
 
 ### License
 
