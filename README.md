@@ -179,7 +179,7 @@ As example to create a new session with all defaults you would press: `prefix + 
 - [x] Installation / Usage Documentation
 - [x] Core configuration Documentation
 - [ ] Module usage Documentation
-- [ ] Module configuration Documentation
+- [x] Module configuration Documentation
 - [x] Stabilizing API
 - [ ] Development / Contribution Documentation
 
