@@ -16,8 +16,4 @@
     <Name>LocalPort</Name>
     <DefaultValue>4444</DefaultValue>
   </Option>
-  <Option>
-    <Name>LocalTempPort</Name>
-    <DefaultValue>8800</DefaultValue>
-  </Option>
 </PenmuxModuleOptions>
