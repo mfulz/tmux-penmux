@@ -15,7 +15,7 @@ The following configurable options are used by the Commander module.
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 |SnippetSearchPath | String | $HOME/.tmux/plugins/tmux-penmux/modules/auxiliary/Snipper/snippets | The search path for csv files providing snippets |
-|ClipboardCommand | String | echo '$$snippet$$' | xclip -i -sel c | The command used to copy the snippet to the clipboard. The placeholder `'$$snippet$$'` will be replaced by the selected snippet |
+|ClipboardCommand | String | echo '\$\$snippet\$\$' | xclip -i -sel c | The command used to copy the snippet to the clipboard. The placeholder `'$$snippet$$'` will be replaced by the selected snippet |
 |LocalHost | String | 127.0.0.1 | An option used by various commands. Can be seen like metasploit's LHOST |
 |LocalPort | Integer | 4444 | An option used by various commands. Can be seen like metasploit's LPORT |
 
