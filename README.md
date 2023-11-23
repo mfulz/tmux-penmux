@@ -189,7 +189,8 @@ Here you can find the guides for developing modules.
 - [x] Module usage Documentation
 - [x] Module configuration Documentation
 - [x] Stabilizing API
-- [ ] Development Guide
+- [x] Development Info 
+- [ ] Module development Guide
 - [ ] Contribution Guide
 
 ### License

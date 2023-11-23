@@ -49,9 +49,9 @@ We'll now go through all the elements one by one to describe what they are doing
 
 Option elements can occur multiple times. They are telling what default values are set for module options.
 
-For more information refer to the [OptionType](#OptionType).
+For more information refer to the [OptionType](#optiontype).
 
-### <a name="OptionType"></a>2.2 OptionType
+### <a name="optiontype"></a>2.2 OptionType
 
 An OptionType defines what default value an option has if no value is set by the user in the active session:
 ```

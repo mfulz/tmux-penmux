@@ -201,7 +201,7 @@ In most cases this element should be left out as for the main purpose of receivi
 
 Option elements are optional and can occur multiple times. They are telling what options a module has and what flags (attributes) they have.
 
-For more information about the attributes, etc. refer to the [OptionType](#OptionType).
+For more information about the attributes, etc. refer to the [OptionType](#optiontype).
 
 #### <a name="Consumes"></a>Consumes
 
@@ -215,7 +215,7 @@ Note that only [Options](#OptionType) marked as 'Provided' are possible to consu
 
 For detailed information about this refer to the [PenmuxConsumer](#PenmuxConsumer).
 
-### 2.2 OptionType
+### <a name="optiontype"></a>2.2 OptionType
 
 An OptionType defines what type an option has and can further define different features by its attributes:
 ```
