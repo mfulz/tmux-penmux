@@ -189,7 +189,7 @@ If a module (which should be the case for the vast majority) does not use a defa
 
 This element is telling the API that a module wants to get notified for any change of options from any module.
 
-Like CmdPrio the use case for this is rare (like for the [Session](docs/modules/auxilliary/Session.md) module) but still existing.
+Like CmdPrio the use case for this is rare (like for the [Session](../../../modules/auxilliary/Session.md) module) but still existing.
 
 If a module has this element set to 'true' the API will call the corresponding function (more info at [Module development guide](**TODO**)) of the module on every option change.
 
@@ -209,7 +209,7 @@ This element is a [PenmuxConsumer](#PenmuxConsumer) and optional. It can be adde
 
 The purpose of this element is to let a module use provided options from other modules to benefit from them.
 
-As an example the [ScriptLog module](docs/modules/reporting/ScriptLog.md) consumes the 'SessionDir' from the [Session module](docs/modules/auxilliary/Session.md) to log into the session directory when working inside of a session.
+As an example the [ScriptLog module](../../../modules/reporting/ScriptLog.md) consumes the 'SessionDir' from the [Session module](../../../modules/auxilliary/Session.md) to log into the session directory when working inside of a session.
 
 Note that only [Options](#OptionType) marked as 'Provided' are possible to consume.
 
@@ -356,7 +356,7 @@ An exception to this is when it is also set as [Exported](#exported).
 
 This attribute if set to true tells that this option should be exported. This option is still not usable from other modules in a normal way, but will be hand out by a function.
 
-The purpose of this is to be able for specific modules like the [Session Module](docs/modules/auxilliary/Session.md) to store the options for later use or similar functionality.
+The purpose of this is to be able for specific modules like the [Session Module](../../../modules/auxilliary/Session.md) to store the options for later use or similar functionality.
 
 It makes only sense to set a [Private](#private) option as Exported when it is a static like option that is set by the user. More about this in the [Module development guide](**TODO**)
 
@@ -364,7 +364,7 @@ It makes only sense to set a [Private](#private) option as Exported when it is a
 
 This attribute will mark an option to be usable by other modules. The difference to an option not set to [Private](#private) is that it is not meant to be an option set by other modules like 'LocalHost' but more to be seen as a result from the module internals.
 
-As example the [Session Module](docs/modules/auxilliary/Session.md) has the 'SessionDir' flagged as Provided. The SessionDir is not set by the user directly but computed from the module configuration, etc.
+As example the [Session Module](../../../modules/auxilliary/Session.md) has the 'SessionDir' flagged as Provided. The SessionDir is not set by the user directly but computed from the module configuration, etc.
 
 A module that is using provided options should also notify about any change happening to them. More about all this in the [Module development guide](**TODO**).
 
@@ -374,7 +374,7 @@ This attribute defines an option as volatile. It means that this option should n
 
 This is more like a request to other modules but is not restricted by code. Still this should be honored to avoid misbehavior of the module.
 
-The reason for that attribute is, that a module like the [Session Module](docs/modules/auxilliary/Session.md) should set such option on new panes, windows, etc. but not reload it from a persistent storage as only the owning module can validate the correct state.
+The reason for that attribute is, that a module like the [Session Module](../../../modules/auxilliary/Session.md) should set such option on new panes, windows, etc. but not reload it from a persistent storage as only the owning module can validate the correct state.
 
 More about this in the [Module development guide](**TODO**).
 

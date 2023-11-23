@@ -6,9 +6,9 @@ Penmux is using xml files to define the modules, options and keytables. Therefor
 
 In the current version there are three xsd schemas present (they can be located under the schemas folder):
 
-- [penmux-module.xsd](docs/dev/API/schemas/PenmuxModule.md)
-- [penmux-module-options.xsd](docs/dev/API/schemas/PenmuxModuleOptions.md)
-- [penmux-module-keytable.xsd](docs/dev/API/schemas/PenmuxModuleKeytable.md)
+- [penmux-module.xsd](schemas/PenmuxModule.md)
+- [penmux-module-options.xsd](schemas/PenmuxModuleOptions.md)
+- [penmux-module-keytable.xsd](schemas/PenmuxModuleKeytable.md)
 
 ### Penmux Module
 
