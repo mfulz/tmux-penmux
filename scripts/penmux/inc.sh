@@ -1,8 +1,22 @@
+#!/bin/env bash
+# @name PenmuxModuleLibrary (scripts/penmux/inc.sh)
+# @brief Library that provides penmux functions to the modules
+# @description
+#   This library must be used in all penmux modules so that
+#   they can interact with each other and work together with
+#   the penmux API.
+#
+#   It has the following function blocks:
+#     * penmux module functions: Used to read and set options, parse penmux xml files, etc.
+#     * general helper functions: These functions provide csv parsing, tmux path expansion, etc.
+
 _INC_CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 source "$_INC_CURRENT_DIR/../include/module.sh"
 
-# penmux module functions
+# @section penmux module functions
+# @description The following functions can be used to handle penmux module specific stuff.
+
 penmux_module_get_exported_options() {
   local pane_id="$1"
   local loaded_modules="$(_module_get_loaded)"
@@ -162,7 +176,9 @@ penmux_module_is_loaded() {
   _module_get_loaded "$module"
 }
 
-# generel helper functions
+# @section general helper functions
+# @description The following functions can be used to for general recurring tasks.
+
 penmux_csv_to_arrays() {
   local csv_content="$1"
   local csv_sep="$2"
