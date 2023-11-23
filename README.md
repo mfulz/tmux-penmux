@@ -170,7 +170,7 @@ As example to create a new session with all defaults you would press: `prefix + 
 |[Session](docs/modules/auxilliary/Session.md) | auxilliary | No | Module to handle penmux sessions (persisting options, etc.) |
 |[Commander](docs/modules/auxilliary/Commander.md) | auxilliary | Yes | Module to run commands that are read from csv files |
 |[Snipper](docs/modules/auxilliary/Snipper.md) | auxilliary | Yes |Module to copy snippets to clipboard that are read from csv files |
-|[Scriptlog](docs/modules/reporting/Scriptlog.md) | reporting | No | Module to log all terminal input / output via script |
+|[ScriptLog](docs/modules/reporting/ScriptLog.md) | reporting | No | Module to log all terminal input / output via script |
 |[HttpExchange](docs/modules/comm/HttpExchange.md) | comm | Yes | Module to provide a python webserver including predifined fetch commands |
 
 ### Tasks by PRIO
