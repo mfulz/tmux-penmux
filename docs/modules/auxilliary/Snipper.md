@@ -21,7 +21,7 @@ The following configurable options are used by the Commander module.
 
 ## 3. Adding snippets
 
-You can extend the Snipper with snippets to your like. Either by extending existing csv files or creating new ones. The module is loading any csv or sh file from the 'SnippetSearchPath' recursively so that they can be grouped by using nested directories.
+You can extend the Snipper with snippets to your like. Either by extending existing csv files or creating new ones. The module is loading any csv file from the 'SnippetSearchPath' recursively so that they can be grouped by using nested directories.
 
 **If you're adding any snippets, please create an issue / pr so that others can benefit from**
 
