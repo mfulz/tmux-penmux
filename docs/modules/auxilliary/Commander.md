@@ -83,7 +83,7 @@ tcpAllDefault,Default nmap tcp scan including standard scripts for all ports,###
 
 ### Replacement / Expanding
 
-For detailed information of what can be added as dynamic values please refer to [String replacements](../misc/Replacement.md)
+For detailed information of what can be added as dynamic values please refer to [String replacements](../misc/Replacements.md)
 
 ## 4. Development information
 
