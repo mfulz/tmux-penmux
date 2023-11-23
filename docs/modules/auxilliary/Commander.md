@@ -69,7 +69,7 @@ vulnAllDefaultNoHost,Default nmap scan for vulnerabilities without host discover
 vulnPortDefaultNoHost,Default nmap scan for vulnerabilities against the remote port without host discovery,###SessionDir###nmap,false,nmap --script vuln -Pn -p ###RemotePort### -oN ###SessionDir###nmap/###RemoteHost###-###RemotePort###-%Y%m%d%H%M%S-vulnPortDefaultNoHost ###RemoteHost###
 ```
 
-### Braking it down
+### Breaking it down
 
 Let's check out one line to get an idea on what is going on:
 ```

