@@ -203,7 +203,7 @@ Option elements are optional and can occur multiple times. They are telling what
 
 For more information about the attributes, etc. refer to the [OptionType](#OptionType).
 
-#### <a name="#Consumes"></a>Consumes
+#### <a name="Consumes"></a>Consumes
 
 This element is a [PenmuxConsumer](#PenmuxConsumer) and optional. It can be added multiple times, if the module is consuming multiple options from other modules.
 
@@ -346,13 +346,13 @@ The handling of a OptionType from the API can be adjusted by various attributes,
 
 This attribute if set to true tells that this option is mandatory and the module will not work if there is neither a default value existing nor a value set inside the session.
 
-##### <a name="#private"></a>Private
+##### <a name="private"></a>Private
 
 This attribute if set to true tells that this option is private to the module and cannot be accessed by other modules.
 
 An exception to this is when it is also set as [Exported](#exported).
 
-##### <a name="#exported"></a>Exported
+##### <a name="exported"></a>Exported
 
 This attribute if set to true tells that this option should be exported. This option is still not usable from other modules in a normal way, but will be hand out by a function.
 
@@ -378,7 +378,7 @@ The reason for that attribute is, that a module like the [Session Module](../../
 
 More about this in the [Module development guide](**TODO**).
 
-### <a name="#PenmuxConsumer"></a>2.3 PenmuxConsumer
+### <a name="PenmuxConsumer"></a>2.3 PenmuxConsumer
 
 The PenmuxConsumer describes an Option that is consumed from another module, but not required:
 
