@@ -11,7 +11,7 @@ Not implemented.
 
 ## 2. Options
 
-The following configurable options are used by the Session module.
+The following configurable options are used by the Commander module.
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
