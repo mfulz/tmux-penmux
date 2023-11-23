@@ -178,7 +178,7 @@ As example to create a new session with all defaults you would press: `prefix + 
 - [x] Migrate Repo
 - [x] Installation / Usage Documentation
 - [x] Core configuration Documentation
-- [ ] Module usage Documentation
+- [x] Module usage Documentation
 - [x] Module configuration Documentation
 - [x] Stabilizing API
 - [ ] Development / Contribution Documentation
