@@ -177,8 +177,10 @@ As example to create a new session with all defaults you would press: `prefix + 
 
 Here you can find the guides for developing modules.
 
-The [Penmux Module Library](docs/dev/API/PenmuxModuleLibrary.md) should be used to interact with Options and other penmux modules.
+#### API
 
+- The [Penmux Module Library](docs/dev/API/PenmuxModuleLibrary.md) should be used to interact with Options and other penmux modules.
+- The [Penmux Schemas](docs/dev/API/PenmuxSchemas.md) are describing what a module is made from
 ### Tasks by PRIO
 
 - [x] Migrate Repo
