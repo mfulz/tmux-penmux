@@ -66,6 +66,7 @@ _keyfunc() {
 _hook() {
   local pane_id="$1"
   local hook="$2"
+  local hook_option="$3"
 
   case "$hook" in
     "PreModuleLoad")

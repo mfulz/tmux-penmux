@@ -72,7 +72,7 @@ main() {
   fi
 
   # PreModuleLoad hooking
-  _module_run_hook "PreModuleLoad"
+  _module_run_hook "PreModuleLoad" "$module_to_load"
 
   err="$("$CURRENT_DIR/internal/handler.sh" "$module_path" -a load 2>&1 1>/dev/null)" || {
     tmux display-message -d 5000 "Module load error: '$err'"
@@ -102,6 +102,6 @@ main() {
   fi
   
   # PostModuleLoad hooking
-  _module_run_hook "PostModuleLoad"
+  _module_run_hook "PostModuleLoad" "$module_to_load" "$module_to_load"
 }
 main

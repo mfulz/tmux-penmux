@@ -135,6 +135,7 @@ _keyfunc() {
 _hook() {
   local pane_id="$1"
   local hook="$2"
+  local hook_option="$3"
   local session="$(tmux display-message -p "#{session_id}")"
   local panes="$(tmux list-panes -s -t "$session" -F "#D")"
 

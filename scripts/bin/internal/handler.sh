@@ -21,9 +21,10 @@ main() {
   local opt_volatile
   local func_name
   local hook
+  local hook_option
 
 	local OPTIND o
-	while getopts "a:c:p:n:v:s:f:h:" o; do
+	while getopts "a:c:p:n:v:s:f:h:o:" o; do
 		case "${o}" in
 		a)
 			action="${OPTARG}"
@@ -52,6 +53,9 @@ main() {
 			;;
 		h)
       hook="${OPTARG}"
+			;;
+		o)
+      hook_option="${OPTARG}"
 			;;
     *)
       # do not change !!! 
@@ -111,7 +115,7 @@ case "${action}" in
     ;;
   "hook")
     # running registered hooks
-    _hook "$pane_id" "$hook"
+    _hook "$pane_id" "$hook" "$hook_option"
     exit 0
     ;;
   *)

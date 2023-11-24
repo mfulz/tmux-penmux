@@ -124,8 +124,8 @@ _load() {
 
 _save() {
   local pane_id="$1"
-  local session_name="$(penmux_module_get_option "$_MODULE_FILE" "SessionName")"
-  local session_dir="$(penmux_module_get_option "$_MODULE_FILE" "SessionDir")"
+  local session_name="$(penmux_module_get_option "$_MODULE_FILE" "SessionName" "$pane_id")"
+  local session_dir="$(penmux_module_get_option "$_MODULE_FILE" "SessionDir" "$pane_id")"
   local session_file="$(realpath $session_dir/.pmses)"
   local session_opts
 

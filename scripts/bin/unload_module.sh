@@ -30,6 +30,9 @@ main() {
 
   module_path="$(_module_convert_relative_path "$module_to_unload")"
 
+  # PreModuleUnload hooking
+  _module_run_hook "PreModuleUnload" "$module_to_unload"
+
   local module_keytable_file="$(_keytables_get_file "$module_path")"
   if [[ -n "$module_keytable_file" ]]; then
     local module_name="$(_module_get_name "$module_path")"
@@ -43,7 +46,7 @@ main() {
     tmux unbind -T penmux_keytable "$prefix_key"
   fi
 
-    cmdprio="$(_module_get_cmdprio "$module_path")"
+  cmdprio="$(_module_get_cmdprio "$module_path")"
   if [ -n "$cmdprio" ]; then
     local new_cmds=""
     if [ -n "$cmds" ]; then
@@ -76,5 +79,8 @@ main() {
     return
   }
   tmux display-message -d 5000 "Module '$module_to_unload' unloaded"
+
+  # PostModuleUnload hooking
+  _module_run_hook "PostModuleUnload" "$module_to_unload"
 }
 main

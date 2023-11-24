@@ -212,6 +212,7 @@ _module_check_hook() {
 
 _module_run_hook() {
   local hook="$1"
+  local hook_option="$2"
   local loaded_modules="$(_module_get_loaded)"
 
   while IFS= read -r m; do
@@ -219,7 +220,7 @@ _module_run_hook() {
     local has_hook="$(_module_check_hook "$mpath" "$hook")"
 
     if [[ "$has_hook" == "true" ]]; then
-      "$_MODULE_CURRENT_DIR/../bin/internal/handler.sh" "$mpath" -a hook -h "$hook"
+      "$_MODULE_CURRENT_DIR/../bin/internal/handler.sh" "$mpath" -a hook -h "$hook" -o "$hook_option"
     fi
   done <<< "$loaded_modules"
 }
