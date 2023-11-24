@@ -21,6 +21,6 @@
   </Option>
   <Consumes NoNotify="true">
     <Name>HttpUri</Name>
-    <Description>Provides the final http server base uri. Can be used by other modules to store files</Description>
+    <From>HttpExchange</From>
   </Consumes>
 </PenmuxModule>

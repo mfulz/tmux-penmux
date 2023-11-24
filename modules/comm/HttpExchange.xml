@@ -41,6 +41,6 @@
   </Option>
   <Consumes NoNotify="true">
     <Name>SessionDir</Name>
-    <Description>The final session directory. Can be used by other modules to store data.</Description>
+    <From>Session</From>
   </Consumes>
 </PenmuxModule>

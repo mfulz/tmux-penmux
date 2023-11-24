@@ -101,8 +101,6 @@ _restart() {
 
   # _is_logging "$pane_id" || exit 0
 
-  echo "$pane_id a: $log_file n: $new_file" >> /tmp/fuckoff
-
   if [[ "$log_file" != "$new_file" ]]; then
     _revert "$pane_id"
     # tmux run-shell "\"$CURRENT_DIR/scriptlog.sh\" -a revert -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_FILE\" -p \"$pane_id\""

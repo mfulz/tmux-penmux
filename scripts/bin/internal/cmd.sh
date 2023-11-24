@@ -27,7 +27,6 @@ main() {
         to_run="$to_run; $CURRENT_DIR/handler.sh $mpath -a cmd -p $pane_id -c $calling_pane_id"
       fi
     done
-    echo "$to_run" >> /tmp/to_run
 
     tmux run-shell -t "$pane_id" "$to_run"
   fi

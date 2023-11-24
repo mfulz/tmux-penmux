@@ -43,20 +43,28 @@ _module_get_cmdprio() {
 _module_get_options() {
   local module_path="$1"
 
-  xmlstarlet sel -t -v "/PenmuxModule/Option/Name/text()" "$module_path"
+  xmlstarlet sel -t -v "/PenmuxModule/Option[boolean(@Provided)=0]/Name/text()" "$module_path"
 }
 
 _module_get_option_name() {
   local module_path="$1"
   local option_name="$2"
-  local option_name_xml
 
-  option_name_xml="$(xmlstarlet sel -t -v "/PenmuxModule/Option[Name=\"$option_name\"]/Name/text()" "$module_path")"
-  if [[ -z "$option_name_xml" ]]; then
-    option_name_xml="$(xmlstarlet sel -t -v "/PenmuxModule/Consumes[Name=\"$option_name\"]/Name/text()" "$module_path")"
-  fi
+  xmlstarlet sel -t -v "/PenmuxModule/Option[Name=\"$option_name\"]/Name/text()" "$module_path"
+}
 
-  echo "$option_name_xml"
+_module_get_consumer_name() {
+  local module_path="$1"
+  local consumer_name="$2"
+
+  xmlstarlet sel -t -v "/PenmuxModule/Consumes[Name=\"$consumer_name\"]/Name/text()" "$module_path"
+}
+
+_module_get_consumer_from() {
+  local module_path="$1"
+  local consumer_name="$2"
+
+  xmlstarlet sel -t -v "/PenmuxModule/Consumes[Name=\"$consumer_name\"]/From/text()" "$module_path"
 }
 
 _module_get_option_private() {

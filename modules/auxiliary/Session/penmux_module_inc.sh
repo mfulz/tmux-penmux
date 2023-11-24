@@ -13,7 +13,7 @@ _load() {
   local panes="$(tmux list-panes -s -t "$session" -F "#D")"
 
   while IFS= read -r p; do
-    tmux set-option -t "$p" automatic-rename-format '#{?#{==:#{@penmux-SessionName},},No Session,#{@penmux-SessionName}} (#{?#{==:#{@penmux-SessionDir},},CWD: #{pane_current_path},CSD: #{@penmux-SessionDir}})'
+    tmux set-option -t "$p" automatic-rename-format '#{?#{==:#{@penmux-Session-SessionName},},No Session,#{@penmux-Session-SessionName}} (#{?#{==:#{@penmux-Session-SessionDir},},CWD: #{pane_current_path},CSD: #{@penmux-Session-SessionDir}})'
     tmux set-option -t "$p" status-interval 5
     tmux set-option -t "$p" automatic-rename on
   done <<< "$panes"
@@ -60,7 +60,7 @@ _cmd() {
     tmux respawn-pane -k -t "$pane_id" "$SHELL"
   fi
 
-  tmux set-option automatic-rename-format '#{?#{==:#{@penmux-SessionName},},No Session,#{@penmux-SessionName}} (#{?#{==:#{@penmux-SessionDir},},CWD: #{pane_current_path},CSD: #{@penmux-SessionDir}})'
+  tmux set-option automatic-rename-format '#{?#{==:#{@penmux-Session-SessionName},},No Session,#{@penmux-Session-SessionName}} (#{?#{==:#{@penmux-Session-SessionDir},},CWD: #{pane_current_path},CSD: #{@penmux-Session-SessionDir}})'
   tmux set-option status-interval 5
   tmux set-option automatic-rename on
 }
