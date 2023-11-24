@@ -52,3 +52,31 @@ _optionsnotify() {
 _consumes() {
   return
 }
+
+_hook() {
+  local pane_id="$1"
+  local hook="$2"
+  local hook_option="$3"
+
+  case "$hook" in
+    "PreModuleLoad")
+      ;;
+    "PostModuleLoad")
+      ;;
+    "PreModuleUnload")
+      ;;
+    "PostModuleUnload")
+      ;;
+    *)
+      echo >&2 "Unknown hook name: '$hook'"
+      ;;
+  esac
+
+  return
+}
+
+_apiver() {
+  # do not change this without implementing the
+  # required changes
+  echo "1.0.0"
+}

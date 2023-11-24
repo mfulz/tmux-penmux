@@ -84,3 +84,9 @@ _hook() {
 
   return
 }
+
+_apiver() {
+  # do not change this without implementing the
+  # required changes
+  echo "1.0.0"
+}

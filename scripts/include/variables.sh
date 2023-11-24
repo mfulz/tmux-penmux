@@ -1,4 +1,5 @@
 SUPPORTED_VERSION="1.9"
+API_VERSION="1.0.0"
 
 # custom keytables path
 custom_keytables_dir_option="@penmux-custom-keytables-dir"

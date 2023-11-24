@@ -30,19 +30,15 @@ main() {
 			action="${OPTARG}"
 			;;
 		c)
-      # do not change !!! 
       calling_pane_id="${OPTARG}"
 			;;
 		p)
-      # do not change !!! 
       pane_id="${OPTARG}"
 			;;
 		n)
-      # do not change !!! 
       provider_name="${OPTARG}"
 			;;
 		v)
-      # do not change !!! 
       provider_value="${OPTARG}"
 			;;
 		s)
@@ -58,7 +54,6 @@ main() {
       hook_option="${OPTARG}"
 			;;
     *)
-      # do not change !!! 
       echo >&2 "Invalid parameter"
       exit 1
       ;;
@@ -116,6 +111,10 @@ case "${action}" in
   "hook")
     # running registered hooks
     _hook "$pane_id" "$hook" "$hook_option"
+    exit 0
+    ;;
+  "apiver")
+    _apiver
     exit 0
     ;;
   *)
