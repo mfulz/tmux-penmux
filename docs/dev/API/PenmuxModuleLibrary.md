@@ -15,6 +15,8 @@ It has the following function blocks:
 ## Index
 
 * [penmux_module_get_exported_options](#penmuxmodulegetexportedoptions)
+* [penmux_module_set_exported_option](#penmuxmodulesetexportedoption)
+* [penmux_module_copy_exported_options](#penmuxmodulecopyexportedoptions)
 * [penmux_module_get_option](#penmuxmodulegetoption)
 * [penmux_module_set_option](#penmuxmodulesetoption)
 * [penmux_module_notify_consumers](#penmuxmodulenotifyconsumers)
@@ -28,15 +30,17 @@ It has the following function blocks:
 
 The following functions can be used to handle penmux module specific stuff.
 
-### penmux_module_get_exported_options
+### <a name="penmuxmodulegetexportedoptions"></a>penmux_module_get_exported_options
 
 This function will return all options that are exported or not Private
 from all loaded modules.
 
-This function will return the options as an array with the plain tmux option names and should
-be used with care.
+This function will return the options as an array in the format array[ModuleName:OptionName] = value
 Most of the modules should not care about all exported options but for some specific modules
 like Session it is crucial to retrieve all exported options.
+
+This function will only return options that are exported (when private) and not volatile options.
+It is meant for using in modules to provide the possibility for persisting sessions.
 
 #### Example
 
@@ -52,7 +56,48 @@ declare -A exported_options="$(penmux_module_get_exported_options "$pane_id")"
 
 * Output either "" or the options as parsable array string
 
-### penmux_module_get_option
+### <a name="penmuxmodulesetexportedoption"></a>penmux_module_set_exported_option
+
+This function will set an exported option.
+It is meant to be used by modules to restore persisted options (like Session) and provides a way
+to set options for other modules, wich normally should not be allowed.
+
+It will only set options for loaded modules. This avoids polluting the tmux env with
+options not used and keep a cleaner state.
+
+#### Example
+
+```bash
+penmux_module_set_exported_options "$pane_id" "Session:SessionDir" "$HOME")"
+```
+
+#### Arguments
+
+* **$1** (string): The ID of the tmux pane that requests the exported options
+* **$2** (string): The option key, which is in the format ModuleName:OptionName
+* **$3** (string): The value for the exported option
+
+### <a name="penmuxmodulecopyexportedoptions"></a>penmux_module_copy_exported_options
+
+This function will copy all options (including volatile) except private only
+ones (that should only be used internally by a module for keeping its state) from one pane
+to another one.
+
+It is meant to be used by modules like Session, to keep track of the active environment
+when creating new panes, etc.
+
+#### Example
+
+```bash
+penmux_module_copy_exported_options "$pane_id" "$src_pane_id")"
+```
+
+#### Arguments
+
+* **$1** (string): The ID of the destination tmux pane
+* **$2** (string): The ID of the source tmux pane
+
+### <a name="penmuxmodulegetoption"></a>penmux_module_get_option
 
 This function will return the value for a requested option.
 The requested option must either belong to the calling module or it has
@@ -75,7 +120,7 @@ option_value="$(penmux_module_get_option "$module_file" "SessionDir" "$pane_id")
 
 * Output either "" (if no default value found), the default value or the actual value that was set by the user
 
-### penmux_module_set_option
+### <a name="penmuxmodulesetoption"></a>penmux_module_set_option
 
 This function will set a value for a requested option.
 The requested option must  belong to the calling module.
@@ -102,7 +147,7 @@ penmux_module_set_option "$module_file" "HttpPort" "80" "$pane_id"
 
 * Output an error that describes what went wrong on error
 
-### penmux_module_notify_consumers
+### <a name="penmuxmodulenotifyconsumers"></a>penmux_module_notify_consumers
 
 This function will notify all loaded modules that
 has a consumer for this option and not flagged it NoNotify about
@@ -129,7 +174,7 @@ penmux_module_notify_consumers "$module_file" "SessionDir" "$pane_id"
 * **1**: If option is private
 * **2**: If option is not provided
 
-### penmux_module_expand_options_string
+### <a name="penmuxmoduleexpandoptionsstring"></a>penmux_module_expand_options_string
 
 This function will expand a given string by replacing
 penmux format specifiers
@@ -153,7 +198,7 @@ final_command="$(penmux_module_expand_options_string "$module_file" "###SessionD
 
 * Outputs the expanded input string
 
-### penmux_module_is_loaded
+### <a name="penmuxmoduleisloaded"></a>penmux_module_is_loaded
 
 This function tells if a module is loaded
 
@@ -180,7 +225,7 @@ fi
 
 The following functions can be used to for general recurring tasks.
 
-### penmux_csv_to_arrays
+### <a name="penmuxcsvtoarrays"></a>penmux_csv_to_arrays
 
 This function parse a given csv content and print parsable lines
 that can be assigned to arrays.
@@ -207,7 +252,7 @@ done <<< "$csv_parsed"
 
 * Output either "" or the parsed csv data
 
-### penmux_arrays_to_csv
+### <a name="penmuxarraystocsv"></a>penmux_arrays_to_csv
 
 This function parse a given array content and
 print the corresponding csv content.
@@ -229,7 +274,7 @@ echo "$csv_content" > output.csv
 
 * Output either "" or the parsed csv data
 
-### penmux_expand_tmux_format_path
+### <a name="penmuxexpandtmuxformatpath"></a>penmux_expand_tmux_format_path
 
 This function will expand a given string by replacing
 tmux format specifiers

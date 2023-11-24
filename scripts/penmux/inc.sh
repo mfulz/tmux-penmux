@@ -20,16 +20,17 @@ source "$_INC_CURRENT_DIR/../include/module.sh"
 # @description This function will return all options that are exported or not Private
 # from all loaded modules.
 #
-# This function will return the options as an array with the plain tmux option names and should
-# be used with care.
+# This function will return the options as an array in the format array[ModuleName:OptionName] = value
 # Most of the modules should not care about all exported options but for some specific modules
 # like Session it is crucial to retrieve all exported options.
+#
+# This function will only return options that are exported (when private) and not volatile options.
+# It is meant for using in modules to provide the possibility for persisting sessions.
 #
 # @example
 #   declare -A exported_options="$(penmux_module_get_exported_options "$pane_id")"
 #
 # @arg $1 string The ID of the tmux pane that requests the exported options
-# @arg $2 boolean If this argument is set only exported options that are not volatile will be returned
 #
 # @stdout Output either "" or the options as parsable array string
 penmux_module_get_exported_options() {
@@ -70,6 +71,19 @@ penmux_module_get_exported_options() {
   echo "${opts_arr[@]@K}"
 }
 
+# @description This function will set an exported option.
+# It is meant to be used by modules to restore persisted options (like Session) and provides a way
+# to set options for other modules, wich normally should not be allowed.
+#
+# It will only set options for loaded modules. This avoids polluting the tmux env with
+# options not used and keep a cleaner state.
+#
+# @example
+#   penmux_module_set_exported_options "$pane_id" "Session:SessionDir" "$HOME")"
+#
+# @arg $1 string The ID of the tmux pane that requests the exported options
+# @arg $2 string The option key, which is in the format ModuleName:OptionName
+# @arg $3 string The value for the exported option
 penmux_module_set_exported_option() {
   local pane_id="$1"
   local opt_key="$2"
@@ -87,6 +101,18 @@ penmux_module_set_exported_option() {
   done <<< "$loaded_modules"
 }
 
+# @description This function will copy all options (including volatile) except private only
+# ones (that should only be used internally by a module for keeping its state) from one pane
+# to another one.
+#
+# It is meant to be used by modules like Session, to keep track of the active environment
+# when creating new panes, etc.
+#
+# @example
+#   penmux_module_copy_exported_options "$pane_id" "$src_pane_id")"
+#
+# @arg $1 string The ID of the destination tmux pane
+# @arg $2 string The ID of the source tmux pane
 penmux_module_copy_exported_options() {
   local pane_id="$1"
   local src_pane_id="$2"

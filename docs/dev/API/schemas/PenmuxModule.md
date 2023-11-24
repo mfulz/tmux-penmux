@@ -108,11 +108,20 @@ Here is the whole schema for the current version:
   <xs:complexType name="PenmuxConsumer">
     <xs:sequence>
       <xs:element name="Name" type="xs:string" />
-      <xs:element name="Description" type="xs:string" />
+      <xs:element name="From" type="xs:string" />
     </xs:sequence>
     <xs:attribute name="NoNotify"
     type="xs:boolean"
     use="optional" />
+  </xs:complexType>
+
+  <xs:complexType name="PenmuxHooks">
+    <xs:sequence>
+      <xs:element name="PreModuleLoad" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+      <xs:element name="PostModuleLoad" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+      <xs:element name="PreModuleUnload" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+      <xs:element name="PostModuleUnload" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
   </xs:complexType>
 
   <xs:element name="PenmuxModule">
@@ -125,6 +134,7 @@ Here is the whole schema for the current version:
         <xs:element name="NotifyOptions" type="xs:boolean" minOccurs="0" maxOccurs="1" />
         <xs:element name="Option" type="OptionType" minOccurs="0" maxOccurs="unbounded" />
         <xs:element name="Consumes" type="PenmuxConsumer" minOccurs="0" maxOccurs="unbounded" />
+        <xs:element name="Hooks" type="PenmuxHooks" minOccurs="0" maxOccurs="1" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -149,6 +159,7 @@ The PenmuxModule is the actual module description itself:
         <xs:element name="NotifyOptions" type="xs:boolean" minOccurs="0" maxOccurs="1" />
         <xs:element name="Option" type="OptionType" minOccurs="0" maxOccurs="unbounded" />
         <xs:element name="Consumes" type="PenmuxConsumer" minOccurs="0" maxOccurs="unbounded" />
+        <xs:element name="Hooks" type="PenmuxHooks" minOccurs="0" maxOccurs="1" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -211,9 +222,23 @@ The purpose of this element is to let a module use provided options from other m
 
 As an example the [ScriptLog module](../../../modules/reporting/ScriptLog.md) consumes the 'SessionDir' from the [Session module](../../../modules/auxilliary/Session.md) to log into the session directory when working inside of a session.
 
-Note that only [Options](#OptionType) marked as 'Provided' are possible to consume.
+Note that only [Options](#optiontype) marked as 'Provided' are possible to consume.
 
 For detailed information about this refer to the [PenmuxConsumer](#PenmuxConsumer).
+
+#### <a name="hooks"></a>Hooks
+
+This element is a [PenmuxHooks](#penmuxhooks) and optional. It can be added to tell the API that the module is using
+hooks for its functionality.
+
+At the current version there are the following hooks available:
+
+| Name | Description |
+|------|-------------|
+|PreModuleLoad|This hook is executed directly before a module is loaded, but after the user selected the module|
+|PostModuleLoad|This hook is executed directly after a module is loaded|
+|PreModuleUnload|This hook is executed directly before a module is unloaded, but after the user selected the module|
+|PostModuleUnload|This hook is executed directly after a module is unloaded|
 
 ### <a name="optiontype"></a>2.2 OptionType
 
@@ -386,7 +411,7 @@ The PenmuxConsumer describes an Option that is consumed from another module, but
 <xs:complexType name="PenmuxConsumer">
   <xs:sequence>
     <xs:element name="Name" type="xs:string" />
-    <xs:element name="Description" type="xs:string" />
+    <xs:element name="From" type="xs:string" />
   </xs:sequence>
   <xs:attribute name="NoNotify"
     type="xs:boolean"
@@ -400,9 +425,9 @@ We'll now go through the different elements and attributes.
 
 The name of the Option that should be consumed. Only [Provided](#provided) Options can be consumed.
 
-#### Description
+#### From
 
-A description of the Consumer (can be the same as the provided option).
+The exact module name which provides the option that should be consumed. Ae.: Session
 
 #### Attributes
 
@@ -415,3 +440,24 @@ This attribute tells the API that the module does not want to be notified when t
 This can be useful for modules, that don't need to change any (normally background tasks) in a dynamic manner.
 
 More about all this in the [Module development guide](**TODO**).
+
+### <a name="penmuxhooks"></a>2.4 PenmuxHooks
+
+The PenmuxHooks describes what hooks are used by a module.
+
+```
+  <xs:complexType name="PenmuxHooks">
+    <xs:sequence>
+      <xs:element name="PreModuleLoad" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+      <xs:element name="PostModuleLoad" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+      <xs:element name="PreModuleUnload" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+      <xs:element name="PostModuleUnload" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+  </xs:complexType>
+```
+This element containes a list of booleans that can be set to true, depending on which hooks a module
+want to use.
+
+For a list of hooks available check out [Hooks](#hooks)
+
+More about this in the [Module development guide](**TODO**).
