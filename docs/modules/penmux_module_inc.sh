@@ -62,3 +62,24 @@ _keyfunc() {
 
   return
 }
+
+_hook() {
+  local pane_id="$1"
+  local hook="$2"
+
+  case "$hook" in
+    "PreModuleLoad")
+      ;;
+    "PostModuleLoad")
+      ;;
+    "PreModuleUnload")
+      ;;
+    "PostModuleUnload")
+      ;;
+    *)
+      echo >&2 "Unknown hook name: '$hook'"
+      ;;
+  esac
+
+  return
+}

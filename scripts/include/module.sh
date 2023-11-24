@@ -202,6 +202,28 @@ _module_notify_options() {
   done <<< "$loaded_modules"
 }
 
+# hooks
+_module_check_hook() {
+  local module_path="$1"
+  local hook="$2"
+
+  xmlstarlet sel -t -v "boolean(/PenmuxModule/Hooks/$hook)" "$module_path"
+}
+
+_module_run_hook() {
+  local hook="$1"
+  local loaded_modules="$(_module_get_loaded)"
+
+  while IFS= read -r m; do
+    local mpath="$(_module_convert_relative_path "$m")"
+    local has_hook="$(_module_check_hook "$mpath" "$hook")"
+
+    if [[ "$has_hook" == "true" ]]; then
+      "$_MODULE_CURRENT_DIR/../bin/internal/handler.sh" "$mpath" -a hook -h "$hook"
+    fi
+  done <<< "$loaded_modules"
+}
+
 # keytables
 _keytables_get_file() {
   local module_path="$1"

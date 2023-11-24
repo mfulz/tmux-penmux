@@ -32,4 +32,7 @@
     <Name>SessionDir</Name>
     <Description>Final Session directory.</Description>
   </Option>
+  <Hooks>
+    <PostModuleLoad>true</PostModuleLoad>
+  </Hooks>
 </PenmuxModule>

@@ -20,9 +20,10 @@ main() {
   local provider_value
   local opt_volatile
   local func_name
+  local hook
 
 	local OPTIND o
-	while getopts "a:c:p:n:v:s:f:" o; do
+	while getopts "a:c:p:n:v:s:f:h:" o; do
 		case "${o}" in
 		a)
 			action="${OPTARG}"
@@ -48,6 +49,9 @@ main() {
 			;;
 		f)
       func_name="${OPTARG}"
+			;;
+		h)
+      hook="${OPTARG}"
 			;;
     *)
       # do not change !!! 
@@ -103,6 +107,11 @@ case "${action}" in
   "keyfunc")
     # Will be called from keytable definition
     _keyfunc "$calling_pane_id" "$pane_id" "$func_name"
+    exit 0
+    ;;
+  "hook")
+    # running registered hooks
+    _hook "$pane_id" "$hook"
     exit 0
     ;;
   *)

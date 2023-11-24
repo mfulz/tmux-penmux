@@ -37,7 +37,7 @@ _new() {
   penmux_module_set_option "$_MODULE_FILE" "SessionName" "$session_name" "$pane_id"
   penmux_module_set_option "$_MODULE_FILE" "SessionDir" "$session_dir/" "$pane_id"
 
-  declare -A session_opts="($(penmux_module_get_exported_options "$pane_id" "true"))"
+  declare -A session_opts="($(penmux_module_get_exported_options "$pane_id"))"
   _array_to_session_file "$session_dir/.pmses" session_opts
 
   tmux respawn-pane -k -t "$pane_id" -c "$session_dir"
@@ -92,26 +92,26 @@ _load() {
   fi
 
   declare -A session_opts="($(_session_file_to_array "$session_file"))"
-  [[ -v "session_opts[@penmux-Session-SessionDir]" ]] || {
+  [[ -v "session_opts[Session:SessionDir]" ]] || {
     echo >&2 "Session file '$session_file' corrupt. Missing 'SessionDir'"
     return 1
   }
-  [[ -v "session_opts[@penmux-Session-SessionName]" ]] || {
+  [[ -v "session_opts[Session:SessionName]" ]] || {
     echo >&2 "Session file '$session_file' corrupt. Missing 'SessionName'"
     return 1
   }
 
-  [[ "$session_dir_act" == "${session_opts["@penmux-Session-SessionDir"]}" ]] && exit 0
+  [[ "$session_dir_act" == "${session_opts["Session:SessionDir"]}" ]] && exit 0
 
   _unset_session "$pane_id"
 
   for key in "${!session_opts[@]}"; do
-    tmux set-option -p -t "$pane_id" "$key" "${session_opts[${key}]}"
+    penmux_module_set_exported_option "$pane_id" "$key" "${session_opts[${key}]}"
   done
 
   tmux set-option -t "$pane_id" -p remain-on-exit on
   tmux send-keys -t "$pane_id" " exit" Enter
-  tmux respawn-pane -k -t "$pane_id" -c "${session_opts["@penmux-Session-SessionDir"]}" "$SHELL -c ' cd . && $SHELL'"
+  tmux respawn-pane -k -t "$pane_id" -c "${session_opts["Session:SessionDir"]}" "$SHELL -c ' cd . && $SHELL'"
   # tmux respawn-pane -k -t "$pane_id" -c "${session_opts["@penmux-SessionDir"]}" "$SHELL"
   # dirty hack (dunno what's wrong here)
   # TODO:Fix
@@ -134,9 +134,36 @@ _save() {
     return 1
   fi
 
-  declare -A session_opts="($(penmux_module_get_exported_options "$pane_id" "true"))"
+  declare -A session_opts="($(penmux_module_get_exported_options "$pane_id"))"
 
   _array_to_session_file "$session_file" session_opts
+}
+
+_update() {
+  local pane_id="$1"
+  local session_name="$(penmux_module_get_option "$_MODULE_FILE" "SessionName" "$pane_id")"
+  local session_dir="$(penmux_module_get_option "$_MODULE_FILE" "SessionDir" "$pane_id")"
+  local session_file="$session_dir/.pmses"
+  local session_opts
+  local loaded="$(penmux_module_is_loaded "auxilliary/Session.xml")"
+
+  [[ -z "$loaded" ]] && exit 0
+
+  [[ -n "$session_name" && -n "$session_dir" ]] || exit 0
+
+  declare -A session_opts="($(_session_file_to_array "$session_file"))"
+  [[ -v "session_opts[Session:SessionDir]" ]] || {
+    echo >&2 "Session file '$session_file' corrupt. Missing 'SessionDir'"
+    return 1
+  }
+  [[ -v "session_opts[Session:SessionName]" ]] || {
+    echo >&2 "Session file '$session_file' corrupt. Missing 'SessionName'"
+    return 1
+  }
+
+  for key in "${!session_opts[@]}"; do
+    penmux_module_set_exported_option "$pane_id" "$key" "${session_opts[${key}]}"
+  done
 }
 
 main() {
@@ -204,6 +231,12 @@ main() {
       ;;
     "save")
       err="$(_save "$pane_id" 2>&1 1>/dev/null)" || {
+        tmux display-message -d 5000 "Error: '$err'"
+        exit 0
+      }
+      ;;
+    "update")
+      err="$(_update "$pane_id" 2>&1 1>/dev/null)" || {
         tmux display-message -d 5000 "Error: '$err'"
         exit 0
       }

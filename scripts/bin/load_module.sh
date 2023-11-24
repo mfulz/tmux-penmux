@@ -71,6 +71,9 @@ main() {
     tmux set-option -t "$session" "@penmux-default-cmds" "$new_cmds"
   fi
 
+  # PreModuleLoad hooking
+  _module_run_hook "PreModuleLoad"
+
   err="$("$CURRENT_DIR/internal/handler.sh" "$module_path" -a load 2>&1 1>/dev/null)" || {
     tmux display-message -d 5000 "Module load error: '$err'"
     return
@@ -97,5 +100,8 @@ main() {
   else
     tmux set-option -a "@penmux-loaded-modules" "#$module_to_load"
   fi
+  
+  # PostModuleLoad hooking
+  _module_run_hook "PostModuleLoad"
 }
 main

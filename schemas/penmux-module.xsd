@@ -107,6 +107,15 @@
     use="optional" />
   </xs:complexType>
 
+  <xs:complexType name="PenmuxHooks">
+    <xs:sequence>
+      <xs:element name="PreModuleLoad" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+      <xs:element name="PostModuleLoad" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+      <xs:element name="PreModuleUnload" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+      <xs:element name="PostModuleUnload" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+  </xs:complexType>
+
   <xs:element name="PenmuxModule">
     <xs:complexType>
       <xs:sequence>
@@ -117,6 +126,7 @@
         <xs:element name="NotifyOptions" type="xs:boolean" minOccurs="0" maxOccurs="1" />
         <xs:element name="Option" type="OptionType" minOccurs="0" maxOccurs="unbounded" />
         <xs:element name="Consumes" type="PenmuxConsumer" minOccurs="0" maxOccurs="unbounded" />
+        <xs:element name="Hooks" type="PenmuxHooks" minOccurs="0" maxOccurs="1" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>

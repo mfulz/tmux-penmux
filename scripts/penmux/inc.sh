@@ -34,10 +34,63 @@ source "$_INC_CURRENT_DIR/../include/module.sh"
 # @stdout Output either "" or the options as parsable array string
 penmux_module_get_exported_options() {
   local pane_id="$1"
-  local no_volatile="$2"
   local loaded_modules="$(_module_get_loaded)"
   local opts_arr
   declare -A opts_arr
+
+  while IFS= read -r m; do
+    local mpath="$(_module_convert_relative_path "$m")"
+    local mname="$(_module_get_name "$mpath")"
+    local mpopts="$(xmlstarlet sel -t -v "/PenmuxModule/Option[boolean(@Private)=1][boolean(@Exported)=1][boolean(@Volatile)=0]/Name/text()" "$mpath")"
+    local mopts="$(xmlstarlet sel -t -v "/PenmuxModule/Option[boolean(@Private)=0][boolean(@Provided)=0][boolean(@Volatile)=0]/Name/text()" "$mpath")"
+    local popts="$(xmlstarlet sel -t -v "/PenmuxModule/Option[boolean(@Private)=0][boolean(@Provided)=1][boolean(@Volatile)=0]/Name/text()" "$mpath")"
+
+    while IFS= read -r o; do
+      local oval="$(get_tmux_option_pane "@penmux-$mname-$o" "" "$pane_id")"
+      [[ -z "$oval" ]] && continue
+
+      opts_arr["$mname:$o"]="$oval"
+    done <<< "$mpopts"
+
+    while IFS= read -r o; do
+      local oval="$(get_tmux_option_pane "@penmux-$mname-$o" "" "$pane_id")"
+      [[ -z "$oval" ]] && continue
+
+      opts_arr["$mname:$o"]="$oval"
+    done <<< "$popts"
+
+    while IFS= read -r o; do
+      local oval="$(get_tmux_option_pane "@penmux-$o" "" "$pane_id")"
+      [[ -z "$oval" ]] && continue
+
+      opts_arr["$mname:$o"]="$oval"
+    done <<< "$mopts"
+  done <<< "$loaded_modules"
+
+  echo "${opts_arr[@]@K}"
+}
+
+penmux_module_set_exported_option() {
+  local pane_id="$1"
+  local opt_key="$2"
+  local opt_val="$3"
+  local loaded_modules="$(_module_get_loaded)"
+  local opt_from="$(echo "$opt_key" | cut -d ":" -f1)"
+  local opt_name="$(echo "$opt_key" | cut -d ":" -f2)"
+
+  while IFS= read -r m; do
+    local mpath="$(_module_convert_relative_path "$m")"
+    local mname="$(_module_get_name "$mpath")"
+
+    [[ "$mname" == "$opt_from" ]] || continue
+    penmux_module_set_option "$mpath" "$opt_name" "$opt_val" "$pane_id"
+  done <<< "$loaded_modules"
+}
+
+penmux_module_copy_exported_options() {
+  local pane_id="$1"
+  local src_pane_id="$2"
+  local loaded_modules="$(_module_get_loaded)"
 
   while IFS= read -r m; do
     local mpath="$(_module_convert_relative_path "$m")"
@@ -47,40 +100,26 @@ penmux_module_get_exported_options() {
     local popts="$(xmlstarlet sel -t -v "/PenmuxModule/Option[boolean(@Private)=0][boolean(@Provided)=1]/Name/text()" "$mpath")"
 
     while IFS= read -r o; do
-      local oval="$(get_tmux_option_pane "@penmux-$mname-$o" "" "$pane_id")"
+      local oval="$(get_tmux_option_pane "@penmux-$mname-$o" "" "$src_pane_id")"
       [[ -z "$oval" ]] && continue
 
-      if [[ -n "$no_volatile" ]]; then
-        local volatile="$(_module_get_option_volatile "$mpath" "$o")"
-        [[ "$volatile" == "true" ]] && continue
-      fi
-      opts_arr["@penmux-$mname-$o"]="$oval"
+      tmux set-option -t "$pane_id" -p "@penmux-$mname-$o" "$oval"
     done <<< "$mpopts"
 
     while IFS= read -r o; do
-      local oval="$(get_tmux_option_pane "@penmux-$mname-$o" "" "$pane_id")"
+      local oval="$(get_tmux_option_pane "@penmux-$mname-$o" "" "$src_pane_id")"
       [[ -z "$oval" ]] && continue
 
-      if [[ -n "$no_volatile" ]]; then
-        local volatile="$(_module_get_option_volatile "$mpath" "$o")"
-        [[ "$volatile" == "true" ]] && continue
-      fi
-      opts_arr["@penmux-$mname-$o"]="$oval"
+      tmux set-option -t "$pane_id" -p "@penmux-$mname-$o" "$oval"
     done <<< "$popts"
 
     while IFS= read -r o; do
-      local oval="$(get_tmux_option_pane "@penmux-$o" "" "$pane_id")"
+      local oval="$(get_tmux_option_pane "@penmux-$o" "" "$src_pane_id")"
       [[ -z "$oval" ]] && continue
 
-      if [[ -n "$no_volatile" ]]; then
-        local volatile="$(_module_get_option_volatile "$mpath" "$o")"
-        [[ "$volatile" == "true" ]] && continue
-      fi
-      opts_arr["@penmux-$o"]="$oval"
+      tmux set-option -t "$pane_id" -p "@penmux-$o" "$oval"
     done <<< "$mopts"
   done <<< "$loaded_modules"
-
-  echo "${opts_arr[@]@K}"
 }
 
 # @description This function will return the value for a requested option.
@@ -203,7 +242,7 @@ penmux_module_set_option() {
   fi
 
   [[ "$opt_private" == "true" && "$opt_exported" == "false" ]] && return
-  _module_notify_options "$tmux_option_name" "$pane_id" "$value" "$opt_volatile"
+  _module_notify_options "$module_name:$option_name" "$pane_id" "$value" "$opt_volatile"
 }
 
 # @description This function will notify all loaded modules that

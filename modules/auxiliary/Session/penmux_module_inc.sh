@@ -44,10 +44,7 @@ _cmd() {
     penmux_module_set_option "$_MODULE_FILE" "SessionName" "$session_name" "$pane_id"
     penmux_module_set_option "$_MODULE_FILE" "SessionDir" "$session_dir/" "$pane_id"
 
-    declare -A session_opts="($(penmux_module_get_exported_options "$calling_pane_id"))"
-    for key in "${!session_opts[@]}"; do
-      tmux set-option -p -t "$pane_id" "$key" "${session_opts[${key}]}"
-    done
+    penmux_module_copy_exported_options "$pane_id" "$calling_pane_id"
 
     tmux respawn-pane -k -t "$pane_id" -c "$session_dir" "$SHELL -c ' cd . && $SHELL'"
     # dirty hack (dunno what's wrong here)
@@ -129,6 +126,32 @@ _keyfunc() {
       ;;
     *)
       echo >&2 "Unknown func name: '$func_name'"
+      ;;
+  esac
+
+  return
+}
+
+_hook() {
+  local pane_id="$1"
+  local hook="$2"
+  local session="$(tmux display-message -p "#{session_id}")"
+  local panes="$(tmux list-panes -s -t "$session" -F "#D")"
+
+  case "$hook" in
+    "PreModuleLoad")
+      ;;
+    "PostModuleLoad")
+      while IFS= read -r p; do
+        "$_PENMUX_INC_CURRENT_DIR/session.sh" -a update -c "$_PENMUX_SCRIPTS" -m "$_MODULE_FILE" -p "$p"
+      done <<< "$panes"
+      ;;
+    "PreModuleUnload")
+      ;;
+    "PostModuleUnload")
+      ;;
+    *)
+      echo >&2 "Unknown hook name: '$hook'"
       ;;
   esac
 
