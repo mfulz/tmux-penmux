@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-### Module handle script ###
+### Module handler interface ###
 # Has to be implemented by every module
 
 _PENMUX_INC_CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

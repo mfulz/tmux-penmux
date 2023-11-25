@@ -293,7 +293,27 @@ _module_has_api() {
 
   [[ "$mmajor" -eq "$rmajor" ]] || return 1
   [[ "$mminor" -ge "$rminor" ]] || return 1
-  [[ "$mmicro" -ge "$rmicro" ]] || return 1
+
+  return 0
+}
+
+_module_api_compatible() {
+  local module_path="$1"
+  local required_api="$2"
+  local module_api="$(_module_get_api_version "$module_path")"
+
+  # module api is matching actual api -> everything is fine
+  [[ "$module_api" == "$API_VERSION" ]] && return 0
+
+  local rmajor="$(echo "$required_api" | cut -d"." -f1)"
+  local rminor="$(echo "$required_api" | cut -d"." -f2)"
+  local rmicro="$(echo "$required_api" | cut -d"." -f3)"
+  local mmajor="$(echo "$module_api" | cut -d"." -f1)"
+  local mminor="$(echo "$module_api" | cut -d"." -f2)"
+  local mmicro="$(echo "$module_api" | cut -d"." -f3)"
+
+  [[ "$mmajor" -eq "$rmajor" ]] || return 1
+  [[ "$mminor" -le "$rminor" ]] || return 2
 
   return 0
 }
