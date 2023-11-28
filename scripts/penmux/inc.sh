@@ -489,5 +489,5 @@ penmux_expand_tmux_format_path() {
     full_path="$(tmux display-message -t "$pane_id" -p '#{pane_current_path}')/${full_path}"
   fi
 
-  echo "$full_path"
+  realpath -m "$full_path"
 }
