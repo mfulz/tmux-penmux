@@ -97,7 +97,7 @@ penmux_module_set_exported_option() {
     local mname="$(_module_get_name "$mpath")"
 
     [[ "$mname" == "$opt_from" ]] || continue
-    penmux_module_set_option "$mpath" "$opt_name" "$opt_val" "$pane_id"
+    penmux_module_set_option "$mpath" "$opt_name" "$opt_val" "$pane_id" "1"
   done <<< "$loaded_modules"
 }
 
@@ -115,7 +115,7 @@ penmux_module_set_exported_option() {
 # @arg $2 string The ID of the source tmux pane
 penmux_module_copy_exported_options() {
   local pane_id="$1"
-  local src_pane_id="$2"
+  local src_pane_id="$3"
   local loaded_modules="$(_module_get_loaded)"
 
   while IFS= read -r m; do
@@ -203,6 +203,7 @@ penmux_module_get_option() {
 # @arg $2 string The name of the option that is should be set (as defined in the xml file)
 # @arg $3 string The new value that should be set
 # @arg $4 string The ID of the tmux pane which option should be set
+# @arg $5 boolean Do not run _module_notify_options
 #
 # @stderr Output an error that describes what went wrong on error
 #
@@ -213,6 +214,7 @@ penmux_module_set_option() {
   local option_name="${2}"
   local value="${3}"
   local pane_id="${4}"
+  local no_notify="${5}"
   local module_name
   local opt_private="$(_module_get_option_private "$module_path" "$option_name")"
   local opt_exported="$(_module_get_option_exported "$module_path" "$option_name")"
@@ -268,6 +270,7 @@ penmux_module_set_option() {
   fi
 
   [[ "$opt_private" == "true" && "$opt_exported" == "false" ]] && return
+  [[ -n "$no_notify" ]] && return
   _module_notify_options "$module_name:$option_name" "$pane_id" "$value" "$opt_volatile"
 }
 
@@ -476,18 +479,24 @@ penmux_arrays_to_csv() {
 # @arg $1 string The ID of the tmux pane where the options should be read from
 # @arg $2 string The input string that should be expanded
 # @arg $3 boolean If the path should be kept relative
+# @arg $4 boolean If the path should be run through realpath
 #
 # @stdout Outputs the expanded input string
 penmux_expand_tmux_format_path() {
   local pane_id="$1"
 	local tmux_format_path="${2}"
   local no_absolute="${3}"
+  local no_realpath="${4}"
 	local full_path=$(tmux display-message -t "$pane_id" -p "${tmux_format_path}")
   full_path="$(echo "$full_path" | sed "s,\$HOME,$HOME,g; s,\$HOSTNAME,$(hostname),g; s,\~,$HOME,g")"
 
-  if [[ "$full_path" != /* && -z "$no_absolute" ]]; then
+  if [[ "$full_path" != "/"* && -z "$no_absolute" ]]; then
     full_path="$(tmux display-message -t "$pane_id" -p '#{pane_current_path}')/${full_path}"
   fi
 
-  realpath -m "$full_path"
+  if [[ -z "$no_realpath" ]]; then
+    realpath -m "$full_path"
+  else
+    echo "$full_path"
+  fi
 }
