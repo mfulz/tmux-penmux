@@ -115,7 +115,7 @@ penmux_module_set_exported_option() {
 # @arg $2 string The ID of the source tmux pane
 penmux_module_copy_exported_options() {
   local pane_id="$1"
-  local src_pane_id="$3"
+  local src_pane_id="$2"
   local loaded_modules="$(_module_get_loaded)"
 
   while IFS= read -r m; do
