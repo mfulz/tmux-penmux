@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PenmuxModuleOptions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/penmux-module-options.xsd">
+  <Option>
+    <Name>Payload</Name>
+    <DefaultValue>generic/shell_reverse_tcp</DefaultValue>
+  </Option>
+  <Option>
+    <Name>Arch</Name>
+    <DefaultValue>x64</DefaultValue>
+  </Option>
+  <Option>
+    <Name>Platform</Name>
+    <DefaultValue>windows</DefaultValue>
+  </Option>
+  <Option>
+    <Name>Format</Name>
+    <DefaultValue>exe</DefaultValue>
+  </Option>
+  <Option>
+    <Name>NoConfirm</Name>
+    <DefaultValue>true</DefaultValue>
+  </Option>
+  <Option>
+    <Name>SubPath</Name>
+    <DefaultValue>###LocalHost###-###LocalPort###</DefaultValue>
+  </Option>
+  <Option>
+    <Name>LocalHost</Name>
+    <DefaultValue>127.0.0.1</DefaultValue>
+  </Option>
+  <Option>
+    <Name>LocalPort</Name>
+    <DefaultValue>4444</DefaultValue>
+  </Option>
+  <Option>
+    <Name>CacheDir</Name>
+    <DefaultValue>$HOME/.tmux/penmux/.msfvenom/cache</DefaultValue>
+  </Option>
+</PenmuxModuleOptions>

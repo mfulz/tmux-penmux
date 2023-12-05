@@ -259,7 +259,7 @@ penmux_module_set_option() {
           return 1
         fi
         ;;
-      "OptionTypeString")
+      "OptionTypeString"|"OptionTypeSelection")
         tmux set-option -t "$pane_id" -p "$tmux_option_name" "$value"
         ;;
       *)

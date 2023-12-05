@@ -96,7 +96,32 @@
       </xs:restriction>
     </xs:complexContent>
   </xs:complexType>
-
+  <xs:complexType name="OptionTypeSelection">
+    <xs:complexContent>
+      <xs:restriction base="OptionType">
+        <xs:sequence>
+          <xs:element name="Name" type="xs:string" />
+          <xs:element name="Description" type="xs:string" />
+        </xs:sequence>
+        <xs:attribute name="Mandatory"
+        type="xs:boolean"
+        use="optional" />
+        <xs:attribute name="Private"
+        type="xs:boolean"
+        use="optional" />
+        <xs:attribute name="Exported"
+        type="xs:boolean"
+        use="optional" />
+        <xs:attribute name="Provided"
+        type="xs:boolean"
+        use="optional" />
+        <xs:attribute name="Volatile"
+        type="xs:boolean"
+        use="optional" />
+      </xs:restriction>
+    </xs:complexContent>
+  </xs:complexType>
+ 
   <xs:complexType name="PenmuxConsumer">
     <xs:sequence>
       <xs:element name="Name" type="xs:string" />

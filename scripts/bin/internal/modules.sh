@@ -134,6 +134,36 @@ _set_option() {
   }
 }
 
+_get_option_values() {
+  local module_file="$1"
+  local module_opt="$2"
+  local opt_vals_plain="$($CURRENT_DIR/handler.sh "$module_file" -a optionvalues -n "$module_opt")"
+  local opt_vals_plain_file="$(mktemp)"
+  local opt_vals
+  local err
+
+  echo "$opt_vals_plain" > "$opt_vals_plain_file"
+  echo "unset###Unset this option" >> "$opt_vals_plain_file"
+
+  while IFS= read -r v; do
+    local val="$(echo "$v" | awk -F'###' '{print $1}')"
+    if [[ -z "$opt_vals" ]]; then
+      opt_vals="$(printf "%s" "$val")"
+    else
+      opt_vals="$(printf "%s\n%s" "$opt_vals" "$val")"
+    fi
+  done<<<"$opt_vals_plain"
+
+  if [[ -z "$opt_vals" ]]; then
+    opt_vals="$(printf "%s" "unset")"
+  else
+    opt_vals="$(printf "%s\n%s" "$opt_vals" "unset")"
+  fi
+
+  tmux set-option -p @penmux-hidden-option-val "$(echo -n "$opt_vals" | fzf --preview-window="top,60%" --border-label="$label" --border="sharp" --cycle --preview="grep '{}###' $opt_vals_plain_file | awk -F'###' '{print \$2}'")"
+  rm -f "$opt_vals_plain_file"
+}
+
 _select_module() {
   local label="$1"
   local module
@@ -168,6 +198,16 @@ _select_option() {
   option="$(tmux show-options -pqv "@penmux-hidden-option")"
   tmux set-option -pu "@penmux-hidden-option" > /dev/null
   echo "${option}"
+}
+
+_select_option_value() {
+  local module_file="$1"
+  local module_opt="$2"
+  local opt_val
+  tmux display-popup -w 80% -h 80% -E "$CURRENT_DIR/modules.sh -a get_option_values -m \"$module_file\" -o \"$module_opt\""
+  opt_val="$(tmux show-options -pqv "@penmux-hidden-option-val")"
+  tmux set-option -pu "@penmux-hidden-option-val" > /dev/null
+  echo "${opt_val}"
 }
 
 main() {
@@ -237,6 +277,12 @@ main() {
     "set_option")
 			_set_option "${module_file}" "${module_opt}" "$module_opt_val"
 			;;
+    "get_option_values")
+      _get_option_values "${module_file}" "${module_opt}"
+      ;;
+    "select_option_value")
+      _select_option_value "${module_file}" "${module_opt}"
+      ;;
 		*)
 			echo >&2 "Invalid action '${action}'"
 			exit 1

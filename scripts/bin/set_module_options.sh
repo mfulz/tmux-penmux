@@ -52,6 +52,12 @@ main() {
     "OptionTypeInt")
       tmux command-prompt -p "Change '$option' for '$module_name': " -I "$value" "run-shell '\"$CURRENT_DIR/internal/modules.sh\" -a set_option -m \"$module_path\" -o \"$option\" -v \"%%\"'"
       ;;
+    "OptionTypeSelection")
+      value="$("$CURRENT_DIR/internal/modules.sh" -a select_option_value -m "$module_path" -o "$option")"
+      [[ -z "$value" ]] && exit 0
+      [[ "$value" == "unset" ]] && value=""
+      tmux run-shell "\"$CURRENT_DIR/internal/modules.sh\" -a set_option -m \"$module_path\" -o \"$option\" -v \"$value\""
+      ;;
     *)
       exit 1
       ;;

@@ -75,7 +75,6 @@ _optionsnotify() {
   local auto_save="$(penmux_module_get_option "$_MODULE_FILE" "AutoSave")"
   local session_opts
 
-  echo "$opt" >> /tmp/options
 
   [[ "$opt" == "Session:SessionName" ]] && return
   [[ "$opt" == "Session:SessionDir" ]] && return
@@ -87,12 +86,6 @@ _optionsnotify() {
 
       if [[ "$session_name" == "$pane_session_name" ]] && [[ "$session_dir" == "$pane_session_dir" ]]; then
         penmux_module_set_exported_option "$p" "$opt" "$val"
-        # if [ -z "$val" ]; then
-        #   tmux set-option -t "$p" -u -p "$opt"
-        #   tmux set-option -t "$p" -u -p "$opt"
-        # else
-        #   tmux set-option -t "$p" -p "$opt" "$val"
-        # fi
       fi
     done <<< "$panes"
 

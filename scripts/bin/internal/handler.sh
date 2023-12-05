@@ -16,8 +16,8 @@ main() {
   local action
   local pane_id
   local calling_pane_id
-  local provider_name
-  local provider_value
+  local option_name
+  local option_value
   local opt_volatile
   local func_name
   local hook
@@ -36,10 +36,10 @@ main() {
       pane_id="${OPTARG}"
 			;;
 		n)
-      provider_name="${OPTARG}"
+      option_name="${OPTARG}"
 			;;
 		v)
-      provider_value="${OPTARG}"
+      option_value="${OPTARG}"
 			;;
 		s)
       opt_volatile="${OPTARG}"
@@ -94,13 +94,19 @@ case "${action}" in
   "optionsnotify")
     # Will be called when options are set
     # If not needed just exit 0
-    _optionsnotify "$pane_id" "$provider_name" "$provider_value" "$opt_volatile"
+    _optionsnotify "$pane_id" "$option_name" "$option_value" "$opt_volatile"
+    exit 0
+    ;;
+  "optionvalues")
+    # Will be called when option values are requested
+    # If not needed just exit 0
+    _optionvalues "$pane_id" "$option_name"
     exit 0
     ;;
   "consumes")
     # Will be called when options are set
     # If not needed just exit 0
-    _consumes "$pane_id" "$provider_name" "$provider_value"
+    _consumes "$pane_id" "$option_name" "$option_value"
     exit 0
     ;;
   "keyfunc")

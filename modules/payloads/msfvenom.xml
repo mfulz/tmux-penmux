@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PenmuxModule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../schemas/penmux-module.xsd">
+  <Name>msfvenom</Name>
+  <Description>Module to assist creating payloads by using msfvenom</Description>
+  <HasRun>true</HasRun>
+  <Option xsi:type="OptionTypeSelection" Private="true" Exported="true">
+    <Name>Payload</Name>
+    <Description>Payload to use (msfvenom -l payloads)</Description>
+  </Option>
+  <Option xsi:type="OptionTypeSelection" Private="true" Exported="true">
+    <Name>Arch</Name>
+    <Description>Architecture to target (msfvenom -l archs)</Description>
+  </Option>
+  <Option xsi:type="OptionTypeSelection" Private="true" Exported="true">
+    <Name>Platform</Name>
+    <Description>Platform to target (msfvenom -l platforms)</Description>
+  </Option>
+  <Option xsi:type="OptionTypeSelection" Private="true" Exported="true">
+    <Name>Format</Name>
+    <Description>Format to use (msfvenom -l formats)</Description>
+  </Option>
+  <Option xsi:type="OptionTypeSelection" Private="true" Exported="true">
+    <Name>Encoder</Name>
+    <Description>Encoder to use (msfvenom -l encoders)</Description>
+  </Option>
+  <Option xsi:type="OptionTypeBool" Private="true" Exported="true">
+    <Name>NoConfirm</Name>
+    <Description>Start the command after selection. When enabled you can't edit the command before running</Description>
+  </Option>
+  <Option xsi:type="OptionTypeString">
+    <Name>SubPath</Name>
+    <Description>Use this path to store generated payloads. Default is LocalHost-LocalPort/</Description>
+  </Option>
+  <Option xsi:type="OptionTypeString">
+    <Name>LocalHost</Name>
+    <Description>Defines the local host</Description>
+  </Option>
+  <Option xsi:type="OptionTypeInt">
+    <Name>LocalPort</Name>
+    <Description>Defines the local port</Description>
+  </Option>
+  <Option xsi:type="OptionTypeString">
+    <Name>CacheDir</Name>
+    <Description>This directory is used to create cache files for the different msfvenom argument lists (payloads, encoders, etc)</Description>
+  </Option>
+  <Consumes NoNotify="true">
+    <Name>SessionDir</Name>
+    <From>Session</From>
+  </Consumes>
+  <Consumes NoNotify="true">
+    <Name>HttpRootDir</Name>
+    <From>HttpExchange</From>
+  </Consumes>
+</PenmuxModule>

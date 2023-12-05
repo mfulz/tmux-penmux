@@ -41,6 +41,20 @@ _optionsnotify() {
   return
 }
 
+# @description This function is used to retrieve values for an option
+# of type OptionTypeSelection that can be set.
+#
+# @arg $1 string The ID of the tmux pane which requested the values
+# @arg $2 string The name of the option which values are requested
+#
+# @stdout list of value description pairs separated by ###: optionval1###val1 does the following\noptionval2###val2 does cool things
+_optionvalues() {
+  local pane_id="$1"
+  local opt="$2"
+
+  return
+}
+
 _consumes() {
   local pane_id="$1"
   local opt="$2"
