@@ -2,7 +2,7 @@
 <PenmuxModuleOptions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/penmux-module-options.xsd">
   <Option>
     <Name>Payload</Name>
-    <DefaultValue>generic/shell_reverse_tcp</DefaultValue>
+    <DefaultValue>windows/x64/shell_reverse_tcp</DefaultValue>
   </Option>
   <Option>
     <Name>Arch</Name>

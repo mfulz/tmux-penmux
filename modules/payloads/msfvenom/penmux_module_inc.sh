@@ -26,7 +26,7 @@ _run() {
   local sub_path="$(penmux_module_get_option "$_MODULE_FILE" "SubPath" "$pane_id")"
   local out_file="$(tmux command-prompt -p "Output filename: " -I "shell.$format" "display-message -p '%%'")"
   local base_dir
-  local cmd="msfvenom LHOST=###RemoteHost### LPORT=###RemotePort###"
+  local cmd="msfvenom LHOST=###LocalHost### LPORT=###LocalPort###"
   cmd="$(penmux_module_expand_options_string "$_MODULE_FILE" "$cmd" "$pane_id")"
 
   base_dir="$(penmux_module_expand_options_string "$_MODULE_FILE" "###HttpRootDir###" "$pane_id")"
