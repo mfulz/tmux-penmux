@@ -126,6 +126,22 @@ _module_get_options_file() {
   echo "$options_file"
 }
 
+_module_has_option_global() {
+  local module_file="$1"
+  local option_name="$2"
+  local option_name_xml="$(_module_get_option_name "$module_file" "$option_name")"
+  local opt_private
+  local opt_provided
+
+  [[ -z "$option_name_xml" ]] && return 1
+
+  opt_private="$(_module_get_option_private "$module_file" "$option_name")"
+  opt_provided="$(_module_get_option_provided "$module_file" "$option_name")"
+  [[ "$opt_private" == "true" || "$opt_provided" == "true" ]] && return 1
+
+  return 0
+}
+
 _module_get_option_default_value() {
   local module_path="$1"
   local option_name="$2"

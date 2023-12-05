@@ -96,6 +96,13 @@ penmux_module_set_exported_option() {
     local mpath="$(_module_convert_relative_path "$m")"
     local mname="$(_module_get_name "$mpath")"
 
+    if [[ "$opt_from" == "penmuxGlobal" ]]; then
+      _module_has_option_global "$mpath" "$opt_name" || continue
+
+      penmux_module_set_option "$mpath" "$opt_name" "$opt_val" "$pane_id" "1"
+      break
+    fi
+
     [[ "$mname" == "$opt_from" ]] || continue
     penmux_module_set_option "$mpath" "$opt_name" "$opt_val" "$pane_id" "1"
   done <<< "$loaded_modules"
@@ -232,6 +239,7 @@ penmux_module_set_option() {
     tmux_option_name="@penmux-$module_name-$option_name"
   else
     tmux_option_name="@penmux-$option_name"
+    module_name="penmuxGlobal"
   fi
 
   if [ -z "$pane_id" ]; then

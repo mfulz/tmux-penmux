@@ -33,7 +33,9 @@ _run() {
     fi
 
     tmux send-keys "reset" Enter
-    tmux send-keys "python -m http.server -b \"$host\" -d \"$dir\" \"$port\" 2>&1 1>/dev/null && \"$_PENMUX_INC_CURRENT_DIR/httpexchange.sh\" -a stopped -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_FILE\" -p \"$pane_id\"" Enter
+    tmux send-keys "python -m http.server -b \"$host\" -d \"$dir\" \"$port\" 2>/dev/null \
+      && \"$_PENMUX_INC_CURRENT_DIR/httpexchange.sh\" -a stopped -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_FILE\" -p \"$pane_id\" \
+      || \"$_PENMUX_INC_CURRENT_DIR/httpexchange.sh\" -a stopped -c \"$_PENMUX_SCRIPTS\" -m \"$_MODULE_FILE\" -p \"$pane_id\"" Enter
     penmux_module_set_option "$_MODULE_FILE" "HttpRunning" "true" "$pane_id"
     penmux_module_set_option "$_MODULE_FILE" "HttpRootDir" "$dir/" "$pane_id"
     penmux_module_set_option "$_MODULE_FILE" "HttpUri" "http://$host:$port/" "$pane_id"
