@@ -42,7 +42,7 @@ _cmd() {
 
   if [ -n "$session_name" ] && [ -n "$session_dir" ]; then
     penmux_module_set_option "$_MODULE_FILE" "SessionName" "$session_name" "$pane_id"
-    penmux_module_set_option "$_MODULE_FILE" "SessionDir" "$session_dir/" "$pane_id"
+    penmux_module_set_option "$_MODULE_FILE" "SessionDir" "$(realpath -m "$session_dir")/" "$pane_id"
 
     penmux_module_copy_exported_options "$pane_id" "$calling_pane_id"
 
