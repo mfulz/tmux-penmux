@@ -6,7 +6,7 @@ source "$CURRENT_DIR/../include/variables.sh"
 source "$CURRENT_DIR/../penmux/inc.sh"
 
 main() {
-  local module_to_load
+  local module_to_load="$1"
   local loaded_modules="$(_module_get_loaded)"
   local cmds="$(get_tmux_option "@penmux-default-cmds" "" "")"
   local session="$(tmux display-message -p "#{session_id}")"
@@ -15,11 +15,14 @@ main() {
   local err
 
   # dirty hack to set hooks for plugin
-  "$CURRENT_DIR/internal/init_hooks.sh"
+  # "$CURRENT_DIR/internal/init_hooks.sh"
 
-  module_to_load="$("$CURRENT_DIR/internal/modules.sh" -a select)"
-  [ -z "$module_to_load" ] && exit 0
+  echo "LOOOOOOO $module_to_load" >> /tmp/penmux
 
+  [[ -z "$module_to_load" ]] && module_to_load="$("$CURRENT_DIR/internal/modules.sh" -a select)"
+  [[ -z "$module_to_load" ]] && exit 0
+
+  echo "LOOOOOOO $module_to_load" >> /tmp/penmux
   while IFS= read -r m; do
     if [[ "$m" == "$module_to_load" ]]; then
       tmux display-message -d 5000 "Module '$module_to_load' already loaded"
@@ -104,4 +107,4 @@ main() {
   # PostModuleLoad hooking
   _module_run_hook "PostModuleLoad" "$module_to_load" "$module_to_load"
 }
-main
+main "$@"

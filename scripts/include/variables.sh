@@ -10,7 +10,10 @@ custom_module_options_dir_option="@penmux-custom-module-options-dir"
 default_custom_module_options_dir="$HOME/.tmux/penmux/options"
 
 # The modules listed will be autoloaded by the penmux plugin
+# The modules need to be given by relative path starting from the
+# modules dir and separated by space (ae. auxiliary/Session.xml auxiliary/Snipper.xml)
 autoload_modules_option="@penmux-autoload-modules"
+default_autoload_modules="auxiliary/Session.xml"
 
 # Key bindings
 keytable_key_option="@penmux-keytable-key" # Shift-p
