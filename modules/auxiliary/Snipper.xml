@@ -12,6 +12,18 @@
     <Description>Command used for copying snippet to clipboard</Description>
   </Option>
   <Option xsi:type="OptionTypeString">
+    <Name>RemoteHost</Name>
+    <Description>Defines the remote host(s)</Description>
+  </Option>
+  <Option xsi:type="OptionTypeInt">
+    <Name>RemotePort</Name>
+    <Description>Defines the remote port</Description>
+  </Option>
+  <Option xsi:type="OptionTypeString">
+    <Name>RemoteProto</Name>
+    <Description>Defines the default remote protocol</Description>
+  </Option>
+  <Option xsi:type="OptionTypeString">
     <Name>LocalHost</Name>
     <Description>Defines the local host</Description>
   </Option>

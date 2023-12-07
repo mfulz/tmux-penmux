@@ -1,0 +1,10 @@
+name,description,variables,snippet
+RemoteHost,Remote host value,,###RemoteHost###
+RemotePort,Remote port value,,###RemotePort###
+RemoteHostPort,Remote host and port value (separated by space),,###RemoteHost### ###RemotePort###
+RemoteHostColonPort,Remote host and port value (separated by colon),,###RemoteHost###:###RemotePort###
+RemoteUri,Complete uri for remote target,,###RemoteProto###://###RemoteHost###:###RemotePort###
+LocalHost,Local host value,,###LocalHost###
+LocalPort,Local port value,,###LocalPort###
+LocalHostPort,Local host and port value (separated by space),,###LocalHost### ###LocalPort###
+LocalHostColonPort,Local host and port value (separated by colon),,###LocalHost###:###LocalPort###

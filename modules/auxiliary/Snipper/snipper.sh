@@ -68,7 +68,7 @@ _list_snippet() {
 
     if [[ "${csv_entry["name"]}" == "$snippet" ]]; then
       csv_snippet="$(penmux_module_expand_options_string "$_MODULE_PATH" "${csv_entry["snippet"]}" "$pane_id")"
-      csv_snippet="$(penmux_expand_tmux_format_path "$pane_id" "$csv_snippet" "1")"
+      csv_snippet="$(penmux_expand_tmux_format_path "$pane_id" "$csv_snippet" "1" "1")"
 
       tmux set-option -p @penmux-snipper-hidden-snippet "$csv_snippet"
       tmux set-option -p @penmux-snipper-hidden-snippet-variables "${csv_entry["variables"]}"
@@ -92,7 +92,7 @@ _info_snippet() {
 
     if [[ "${csv_entry["name"]}" == "$snippet" ]]; then
       csv_snippet="$(penmux_module_expand_options_string "$_MODULE_PATH" "${csv_entry["snippet"]}" "$pane_id")"
-      csv_snippet="$(penmux_expand_tmux_format_path "$pane_id" "$csv_snippet" "1")"
+      csv_snippet="$(penmux_expand_tmux_format_path "$pane_id" "$csv_snippet" "1" "1")"
 
       printf "Description: %s\n\nSnippet: %s\n" "${csv_entry["description"]}" "$csv_snippet"
       if [[ -n "${csv_entry["variables"]}" ]]; then
