@@ -9,13 +9,16 @@ main() {
   local pane_id="$(tmux display-message -p "#D")"
   local session="$(tmux display-message -p "#{session_id}")"
   local initialized="$(get_tmux_option "@penmux-initialized" "" "")"
+  local enable_autoload_option_value="$(get_tmux_option "$enable_autoload_option" "$default_enable_autoload")"
   local autoload_modules_option_value="$(get_tmux_option "$autoload_modules_option" "$default_autoload_modules")"
 
-  if [ -z "$initialized" ]; then
-    # autoload modules
-    for m in $autoload_modules_option_value; do
-      tmux run-shell "\"$CURRENT_DIR/../load_module.sh\" \"$m\""
-    done
+  if [[ -z "$initialized" ]]; then
+    if [[ -n "$enable_autoload_option_value" ]]; then
+      # autoload modules
+      for m in $autoload_modules_option_value; do
+        tmux run-shell "\"$CURRENT_DIR/../load_module.sh\" \"$m\""
+      done
+    fi
 
     tmux set-option -t "$session" default-command "\"$CURRENT_DIR/cmd.sh\" \"$pane_id\""
     tmux set-hook -t "$session" -a after-select-pane "run-shell \"$CURRENT_DIR/update_default_cmd.sh\""

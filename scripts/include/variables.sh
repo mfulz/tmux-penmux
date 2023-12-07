@@ -9,11 +9,16 @@ default_custom_keytables_dir="$HOME/.tmux/penmux/keytables"
 custom_module_options_dir_option="@penmux-custom-module-options-dir"
 default_custom_module_options_dir="$HOME/.tmux/penmux/options"
 
+# Enable autoloading for modules
+# Set to any value to enable autoloading of modules
+enable_autoload_option="@penmux-enable-autoload"
+default_enable_autoload=""
+
 # The modules listed will be autoloaded by the penmux plugin
 # The modules need to be given by relative path starting from the
 # modules dir and separated by space (ae. auxiliary/Session.xml auxiliary/Snipper.xml)
 autoload_modules_option="@penmux-autoload-modules"
-default_autoload_modules="auxiliary/Session.xml"
+default_autoload_modules="auxiliary/Session.xml auxiliary/Commander.xml auxiliary/Snipper.xml comm/HttpExchanger.xml payloads/msfvenom.xml"
 
 # Key bindings
 keytable_key_option="@penmux-keytable-key" # Shift-p
