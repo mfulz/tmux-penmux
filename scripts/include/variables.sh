@@ -18,7 +18,7 @@ default_enable_autoload=""
 # The modules need to be given by relative path starting from the
 # modules dir and separated by space (ae. auxiliary/Session.xml auxiliary/Snipper.xml)
 autoload_modules_option="@penmux-autoload-modules"
-default_autoload_modules="auxiliary/Session.xml auxiliary/Commander.xml auxiliary/Snipper.xml comm/HttpExchanger.xml payloads/msfvenom.xml"
+default_autoload_modules="auxiliary/Session.xml auxiliary/Commander.xml auxiliary/Snipper.xml comm/HttpExchange.xml payloads/msfvenom.xml"
 
 # Key bindings
 keytable_key_option="@penmux-keytable-key" # Shift-p
