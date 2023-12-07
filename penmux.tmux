@@ -20,7 +20,8 @@ main() {
 	tmux bind -T penmux_keytable "$run_key_value" run-shell "$PT_CURRENT_DIR/scripts/bin/run_module.sh"
 
   # tmux set-hook -g session-created "run-shell \"$PT_CURRENT_DIR/scripts/bin/internal/init.sh\""
-  tmux run-shell "$PT_CURRENT_DIR/scripts/bin/internal/init.sh"
+  # tmux run-shell "$PT_CURRENT_DIR/scripts/bin/internal/init.sh"
+  "$PT_CURRENT_DIR/scripts/bin/internal/init.sh"
 }
 
 main

@@ -8,3 +8,4 @@ LocalHost,Local host value,,###LocalHost###
 LocalPort,Local port value,,###LocalPort###
 LocalHostPort,Local host and port value (separated by space),,###LocalHost### ###LocalPort###
 LocalHostColonPort,Local host and port value (separated by colon),,###LocalHost###:###LocalPort###
+HttpUri,Uri used by the HttpExchange module,,###HttpUri###
