@@ -74,6 +74,8 @@ _get_info() {
   local module_provides_plain="$(_module_get_provides "$module_file")"
   local module_provides
   local module_keytable_file="$(_keytables_get_file "$module_file")"
+  local module_opts="$(_module_get_options "$module_file")"
+  local module_conf=$(printf "Config:\n")
 
   while IFS= read -r e; do
     module_consumes=$(printf "%s\n  %s" "$module_consumes" "$e")
@@ -83,7 +85,13 @@ _get_info() {
     module_provides=$(printf "%s\n  %s" "$module_provides" "$e")
   done <<< "$module_provides_plain"
 
-  printf "Module: %s\n\nDescription:\n  %s\n\nConsumes:%s\nProvides:%s" "${module_name}" "${module_description}" "${module_consumes}" "${module_provides}"
+  while IFS= read -r e; do
+    local opt_value="$(penmux_module_get_option "$module_file" "$e" "")"
+    opt_value="$(penmux_module_expand_options_string "$module_file" "$opt_value" "")"
+    module_conf=$(printf "%s\n  %-30s\t%s" "$module_conf" "$e:" "$opt_value")
+  done <<< "$module_opts"
+
+  printf "Module: %s\n\nDescription:\n  %s\n\nConsumes:%s\nProvides:%s\n%s" "${module_name}" "${module_description}" "${module_consumes}" "${module_provides}" "${module_conf}"
 
   if [[ -n "$module_keytable_file" ]]; then
     local prefix_key="$(_keytables_get_prefixkey "$module_keytable_file")"
@@ -117,9 +125,9 @@ _get_opt_info() {
   local opt_exported="$(_module_get_option_exported "$module_file" "$module_opt")"
   local opt_provided="$(_module_get_option_provided "$module_file" "$module_opt")"
   local opt_description="$(_module_get_option_description "$module_file" "$module_opt")"
-  local opt_default_value="$(_module_get_option_default_value "$module_file" "$module_opt")"
+  local opt_act_value="$(penmux_module_get_option "$module_file" "$module_opt" "")"
 
-  printf "Option: %s (Private: %s | Exported: %s | Provided: %s)\n\nDescription:\n  %s\n\nDefault: %s" "${module_opt}" "${opt_private}" "${opt_exported}" "${opt_provided}" "${opt_description}" "${opt_default_value}"
+  printf "Option: %s (Private: %s | Exported: %s | Provided: %s)\n\nDescription:\n  %s\n\nValue: %s" "${module_opt}" "${opt_private}" "${opt_exported}" "${opt_provided}" "${opt_description}" "${opt_act_value}"
 }
 
 _set_option() {
